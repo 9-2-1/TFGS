@@ -3,7 +3,7 @@
 
 var _enableTFGS = true;
 
-class TFGS {
+class TFGSExtension {
     getInfo() {
         TFGS();
         TFGSON();
@@ -50,4 +50,4 @@ class TFGS {
     }
 }
 
-Scratch.extensions.register(new TFGS());
+Scratch.extensions.register(new TFGSExtension());
