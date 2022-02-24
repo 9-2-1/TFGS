@@ -412,24 +412,24 @@ function TFGS(){
 
 // 在前面粘贴 TFGS.js 的内容
 
-var _enableTFGS = true;
+var _enableTFGS = false;
 
 class TFGSExtension {
     getInfo() {
         TFGS();
-        TFGSON();
+        turnON();
         return {
             id: 'TFGS',
             name: 'TFGS',
 
             blocks: [
                 {
-                    opcode: 'turnon',
+                    opcode: 'turnON',
                     blockType: Scratch.BlockType.REPORTER,
                     text: '打开 TFGS'
                 },
                 {
-                    opcode: 'turnoff',
+                    opcode: 'turnOFF',
                     blockType: Scratch.BlockType.REPORTER,
                     text: '关闭 TFGS'
                 }
@@ -437,27 +437,29 @@ class TFGSExtension {
         };
     }
 
-    turnon() {
+    turnON() {
         if (!_enableTFGS) {
             try {
                 TFGSON();
                 _enableTFGS = true;
-                return("TFGS 已打开")
+                return "TFGS 成功打开";
             } catch (err) {
-                return("错误: " + err.message);
+                return "错误: " + err.message;
             }
         }
+        return "TFGS 已经打开";
     }
-    turnoff() {
-        if (!_enableTFGS) {
+    turnOFF() {
+        if (_enableTFGS) {
             try {
                 TFGSOFF();
                 _enableTFGS = false;
-                return("TFGS 已关闭")
+                return "TFGS 成功关闭";
             } catch (err) {
-                return("错误: " + err.message);
+                return "错误: " + err.message;
             }
         }
+        return "TFGS 已经关闭";
     }
 }
 
