@@ -1,0 +1,7 @@
+# vim
+*.un~
+*.swp
+
+# Microsoft Word
+~$*
+*.wbk
