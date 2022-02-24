@@ -22,6 +22,11 @@ var workspace, flyoutWorkspace;
 // 打开重试计时器
 var opening = -1;
 
+var alerting="";
+function alert(x){
+    alerting+=x+"\n";
+}
+
 // 打开 tfgs
 function TFGSON(tryCount){
 	var tryCount = tryCount === undefined ? 0 : tryCount;
@@ -437,6 +442,11 @@ class TFGSExtension {
                     opcode: 'turnOFF',
                     blockType: Scratch.BlockType.REPORTER,
                     text: '关闭 TFGS'
+                },
+                {
+                    opcode: 'debug',
+                    blockType: Scratch.BlockType.REPORTER,
+                    text: 'debug'
                 }
             ]
         };
@@ -466,6 +476,9 @@ class TFGSExtension {
             }
         }
         return "TFGS 已经关闭";
+    }
+    debug() {
+        return alerting;
     }
 }
 
