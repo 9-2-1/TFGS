@@ -447,6 +447,7 @@ class TFGSExtension {
             try {
                 TFGSON();
                 _enableTFGS = true;
+                alert("打开！给我打开！")
                 return "TFGS 成功打开";
             } catch (err) {
                 return "错误: " + err.message;
