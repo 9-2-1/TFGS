@@ -1,3 +1,9 @@
 Chrome拓展:将TFGS.js复制进文件夹，在chrome中打开chrome://extension/，选择开发者模式，加载已解压的扩展程序，选择这个文件夹即可。
 ClipCC:全选复制TFGS.js中的内容，打开main-pattern.js，粘贴进“TFGS.js 开始”和“TFGS.js 结束”之间的那行，另存为main.js，将除了main-pattern.js之外的文件全部选择，打包为zip文件，后缀重命名为.ccx即可。
 最好还是使用ClipCC官方扩展打包工具，如果可以的话。
+
+其他:尝试
+
+@javascript:(function(){var s=document.createElement('script');s.src='https://gitee.com/six-6/tfgs/raw/master/TFGS.js';document.body.appendChild(s);})();
+
+带@复制到浏览器地址栏，然后去掉@，回车加载脚本，或者不带@复制保存到书签
