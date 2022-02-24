@@ -1,0 +1,9 @@
+#list {
+	width: 400px;
+	height: 300px;
+}
+
+pre, textarea {
+	font-family: consolas, 黑体;
+	font-size: 10px;
+}

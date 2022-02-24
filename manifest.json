@@ -1,0 +1,36 @@
+{
+	"manifest_version": 2,
+	"name": "Turly For Genuine Scratchers",
+	"version": "0.1.0",
+	"description": "Scratch快速移动，高级复制，以及更多拓展功能",
+	"icons": {
+		"128": "icon.png"
+	},
+	"background":{
+		"scripts": []
+	},
+	"browser_action": {
+		"default_icon": "icon.png",
+		"default_title": "打开或关闭 TFGS",
+		"default_popup": "popup.html"
+	},
+	"content_scripts": [
+		{
+			"matches": ["<all_urls>"],
+			"js": ["whiteList.js","content.js"],
+			"css": [],
+			"run_at": "document_end"
+		}
+	],
+	"web_accessible_resources": [
+		"start.js"
+	],
+	"homepage_url": "https://gitee.com/six-6/truly-for-genuine-scratchers",
+	"options_page": "options.html",
+	"options_ui":{
+		"page": "options.html",
+		"chrome_style": true
+	},
+	"permissions": ["contextMenus","storage","tabs","activeTab"],
+	"content_security_policy": "default-src 'self';"
+}

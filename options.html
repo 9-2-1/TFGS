@@ -1,0 +1,24 @@
+<html>
+	<head>
+		<title>TFGS 选项</title>
+		<meta charset="utf-8">
+		<link rel="stylesheet" href="options.css" type="text/css" />
+	</head>
+	<body>
+		<h1>设定启用 TFGS 的页面</h1>
+		<a href="javascript:;" id="pattern0">格式</a>
+		<span id="pattern"><pre>格式: 每一行是“+/- 网址匹配模式”
++/-: -代表禁用，+代表启用。
+如果一行没有以+或者-开头，会被忽略。
+如果网址符合多条规则，以最下面匹配到的规则为准。
+网址匹配模式中
+	.... 代表任意个字符，
+	xxxx 代表任意个数字和字母，
+	0000 代表任意个数字
+
+示例：</pre><pre id="example">+ https://scratch3.example.com/create/0000</pre></span>
+		<textarea id="whiteList"></textarea>
+		<script src="whiteList.js"></script>
+		<script src="options.js"></script>
+	</body>
+</html>
