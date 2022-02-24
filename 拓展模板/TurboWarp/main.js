@@ -425,12 +425,12 @@ class TFGSExtension {
             blocks: [
                 {
                     opcode: 'turnon',
-                    blockType: Scratch.BlockType.COMMAND,
+                    blockType: Scratch.BlockType.REPORTER,
                     text: '打开 TFGS'
                 },
                 {
                     opcode: 'turnoff',
-                    blockType: Scratch.BlockType.COMMAND,
+                    blockType: Scratch.BlockType.REPORTER,
                     text: '关闭 TFGS'
                 }
             ]
