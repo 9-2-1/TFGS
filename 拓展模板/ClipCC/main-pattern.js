@@ -1,10 +1,10 @@
 var __webpack_modules__ = ({
 "./index.js": ((module, __unused_webpack_exports, __webpack_require__) => {
 const { Extension, type, api } = __webpack_require__("clipcc-extension");
-// --- CONTENT START ---
-// --- TFGS BEGIN --- {
+// --- index.js 开始 ---
+// --- TFGS.js 开始 --- {
 
-//} --- TFGS END ---
+//} --- TFGS.js 结束 ---
 
 class TFGS_Extension extends Extension {
 
@@ -46,7 +46,7 @@ class TFGS_Extension extends Extension {
 	}
 }
 module.exports = TFGS_Extension;
-// --- CONTENT END ---
+// --- index.js 结束 ---
 }),
 "clipcc-extension":((module) => {module.exports = self["ClipCCExtension"];})
 });

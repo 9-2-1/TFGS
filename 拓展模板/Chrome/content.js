@@ -2,7 +2,7 @@ var TFGS_installed = false;
 watchWhiteList(function(){
 	if(getStatus(document.location.href)){
 		if(!TFGS_installed){
-			install("start.js");
+			install("TFGS.js");
 			TFGS_installed = true;
 		}else{
 			window.postMessage({"enable":true},document.location.href);

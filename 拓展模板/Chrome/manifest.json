@@ -23,7 +23,7 @@
 		}
 	],
 	"web_accessible_resources": [
-		"start.js"
+		"TFGS.js"
 	],
 	"homepage_url": "https://gitee.com/six-6/truly-for-genuine-scratchers",
 	"options_page": "options.html",
