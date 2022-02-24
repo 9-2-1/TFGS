@@ -417,7 +417,7 @@ var _enableTFGS = false;
 class TFGSExtension {
     getInfo() {
         TFGS();
-        turnON();
+        this.turnON();
         return {
             id: 'TFGS',
             name: 'TFGS',
