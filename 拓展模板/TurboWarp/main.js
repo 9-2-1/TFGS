@@ -1,4 +1,4 @@
-//当检测到有Extension的存在，也就是被作为ClipCC拓展加载的时候，不自启动。
+/*//当检测到有Extension的存在，也就是被作为ClipCC拓展加载的时候，不自启动。
 if(typeof Extension !== "function"){
 	// 在规则配对之前这个脚本不会加载，只有打开之后才会加载。因此加载必是要打开。
 	TFGS();
@@ -16,7 +16,7 @@ if(typeof Extension !== "function"){
 			}
 		}
 	});
-}
+}*/
 // 左边是积木区，右边是积木拖出区
 var workspace, flyoutWorkspace;
 // 打开重试计时器
@@ -32,6 +32,7 @@ function TFGSON(tryCount){
 		document.body.addEventListener("keydown",on_keydown,true);
 		//document.body.addEventListener("mousedown",on_mousedown,true);
 		console.log("打开 TFGS");
+		alert("TFGS 打开成功")
 		console.log(workspace,flyoutWorkspace);
 	}catch(err){
 		console.error(err);
@@ -78,7 +79,11 @@ function on_keydown(event){
 		switch(event.key){
 			case 't':
 				console.log('TFGS: T');
-				TFGS_T();
+				try{
+				    TFGS_T();
+				}catch(err){
+				    alert(err.message);
+				}
 				event.preventDefault();
 				break;
 			case 'f':
@@ -282,7 +287,7 @@ function TFGS_T_LIST(){
 		}
 	}
 	//快速复制 list
-	if(true){
+	if(false){
 		var a = document.createElement("input");
 		a.value = JSON.stringify(tfgs_t_list);
 		document.body.appendChild(a);
