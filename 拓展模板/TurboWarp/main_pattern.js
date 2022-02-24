@@ -14,12 +14,12 @@ class TFGSExtension {
             blocks: [
                 {
                     opcode: 'turnon',
-                    blockType: Scratch.BlockType.BUTTON,
+                    blockType: Scratch.BlockType.COMMAND,
                     text: '打开 TFGS'
                 },
                 {
                     opcode: 'turnoff',
-                    blockType: Scratch.BlockType.BUTTON,
+                    blockType: Scratch.BlockType.COMMAND,
                     text: '关闭 TFGS'
                 }
             ]
@@ -31,9 +31,9 @@ class TFGSExtension {
             try {
                 TFGSON();
                 _enableTFGS = true;
-                alert("TFGS 已打开")
+                return("TFGS 已打开")
             } catch (err) {
-                alert("错误: " + err.message);
+                return("错误: " + err.message);
             }
         }
     }
@@ -42,9 +42,9 @@ class TFGSExtension {
             try {
                 TFGSOFF();
                 _enableTFGS = false;
-                alert("TFGS 已关闭")
+                return("TFGS 已关闭")
             } catch (err) {
-                alert("错误: " + err.message);
+                return("错误: " + err.message);
             }
         }
     }
