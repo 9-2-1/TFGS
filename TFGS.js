@@ -42,22 +42,12 @@ function TFGSON(tryCount){
 	}catch(err){
 		console.error(err);
 		console.log("TFGS 启动失败次数: ",tryCount + 1);
-		if(tryCount + 1 >= 30){
-			// 遥控关闭
-			if(isChromeExtension){
-			    window.postMessage({"error":err},document.location.href);
-			}
-			alert("开启 TFGS 失败，TFGS 已自动关闭。\n" +
-				"TFGS 需要在 Scratch 3 创作页中使用。\n" +
-				"你可能需要等作品加载完后再次打开。");
-			return;
-		}else{
-			// 再试一次
-			opening = setTimeout(function(){
-				TFGSON(tryCount+1);
-			},1000);
-			return;
-		}
+		TFGSOFF();
+		// 再试一次
+		opening = setTimeout(function(){
+			TFGSON(tryCount+1);
+		},2000);
+		return;
 	}
 }
 
