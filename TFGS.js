@@ -1,21 +1,27 @@
+//检测模式（严格说来chrome的检测要利用拓展发送消息来确定）
+var isChromeExtension = typeof chrome === "object";
+var isClipCCExtension = typeof Extension === "function";
+
 //当检测到有Extension的存在，也就是被作为ClipCC拓展加载的时候，不自启动。
-if(typeof Extension !== "function"){
+if(!isClipCCExtension){
 	// 在规则配对之前这个脚本不会加载，只有打开之后才会加载。因此加载必是要打开。
 	TFGS();
 	TFGSON();
 	
-	// 用于 chrome 拓展的弹窗遥控
-	window.addEventListener("message",function(event){
-		if(event.source === event.target){
-			if(typeof event.data === "object" && "enable" in event.data){
-				// 编辑规则的时候有可能会重复打开，此时先关掉后打开。
-				TFGSOFF();
-				if(event.data.enable){
-					TFGSON();
-				}
-			}
-		}
-	});
+	if(isChromeExtension){
+    	// 用于 chrome 拓展的弹窗遥控
+    	window.addEventListener("message",function(event){
+    		if(event.source === event.target){
+    			if(typeof event.data === "object" && "enable" in event.data){
+    				// 编辑规则的时候有可能会重复打开，此时先关掉后打开。
+    				TFGSOFF();
+    				if(event.data.enable){
+    					TFGSON();
+    				}
+    			}
+    		}
+    	});
+	}
 }
 // 左边是积木区，右边是积木拖出区
 var workspace, flyoutWorkspace;
@@ -36,9 +42,11 @@ function TFGSON(tryCount){
 	}catch(err){
 		console.error(err);
 		console.log("TFGS 启动失败次数: ",tryCount + 1);
-		if(tryCount + 1 >= 5){
+		if(tryCount + 1 >= 30){
 			// 遥控关闭
-			window.postMessage({"error":err},document.location.href);
+			if(isChromeExtension){
+			    window.postMessage({"error":err},document.location.href);
+			}
 			alert("开启 TFGS 失败，TFGS 已自动关闭。\n" +
 				"TFGS 需要在 Scratch 3 创作页中使用。\n" +
 				"你可能需要等作品加载完后再次打开。");
