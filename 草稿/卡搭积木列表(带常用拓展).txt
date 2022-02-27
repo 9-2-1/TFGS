@@ -1,0 +1,2671 @@
+[
+    {
+        "opcode": "looks_nextbackdrop",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"looks_nextbackdrop\" id=\"looks_nextbackdrop\" x=\"12\" y=\"1960\"></block>",
+        "text": "下一个背景",
+        "colour": "#9966FF"
+    },
+    {
+        "opcode": "looks_changeeffectby",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "EFFECT",
+                "type": "f_dropdown",
+                "menu": [
+                    "颜色",
+                    "鱼眼",
+                    "漩涡",
+                    "像素化",
+                    "马赛克",
+                    "亮度",
+                    "虚像"
+                ]
+            },
+            {
+                "name": "CHANGE",
+                "type": "i_normal:math_number"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"looks_changeeffectby\" id=\"looks_changeeffectby\" x=\"12\" y=\"2212\"><field name=\"EFFECT\">COLOR</field><value name=\"CHANGE\"><shadow type=\"math_number\" id=\"math_number\"><field name=\"NUM\">25</field></shadow></value></block>",
+        "text": "将■特效增加○",
+        "colour": "#9966FF"
+    },
+    {
+        "opcode": "looks_seteffectto",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "EFFECT",
+                "type": "f_dropdown",
+                "menu": [
+                    "颜色",
+                    "鱼眼",
+                    "漩涡",
+                    "像素化",
+                    "马赛克",
+                    "亮度",
+                    "虚像"
+                ]
+            },
+            {
+                "name": "VALUE",
+                "type": "i_normal:math_number"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"looks_seteffectto\" id=\"looks_seteffectto\" x=\"12\" y=\"2280\"><field name=\"EFFECT\">COLOR</field><value name=\"VALUE\"><shadow type=\"math_number\" id=\"Gb6`;tYtk~SsyZm{+[B$\"><field name=\"NUM\">0</field></shadow></value></block>",
+        "text": "将■特效设定为○",
+        "colour": "#9966FF"
+    },
+    {
+        "opcode": "looks_cleargraphiceffects",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"looks_cleargraphiceffects\" id=\"looks_cleargraphiceffects\" x=\"12\" y=\"2348\"></block>",
+        "text": "清除图形特效",
+        "colour": "#9966FF"
+    },
+    {
+        "opcode": "looks_backdropnumbername",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "NUMBER_NAME",
+                "type": "f_dropdown",
+                "menu": [
+                    "编号",
+                    "名称"
+                ]
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"looks_backdropnumbername\" id=\"backdropnumbername\" x=\"49\" y=\"2788\"><field name=\"NUMBER_NAME\">number</field></block>",
+        "text": "背景■",
+        "colour": "#9966FF"
+    },
+    {
+        "opcode": "sound_stopallsounds",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"sound_stopallsounds\" id=\"sound_stopallsounds\" x=\"12\" y=\"3104\"></block>",
+        "text": "停止所有声音",
+        "colour": "#CF63CF"
+    },
+    {
+        "opcode": "sound_changeeffectby",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "EFFECT",
+                "type": "f_dropdown",
+                "menu": [
+                    "音调",
+                    "左右平衡"
+                ]
+            },
+            {
+                "name": "VALUE",
+                "type": "i_normal:math_number"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"sound_changeeffectby\" id=\"sound_changeeffectby\" x=\"12\" y=\"3196\"><field name=\"EFFECT\">PITCH</field><value name=\"VALUE\"><shadow type=\"math_number\" id=\"U!?OcO$*fZ;{1y+64{jz\"><field name=\"NUM\">10</field></shadow></value></block>",
+        "text": "将■音效增加○",
+        "colour": "#CF63CF"
+    },
+    {
+        "opcode": "sound_seteffectto",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "EFFECT",
+                "type": "f_dropdown",
+                "menu": [
+                    "音调",
+                    "左右平衡"
+                ]
+            },
+            {
+                "name": "VALUE",
+                "type": "i_normal:math_number"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"sound_seteffectto\" id=\"sound_seteffectto\" x=\"12\" y=\"3264\"><field name=\"EFFECT\">PITCH</field><value name=\"VALUE\"><shadow type=\"math_number\" id=\"YR`f$E1jh~Z=$tJC{?jD\"><field name=\"NUM\">100</field></shadow></value></block>",
+        "text": "将■音效设为○",
+        "colour": "#CF63CF"
+    },
+    {
+        "opcode": "sound_cleareffects",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"sound_cleareffects\" id=\"sound_cleareffects\" x=\"12\" y=\"3332\"></block>",
+        "text": "清除音效",
+        "colour": "#CF63CF"
+    },
+    {
+        "opcode": "sound_changevolumeby",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "VOLUME",
+                "type": "i_normal:math_number"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"sound_changevolumeby\" id=\"sound_changevolumeby\" x=\"12\" y=\"3424\"><value name=\"VOLUME\"><shadow type=\"math_number\" id=\"kwNvB;H@Y;*qqu|h+llp\"><field name=\"NUM\">-10</field></shadow></value></block>",
+        "text": "将音量增加○",
+        "colour": "#CF63CF"
+    },
+    {
+        "opcode": "sound_setvolumeto",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "VOLUME",
+                "type": "i_normal:math_number"
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"sound_setvolumeto\" id=\"sound_setvolumeto\" x=\"12\" y=\"3492\"><value name=\"VOLUME\"><shadow type=\"math_number\" id=\"4dg*TLoog(ARC7;7x]eO\"><field name=\"NUM\">100</field></shadow></value></block>",
+        "text": "将音量设为○%",
+        "colour": "#CF63CF"
+    },
+    {
+        "opcode": "event_whenflagclicked",
+        "shape": null,
+        "next": true,
+        "start": true,
+        "input": [
+            {},
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"event_whenflagclicked\" id=\"event_whenflagclicked\" x=\"12\" y=\"3704\"></block>",
+        "text": "当flag被点击",
+        "colour": "#FFBF00"
+    },
+    {
+        "opcode": "event_whenkeypressed",
+        "shape": null,
+        "next": true,
+        "start": true,
+        "input": [
+            {
+                "name": "KEY_OPTION",
+                "type": "f_dropdown",
+                "menu": [
+                    "空格",
+                    "↑",
+                    "↓",
+                    "→",
+                    "←",
+                    "任意",
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "i",
+                    "j",
+                    "k",
+                    "l",
+                    "m",
+                    "n",
+                    "o",
+                    "p",
+                    "q",
+                    "r",
+                    "s",
+                    "t",
+                    "u",
+                    "v",
+                    "w",
+                    "x",
+                    "y",
+                    "z",
+                    "0",
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9"
+                ]
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"event_whenkeypressed\" id=\"event_whenkeypressed\" x=\"12\" y=\"3788\"><field name=\"KEY_OPTION\">space</field></block>",
+        "text": "当按下■键",
+        "colour": "#FFBF00"
+    },
+    {
+        "opcode": "event_whengreaterthan",
+        "shape": null,
+        "next": true,
+        "start": true,
+        "input": [
+            {
+                "name": "WHENGREATERTHANMENU",
+                "type": "f_dropdown",
+                "menu": [
+                    "响度",
+                    "计时器"
+                ]
+            },
+            {
+                "name": "VALUE",
+                "type": "i_normal:math_number"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"event_whengreaterthan\" id=\"event_whengreaterthan\" x=\"12\" y=\"4064\"><field name=\"WHENGREATERTHANMENU\">LOUDNESS</field><value name=\"VALUE\"><shadow type=\"math_number\" id=\"u}24JAb%m+hJXkIs?wG:\"><field name=\"NUM\">10</field></shadow></value></block>",
+        "text": "当■>○",
+        "colour": "#FFBF00"
+    },
+    {
+        "opcode": "control_wait",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "DURATION",
+                "type": "i_normal:math_positive_number"
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"control_wait\" id=\"control_wait\" x=\"12\" y=\"4452\"><value name=\"DURATION\"><shadow type=\"math_positive_number\" id=\"math_positive_number\"><field name=\"NUM\">1</field></shadow></value></block>",
+        "text": "等待○秒",
+        "colour": "#FFAB19"
+    },
+    {
+        "opcode": "control_repeat",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "TIMES",
+                "type": "i_normal:math_whole_number"
+            },
+            {
+                "name": "SUBSTACK",
+                "type": "i_stack"
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"control_repeat\" id=\"control_repeat\" x=\"12\" y=\"4544\"><value name=\"TIMES\"><shadow type=\"math_whole_number\" id=\"math_whole_number\"><field name=\"NUM\">10</field></shadow></value></block>",
+        "text": "重复执行○次□*",
+        "colour": "#FFAB19"
+    },
+    {
+        "opcode": "control_forever",
+        "shape": null,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "SUBSTACK",
+                "type": "i_stack"
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"control_forever\" id=\"forever\" x=\"12\" y=\"4668\"></block>",
+        "text": "重复执行□*",
+        "colour": "#FFAB19"
+    },
+    {
+        "opcode": "control_if",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "CONDITION",
+                "type": "i_bool"
+            },
+            {
+                "name": "SUBSTACK",
+                "type": "i_stack"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"control_if\" id=\"control_if\" x=\"12\" y=\"4808\"></block>",
+        "text": "如果◆那么□",
+        "colour": "#FFAB19"
+    },
+    {
+        "opcode": "control_if_else",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "CONDITION",
+                "type": "i_bool"
+            },
+            {
+                "name": "SUBSTACK",
+                "type": "i_stack"
+            },
+            {
+                "name": "SUBSTACK2",
+                "type": "i_stack"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"control_if_else\" id=\"control_if_else\" x=\"12\" y=\"4932\"></block>",
+        "text": "如果◆那么□否则□",
+        "colour": "#FFAB19"
+    },
+    {
+        "opcode": "control_wait_until",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "CONDITION",
+                "type": "i_bool"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"control_wait_until\" id=\"wait_until\" x=\"12\" y=\"5112\"></block>",
+        "text": "等待◆",
+        "colour": "#FFAB19"
+    },
+    {
+        "opcode": "control_repeat_until",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "CONDITION",
+                "type": "i_bool"
+            },
+            {
+                "name": "SUBSTACK",
+                "type": "i_stack"
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"control_repeat_until\" id=\"repeat_until\" x=\"12\" y=\"5180\"></block>",
+        "text": "重复执行直到◆□*",
+        "colour": "#FFAB19"
+    },
+    {
+        "opcode": "sensing_askandwait",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "QUESTION",
+                "type": "i_normal:text"
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"sensing_askandwait\" id=\"askandwait\" x=\"12\" y=\"5932\"><value name=\"QUESTION\"><shadow type=\"text\" id=\"text\"><field name=\"TEXT\">What's your name?</field></shadow></value></block>",
+        "text": "询问○并等待",
+        "colour": "#5CB1D6"
+    },
+    {
+        "opcode": "sensing_answer",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"sensing_answer\" id=\"answer\" x=\"49\" y=\"6000\"></block>",
+        "text": "回答",
+        "colour": "#5CB1D6"
+    },
+    {
+        "opcode": "sensing_keypressed",
+        "shape": 1,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "KEY_OPTION",
+                "type": "i_dropdown",
+                "menu": [
+                    "空格",
+                    "↑",
+                    "↓",
+                    "→",
+                    "←",
+                    "任意",
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "e",
+                    "f",
+                    "g",
+                    "h",
+                    "i",
+                    "j",
+                    "k",
+                    "l",
+                    "m",
+                    "n",
+                    "o",
+                    "p",
+                    "q",
+                    "r",
+                    "s",
+                    "t",
+                    "u",
+                    "v",
+                    "w",
+                    "x",
+                    "y",
+                    "z",
+                    "0",
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9"
+                ]
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"sensing_keypressed\" id=\"sensing_keypressed\" x=\"12\" y=\"6076\"><value name=\"KEY_OPTION\"><shadow type=\"sensing_keyoptions\" id=\"sensing_keyoptions\"><field name=\"KEY_OPTION\">space</field></shadow></value></block>",
+        "text": "按下●键?",
+        "colour": "#5CB1D6"
+    },
+    {
+        "opcode": "sensing_mousedown",
+        "shape": 1,
+        "next": false,
+        "start": false,
+        "input": [],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"sensing_mousedown\" id=\"sensing_mousedown\" x=\"12\" y=\"6128\"></block>",
+        "text": "按下鼠标?",
+        "colour": "#5CB1D6"
+    },
+    {
+        "opcode": "sensing_mousex",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"sensing_mousex\" id=\"sensing_mousex\" x=\"12\" y=\"6180\"></block>",
+        "text": "鼠标的x坐标",
+        "colour": "#5CB1D6"
+    },
+    {
+        "opcode": "sensing_mousey",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"sensing_mousey\" id=\"sensing_mousey\" x=\"12\" y=\"6232\"></block>",
+        "text": "鼠标的y坐标",
+        "colour": "#5CB1D6"
+    },
+    {
+        "opcode": "sensing_loudness",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"sensing_loudness\" id=\"loudness\" x=\"49\" y=\"6400\"></block>",
+        "text": "响度",
+        "colour": "#5CB1D6"
+    },
+    {
+        "opcode": "sensing_timer",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"sensing_timer\" id=\"timer\" x=\"49\" y=\"6476\"></block>",
+        "text": "计时器",
+        "colour": "#5CB1D6"
+    },
+    {
+        "opcode": "sensing_resettimer",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"sensing_resettimer\" id=\"sensing_resettimer\" x=\"12\" y=\"6528\"></block>",
+        "text": "计时器归零",
+        "colour": "#5CB1D6"
+    },
+    {
+        "opcode": "sensing_current",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "CURRENTMENU",
+                "type": "f_dropdown",
+                "menu": [
+                    "年",
+                    "月",
+                    "日",
+                    "星期",
+                    "时",
+                    "分",
+                    "秒"
+                ]
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"sensing_current\" id=\"current\" x=\"49\" y=\"6696\"><field name=\"CURRENTMENU\">YEAR</field></block>",
+        "text": "当前时间的■",
+        "colour": "#5CB1D6"
+    },
+    {
+        "opcode": "sensing_dayssince2000",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"sensing_dayssince2000\" id=\"sensing_dayssince2000\" x=\"12\" y=\"6748\"></block>",
+        "text": "2000年至今的天数",
+        "colour": "#5CB1D6"
+    },
+    {
+        "opcode": "sensing_username",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"sensing_username\" id=\"sensing_username\" x=\"49\" y=\"6824\"></block>",
+        "text": "用户名",
+        "colour": "#5CB1D6"
+    },
+    {
+        "opcode": "operator_add",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "NUM1",
+                "type": "i_normal:math_number"
+            },
+            {
+                "name": "NUM2",
+                "type": "i_normal:math_number"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"operator_add\" id=\"operator_add\" x=\"12\" y=\"6952\"><value name=\"NUM1\"><shadow type=\"math_number\" id=\"a7*n@mEY$0i:wD:}u{Q(\"><field name=\"NUM\"></field></shadow></value><value name=\"NUM2\"><shadow type=\"math_number\" id=\"sV7$~:ZdLRQtS*BQIQY.\"><field name=\"NUM\"></field></shadow></value></block>",
+        "text": "○+○",
+        "colour": "#59C059"
+    },
+    {
+        "opcode": "operator_subtract",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "NUM1",
+                "type": "i_normal:math_number"
+            },
+            {
+                "name": "NUM2",
+                "type": "i_normal:math_number"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"operator_subtract\" id=\"operator_subtract\" x=\"12\" y=\"7004\"><value name=\"NUM1\"><shadow type=\"math_number\" id=\"wwbW6CocB^2oB_;g6}i4\"><field name=\"NUM\"></field></shadow></value><value name=\"NUM2\"><shadow type=\"math_number\" id=\"F.am?ewoCc0)n#itXb2%\"><field name=\"NUM\"></field></shadow></value></block>",
+        "text": "○-○",
+        "colour": "#59C059"
+    },
+    {
+        "opcode": "operator_multiply",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "NUM1",
+                "type": "i_normal:math_number"
+            },
+            {
+                "name": "NUM2",
+                "type": "i_normal:math_number"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"operator_multiply\" id=\"operator_multiply\" x=\"12\" y=\"7056\"><value name=\"NUM1\"><shadow type=\"math_number\" id=\"n3FXAH2s]F-q)lF]5dPk\"><field name=\"NUM\"></field></shadow></value><value name=\"NUM2\"><shadow type=\"math_number\" id=\"WbgdbNl{I$^g/TMx|Jcq\"><field name=\"NUM\"></field></shadow></value></block>",
+        "text": "○*○",
+        "colour": "#59C059"
+    },
+    {
+        "opcode": "operator_divide",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "NUM1",
+                "type": "i_normal:math_number"
+            },
+            {
+                "name": "NUM2",
+                "type": "i_normal:math_number"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"operator_divide\" id=\"operator_divide\" x=\"12\" y=\"7108\"><value name=\"NUM1\"><shadow type=\"math_number\" id=\"9_g@(n`4E4JI,?bg80T@\"><field name=\"NUM\"></field></shadow></value><value name=\"NUM2\"><shadow type=\"math_number\" id=\"_aV@F$9Y!bff2(Ggyb)*\"><field name=\"NUM\"></field></shadow></value></block>",
+        "text": "○/○",
+        "colour": "#59C059"
+    },
+    {
+        "opcode": "operator_random",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "FROM",
+                "type": "i_normal:math_number"
+            },
+            {
+                "name": "TO",
+                "type": "i_normal:math_number"
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"operator_random\" id=\"operator_random\" x=\"12\" y=\"7184\"><value name=\"FROM\"><shadow type=\"math_number\" id=\"}LirQYgkw@+Vl,:dFU6w\"><field name=\"NUM\">1</field></shadow></value><value name=\"TO\"><shadow type=\"math_number\" id=\"8V[6;oSUP)q?%eZ~gz}f\"><field name=\"NUM\">10</field></shadow></value></block>",
+        "text": "在○和○之间取随机数",
+        "colour": "#59C059"
+    },
+    {
+        "opcode": "operator_gt",
+        "shape": 1,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "OPERAND1",
+                "type": "i_normal:text"
+            },
+            {
+                "name": "OPERAND2",
+                "type": "i_normal:text"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"operator_gt\" id=\"operator_gt\" x=\"12\" y=\"7260\"><value name=\"OPERAND1\"><shadow type=\"text\" id=\"gJuP*m=LbA$M~DmrBgz8\"><field name=\"TEXT\"></field></shadow></value><value name=\"OPERAND2\"><shadow type=\"text\" id=\"ChJ)p:$9ki]$?VZ}3+yp\"><field name=\"TEXT\">50</field></shadow></value></block>",
+        "text": "○>○",
+        "colour": "#59C059"
+    },
+    {
+        "opcode": "operator_lt",
+        "shape": 1,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "OPERAND1",
+                "type": "i_normal:text"
+            },
+            {
+                "name": "OPERAND2",
+                "type": "i_normal:text"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"operator_lt\" id=\"operator_lt\" x=\"12\" y=\"7312\"><value name=\"OPERAND1\"><shadow type=\"text\" id=\"Cf-)Hi3c.840(.UM^H_k\"><field name=\"TEXT\"></field></shadow></value><value name=\"OPERAND2\"><shadow type=\"text\" id=\"rWbtE04ErTKgj#1Xi.:a\"><field name=\"TEXT\">50</field></shadow></value></block>",
+        "text": "○<○",
+        "colour": "#59C059"
+    },
+    {
+        "opcode": "operator_equals",
+        "shape": 1,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "OPERAND1",
+                "type": "i_normal:text"
+            },
+            {
+                "name": "OPERAND2",
+                "type": "i_normal:text"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"operator_equals\" id=\"operator_equals\" x=\"12\" y=\"7364\"><value name=\"OPERAND1\"><shadow type=\"text\" id=\"86#OX)$u6@$0fvjDfKcG\"><field name=\"TEXT\"></field></shadow></value><value name=\"OPERAND2\"><shadow type=\"text\" id=\"k|UTT[yW$tk[~K|akPmX\"><field name=\"TEXT\">50</field></shadow></value></block>",
+        "text": "○=○",
+        "colour": "#59C059"
+    },
+    {
+        "opcode": "operator_and",
+        "shape": 1,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "OPERAND1",
+                "type": "i_bool"
+            },
+            {
+                "name": "OPERAND2",
+                "type": "i_bool"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"operator_and\" id=\"operator_and\" x=\"12\" y=\"7440\"></block>",
+        "text": "◆与◆",
+        "colour": "#59C059"
+    },
+    {
+        "opcode": "operator_or",
+        "shape": 1,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "OPERAND1",
+                "type": "i_bool"
+            },
+            {
+                "name": "OPERAND2",
+                "type": "i_bool"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"operator_or\" id=\"operator_or\" x=\"12\" y=\"7492\"></block>",
+        "text": "◆或◆",
+        "colour": "#59C059"
+    },
+    {
+        "opcode": "operator_not",
+        "shape": 1,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "OPERAND",
+                "type": "i_bool"
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"operator_not\" id=\"operator_not\" x=\"12\" y=\"7544\"></block>",
+        "text": "◆不成立",
+        "colour": "#59C059"
+    },
+    {
+        "opcode": "operator_join",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "STRING1",
+                "type": "i_normal:text"
+            },
+            {
+                "name": "STRING2",
+                "type": "i_normal:text"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"operator_join\" id=\"operator_join\" x=\"12\" y=\"7620\"><value name=\"STRING1\"><shadow type=\"text\" id=\"w=gTjZ0MGL5YJZWfW+PI\"><field name=\"TEXT\">apple </field></shadow></value><value name=\"STRING2\"><shadow type=\"text\" id=\"=/#9Snpl(XQ;oTcjDI,{\"><field name=\"TEXT\">banana</field></shadow></value></block>",
+        "text": "连接○和○",
+        "colour": "#59C059"
+    },
+    {
+        "opcode": "operator_letter_of",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "STRING",
+                "type": "i_normal:text"
+            },
+            {
+                "name": "LETTER",
+                "type": "i_normal:math_whole_number"
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"operator_letter_of\" id=\"operator_letter_of\" x=\"12\" y=\"7672\"><value name=\"STRING\"><shadow type=\"text\" id=\"o#z5XK+dYC:nHL?4#T[^\"><field name=\"TEXT\">apple</field></shadow></value><value name=\"LETTER\"><shadow type=\"math_whole_number\" id=\"G7ue#(6LjGoEBSD]wNZJ\"><field name=\"NUM\">1</field></shadow></value></block>",
+        "text": "○的第○个字符",
+        "colour": "#59C059"
+    },
+    {
+        "opcode": "operator_length",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "STRING",
+                "type": "i_normal:text"
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"operator_length\" id=\"operator_length\" x=\"12\" y=\"7724\"><value name=\"STRING\"><shadow type=\"text\" id=\"xlK5CeamumtaSKf9,3cA\"><field name=\"TEXT\">apple</field></shadow></value></block>",
+        "text": "○的字符数",
+        "colour": "#59C059"
+    },
+    {
+        "opcode": "operator_contains",
+        "shape": 1,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "STRING1",
+                "type": "i_normal:text"
+            },
+            {
+                "name": "STRING2",
+                "type": "i_normal:text"
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"operator_contains\" id=\"operator_contains\" x=\"12\" y=\"7776\"><value name=\"STRING1\"><shadow type=\"text\" id=\"Hx[F$z2|nLJm=b][[FnA\"><field name=\"TEXT\">apple</field></shadow></value><value name=\"STRING2\"><shadow type=\"text\" id=\"(Cu_C3+O5^]8f)_jJXY_\"><field name=\"TEXT\">a</field></shadow></value></block>",
+        "text": "○包含○?",
+        "colour": "#59C059"
+    },
+    {
+        "opcode": "operator_mod",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "NUM1",
+                "type": "i_normal:math_number"
+            },
+            {
+                "name": "NUM2",
+                "type": "i_normal:math_number"
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"operator_mod\" id=\"operator_mod\" x=\"12\" y=\"7852\"><value name=\"NUM1\"><shadow type=\"math_number\" id=\"dbPTe+N9IZ-Ok(|DB*:z\"><field name=\"NUM\"></field></shadow></value><value name=\"NUM2\"><shadow type=\"math_number\" id=\"Aa.Zha*Etv;VqG-f/L+7\"><field name=\"NUM\"></field></shadow></value></block>",
+        "text": "○除以○的余数",
+        "colour": "#59C059"
+    },
+    {
+        "opcode": "operator_round",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "NUM",
+                "type": "i_normal:math_number"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"operator_round\" id=\"operator_round\" x=\"12\" y=\"7904\"><value name=\"NUM\"><shadow type=\"math_number\" id=\"9[y4OUVNO6j]iGS6s4YS\"><field name=\"NUM\"></field></shadow></value></block>",
+        "text": "四舍五入○",
+        "colour": "#59C059"
+    },
+    {
+        "opcode": "operator_mathop",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "OPERATOR",
+                "type": "f_dropdown",
+                "menu": [
+                    "绝对值",
+                    "向下取整",
+                    "向上取整",
+                    "平方根",
+                    "sin",
+                    "cos",
+                    "tan",
+                    "asin",
+                    "acos",
+                    "atan",
+                    "ln",
+                    "log",
+                    "e ^",
+                    "10 ^"
+                ]
+            },
+            {
+                "name": "NUM",
+                "type": "i_normal:math_number"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"operator_mathop\" id=\"operator_mathop\" x=\"12\" y=\"7980\"><field name=\"OPERATOR\">abs</field><value name=\"NUM\"><shadow type=\"math_number\" id=\"S9hK;D8CBFL_N`C1c8Vc\"><field name=\"NUM\"></field></shadow></value></block>",
+        "text": "■○",
+        "colour": "#59C059"
+    },
+    {
+        "opcode": "motion_movesteps",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "STEPS",
+                "type": "i_normal:math_number"
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"motion_movesteps\" id=\"motion_movesteps\" x=\"12\" y=\"64\"><value name=\"STEPS\"><shadow type=\"math_number\" id=\"U-@]5093!=B;cl2G8~tK\"><field name=\"NUM\">10</field></shadow></value></block>",
+        "text": "移动○步",
+        "colour": "#4C97FF"
+    },
+    {
+        "opcode": "motion_turnright",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {},
+            {
+                "name": "DEGREES",
+                "type": "i_normal:math_number"
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"motion_turnright\" id=\"motion_turnright\" x=\"12\" y=\"132\"><value name=\"DEGREES\"><shadow type=\"math_number\" id=\"Dno:WXz)DCB7N}a0G+9}\"><field name=\"NUM\">15</field></shadow></value></block>",
+        "text": "右转○度",
+        "colour": "#4C97FF"
+    },
+    {
+        "opcode": "motion_turnleft",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {},
+            {
+                "name": "DEGREES",
+                "type": "i_normal:math_number"
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"motion_turnleft\" id=\"motion_turnleft\" x=\"12\" y=\"200\"><value name=\"DEGREES\"><shadow type=\"math_number\" id=\"#7qrO^D(_Lr^aPDgP%}=\"><field name=\"NUM\">15</field></shadow></value></block>",
+        "text": "左转○度",
+        "colour": "#4C97FF"
+    },
+    {
+        "opcode": "motion_gotoxy",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "X",
+                "type": "i_normal:math_number"
+            },
+            {
+                "name": "Y",
+                "type": "i_normal:math_number"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"motion_gotoxy\" id=\"motion_gotoxy\" x=\"12\" y=\"360\"><value name=\"X\"><shadow type=\"math_number\" id=\"movex\"><field name=\"NUM\">0</field></shadow></value><value name=\"Y\"><shadow type=\"math_number\" id=\"movey\"><field name=\"NUM\">0</field></shadow></value></block>",
+        "text": "移到 x:○y:○",
+        "colour": "#4C97FF"
+    },
+    {
+        "opcode": "motion_glidesecstoxy",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "SECS",
+                "type": "i_normal:math_number"
+            },
+            {
+                "name": "X",
+                "type": "i_normal:math_number"
+            },
+            {
+                "name": "Y",
+                "type": "i_normal:math_number"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"motion_glidesecstoxy\" id=\"motion_glidesecstoxy\" x=\"12\" y=\"496\"><value name=\"SECS\"><shadow type=\"math_number\" id=\"ictXsB::34M~Z*-}KuT^\"><field name=\"NUM\">1</field></shadow></value><value name=\"X\"><shadow type=\"math_number\" id=\"glidex\"><field name=\"NUM\">0</field></shadow></value><value name=\"Y\"><shadow type=\"math_number\" id=\"glidey\"><field name=\"NUM\">0</field></shadow></value></block>",
+        "text": "在○秒内滑行到 x:○y:○",
+        "colour": "#4C97FF"
+    },
+    {
+        "opcode": "motion_pointindirection",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "DIRECTION",
+                "type": "i_normal:math_angle"
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"motion_pointindirection\" id=\"motion_pointindirection\" x=\"12\" y=\"588\"><value name=\"DIRECTION\"><shadow type=\"math_angle\" id=\"math_angle\"><field name=\"NUM\">90</field></shadow></value></block>",
+        "text": "面向○方向",
+        "colour": "#4C97FF"
+    },
+    {
+        "opcode": "motion_changexby",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "DX",
+                "type": "i_normal:math_number"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"motion_changexby\" id=\"motion_changexby\" x=\"12\" y=\"748\"><value name=\"DX\"><shadow type=\"math_number\" id=\"T/YzY`#WJ2a%7MGaIKm=\"><field name=\"NUM\">10</field></shadow></value></block>",
+        "text": "将x坐标增加○",
+        "colour": "#4C97FF"
+    },
+    {
+        "opcode": "motion_setx",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "X",
+                "type": "i_normal:math_number"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"motion_setx\" id=\"motion_setx\" x=\"12\" y=\"816\"><value name=\"X\"><shadow type=\"math_number\" id=\"setx\"><field name=\"NUM\">0</field></shadow></value></block>",
+        "text": "将x坐标设为○",
+        "colour": "#4C97FF"
+    },
+    {
+        "opcode": "motion_changeyby",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "DY",
+                "type": "i_normal:math_number"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"motion_changeyby\" id=\"motion_changeyby\" x=\"12\" y=\"884\"><value name=\"DY\"><shadow type=\"math_number\" id=\"mV`4LJORDF@eq0S#-R_!\"><field name=\"NUM\">10</field></shadow></value></block>",
+        "text": "将y坐标增加○",
+        "colour": "#4C97FF"
+    },
+    {
+        "opcode": "motion_sety",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "Y",
+                "type": "i_normal:math_number"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"motion_sety\" id=\"motion_sety\" x=\"12\" y=\"952\"><value name=\"Y\"><shadow type=\"math_number\" id=\"sety\"><field name=\"NUM\">0</field></shadow></value></block>",
+        "text": "将y坐标设为○",
+        "colour": "#4C97FF"
+    },
+    {
+        "opcode": "motion_ifonedgebounce",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"motion_ifonedgebounce\" id=\"motion_ifonedgebounce\" x=\"12\" y=\"1044\"></block>",
+        "text": "碰到边缘就反弹",
+        "colour": "#4C97FF"
+    },
+    {
+        "opcode": "motion_setrotationstyle",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "STYLE",
+                "type": "f_dropdown",
+                "menu": [
+                    "左右翻转",
+                    "不可旋转",
+                    "任意旋转"
+                ]
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"motion_setrotationstyle\" id=\"motion_setrotationstyle\" x=\"12\" y=\"1136\"><field name=\"STYLE\">left-right</field></block>",
+        "text": "将旋转方式设为■",
+        "colour": "#4C97FF"
+    },
+    {
+        "opcode": "motion_xposition",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"motion_xposition\" id=\"^[jaP;CzzZxuMG1z]?86_xposition\" x=\"49\" y=\"1228\"></block>",
+        "text": "x 坐标",
+        "colour": "#4C97FF"
+    },
+    {
+        "opcode": "motion_yposition",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"motion_yposition\" id=\"^[jaP;CzzZxuMG1z]?86_yposition\" x=\"49\" y=\"1280\"></block>",
+        "text": "y 坐标",
+        "colour": "#4C97FF"
+    },
+    {
+        "opcode": "motion_direction",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"motion_direction\" id=\"^[jaP;CzzZxuMG1z]?86_direction\" x=\"49\" y=\"1332\"></block>",
+        "text": "方向",
+        "colour": "#4C97FF"
+    },
+    {
+        "opcode": "looks_sayforsecs",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "MESSAGE",
+                "type": "i_normal:text"
+            },
+            {
+                "name": "SECS",
+                "type": "i_normal:math_number"
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"looks_sayforsecs\" id=\"looks_sayforsecs\" x=\"12\" y=\"1460\"><value name=\"MESSAGE\"><shadow type=\"text\" id=\"w2ih1Z?!.s5}6wlfz$]E\"><field name=\"TEXT\">你好！</field></shadow></value><value name=\"SECS\"><shadow type=\"math_number\" id=\".5x2otiV$JaQ+@.?pZj{\"><field name=\"NUM\">2</field></shadow></value></block>",
+        "text": "说○○秒",
+        "colour": "#9966FF"
+    },
+    {
+        "opcode": "looks_say",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "MESSAGE",
+                "type": "i_normal:text"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"looks_say\" id=\"looks_say\" x=\"12\" y=\"1528\"><value name=\"MESSAGE\"><shadow type=\"text\" id=\"qUQWqqYERVpgw|UV_ESt\"><field name=\"TEXT\">你好！</field></shadow></value></block>",
+        "text": "说○",
+        "colour": "#9966FF"
+    },
+    {
+        "opcode": "looks_thinkforsecs",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "MESSAGE",
+                "type": "i_normal:text"
+            },
+            {
+                "name": "SECS",
+                "type": "i_normal:math_number"
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"looks_thinkforsecs\" id=\"looks_thinkforsecs\" x=\"12\" y=\"1596\"><value name=\"MESSAGE\"><shadow type=\"text\" id=\"2g@gdeH[k2U]8Y9nfyJL\"><field name=\"TEXT\">嗯……</field></shadow></value><value name=\"SECS\"><shadow type=\"math_number\" id=\"KVZ{U`;Wsxlq9{J=FlP-\"><field name=\"NUM\">2</field></shadow></value></block>",
+        "text": "思考○○秒",
+        "colour": "#9966FF"
+    },
+    {
+        "opcode": "looks_think",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "MESSAGE",
+                "type": "i_normal:text"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"looks_think\" id=\"looks_think\" x=\"12\" y=\"1664\"><value name=\"MESSAGE\"><shadow type=\"text\" id=\"6Y#9Z]L[hHI~hoI5(#qL\"><field name=\"TEXT\">嗯……</field></shadow></value></block>",
+        "text": "思考○",
+        "colour": "#9966FF"
+    },
+    {
+        "opcode": "looks_nextcostume",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"looks_nextcostume\" id=\"looks_nextcostume\" x=\"12\" y=\"1824\"></block>",
+        "text": "下一个造型",
+        "colour": "#9966FF"
+    },
+    {
+        "opcode": "looks_changesizeby",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "CHANGE",
+                "type": "i_normal:math_number"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"looks_changesizeby\" id=\"looks_changesizeby\" x=\"12\" y=\"2052\"><value name=\"CHANGE\"><shadow type=\"math_number\" id=\"(_b[ua;Z]8(GgE5Es$$S\"><field name=\"NUM\">10</field></shadow></value></block>",
+        "text": "将大小增加○",
+        "colour": "#9966FF"
+    },
+    {
+        "opcode": "looks_setsizeto",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "SIZE",
+                "type": "i_normal:math_number"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"looks_setsizeto\" id=\"looks_setsizeto\" x=\"12\" y=\"2120\"><value name=\"SIZE\"><shadow type=\"math_number\" id=\"4dgxCrK+0Nb{1xL}%km.\"><field name=\"NUM\">100</field></shadow></value></block>",
+        "text": "将大小设为○",
+        "colour": "#9966FF"
+    },
+    {
+        "opcode": "looks_show",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"looks_show\" id=\"looks_show\" x=\"12\" y=\"2440\"></block>",
+        "text": "显示",
+        "colour": "#9966FF"
+    },
+    {
+        "opcode": "looks_hide",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"looks_hide\" id=\"looks_hide\" x=\"12\" y=\"2508\"></block>",
+        "text": "隐藏",
+        "colour": "#9966FF"
+    },
+    {
+        "opcode": "looks_gotofrontback",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "FRONT_BACK",
+                "type": "f_dropdown",
+                "menu": [
+                    "前面",
+                    "后面"
+                ]
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"looks_gotofrontback\" id=\"looks_gotofrontback\" x=\"12\" y=\"2600\"><field name=\"FRONT_BACK\">front</field></block>",
+        "text": "移到最■",
+        "colour": "#9966FF"
+    },
+    {
+        "opcode": "looks_goforwardbackwardlayers",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "FORWARD_BACKWARD",
+                "type": "f_dropdown",
+                "menu": [
+                    "前移",
+                    "后移"
+                ]
+            },
+            {
+                "name": "NUM",
+                "type": "i_normal:math_integer"
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"looks_goforwardbackwardlayers\" id=\"looks_goforwardbackwardlayers\" x=\"12\" y=\"2668\"><field name=\"FORWARD_BACKWARD\">forward</field><value name=\"NUM\"><shadow type=\"math_integer\" id=\"math_integer\"><field name=\"NUM\">1</field></shadow></value></block>",
+        "text": "■○层",
+        "colour": "#9966FF"
+    },
+    {
+        "opcode": "looks_costumenumbername",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "NUMBER_NAME",
+                "type": "f_dropdown",
+                "menu": [
+                    "编号",
+                    "名称"
+                ]
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"looks_costumenumbername\" id=\"^[jaP;CzzZxuMG1z]?86_costumenumbername\" x=\"49\" y=\"2736\"><field name=\"NUMBER_NAME\">number</field></block>",
+        "text": "造型■",
+        "colour": "#9966FF"
+    },
+    {
+        "opcode": "looks_size",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"looks_size\" id=\"^[jaP;CzzZxuMG1z]?86_size\" x=\"49\" y=\"2840\"></block>",
+        "text": "大小",
+        "colour": "#9966FF"
+    },
+    {
+        "opcode": "sound_volume",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"sound_volume\" id=\"^[jaP;CzzZxuMG1z]?86_volume\" x=\"49\" y=\"3560\"></block>",
+        "text": "音量",
+        "colour": "#CF63CF"
+    },
+    {
+        "opcode": "event_whenthisspriteclicked",
+        "shape": null,
+        "next": true,
+        "start": true,
+        "input": [],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"event_whenthisspriteclicked\" id=\"event_whenthisspriteclicked\" x=\"12\" y=\"3872\"></block>",
+        "text": "当角色被点击",
+        "colour": "#FFBF00"
+    },
+    {
+        "opcode": "control_start_as_clone",
+        "shape": null,
+        "next": true,
+        "start": true,
+        "input": [],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"control_start_as_clone\" id=\"control_start_as_clone\" x=\"12\" y=\"5428\"></block>",
+        "text": "当作为克隆体启动时",
+        "colour": "#FFAB19"
+    },
+    {
+        "opcode": "control_delete_this_clone",
+        "shape": null,
+        "next": false,
+        "start": false,
+        "input": [],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"control_delete_this_clone\" id=\"control_delete_this_clone\" x=\"12\" y=\"5564\"></block>",
+        "text": "删除此克隆体",
+        "colour": "#FFAB19"
+    },
+    {
+        "opcode": "sensing_touchingcolor",
+        "shape": 1,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "COLOR",
+                "type": "i_normal:colour_picker"
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"sensing_touchingcolor\" id=\"sensing_touchingcolor\" x=\"12\" y=\"5752\"><value name=\"COLOR\"><shadow type=\"colour_picker\" id=\"colour_picker\"><field name=\"COLOUR\">#4dfe0c</field></shadow></value></block>",
+        "text": "碰到颜色○?",
+        "colour": "#5CB1D6"
+    },
+    {
+        "opcode": "sensing_coloristouchingcolor",
+        "shape": 1,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "COLOR",
+                "type": "i_normal:colour_picker"
+            },
+            {
+                "name": "COLOR2",
+                "type": "i_normal:colour_picker"
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"sensing_coloristouchingcolor\" id=\"sensing_coloristouchingcolor\" x=\"12\" y=\"5804\"><value name=\"COLOR\"><shadow type=\"colour_picker\" id=\"htj+SEKUusSXUe?Z)!G3\"><field name=\"COLOUR\">#4ef263</field></shadow></value><value name=\"COLOR2\"><shadow type=\"colour_picker\" id=\"wM[p6a7gD}-DG$v^j?nk\"><field name=\"COLOUR\">#206bc0</field></shadow></value></block>",
+        "text": "颜色○碰到○?",
+        "colour": "#5CB1D6"
+    },
+    {
+        "opcode": "sensing_setdragmode",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "DRAG_MODE",
+                "type": "f_dropdown",
+                "menu": [
+                    "可拖动",
+                    "不可拖动"
+                ]
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"sensing_setdragmode\" id=\"sensing_setdragmode\" x=\"12\" y=\"6308\"><field name=\"DRAG_MODE\">draggable</field></block>",
+        "text": "将拖动模式设为■",
+        "colour": "#5CB1D6"
+    },
+    {
+        "opcode": "music_playDrumForBeats",
+        "shape": 3,
+        "next": true,
+        "start": false,
+        "input": [
+            {},
+            {
+                "name": "DRUM",
+                "type": "i_dropdown",
+                "menu": [
+                    "(1) 小军鼓",
+                    "(2) 低音鼓",
+                    "(3) 敲鼓边",
+                    "(4) 碎音钹",
+                    "(5) 开击踩镲",
+                    "(6) 闭击踩镲",
+                    "(7) 铃鼓",
+                    "(8) 手掌",
+                    "(9) 音棒",
+                    "(10) 木鱼",
+                    "(11) 牛铃",
+                    "(12) 三角铁",
+                    "(13) 邦戈鼓",
+                    "(14) 康加鼓",
+                    "(15) 卡巴萨",
+                    "(16) 刮瓜",
+                    "(17) 颤音器",
+                    "(18) 锯加鼓"
+                ]
+            },
+            {
+                "name": "BEATS",
+                "type": "i_normal:math_number"
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"music_playDrumForBeats\" id=\"music_playDrumForBeats\" x=\"12\" y=\"9476\"><value name=\"DRUM\"><shadow type=\"music_menu_DRUM\" id=\"music_menu_DRUM\"><field name=\"DRUM\">1</field></shadow></value><value name=\"BEATS\"><shadow type=\"math_number\" id=\"e8ot8QaZBJ`Dz@ZvYjEF\"><field name=\"NUM\">0.25</field></shadow></value></block>",
+        "text": "击打●○拍",
+        "colour": "#0FBD8C"
+    },
+    {
+        "opcode": "music_restForBeats",
+        "shape": 3,
+        "next": true,
+        "start": false,
+        "input": [
+            {},
+            {
+                "name": "BEATS",
+                "type": "i_normal:math_number"
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"music_restForBeats\" id=\"music_restForBeats\" x=\"12\" y=\"9552\"><value name=\"BEATS\"><shadow type=\"math_number\" id=\"cRDA-XLh9PqbmyWFl+G~\"><field name=\"NUM\">0.25</field></shadow></value></block>",
+        "text": "休止○拍",
+        "colour": "#0FBD8C"
+    },
+    {
+        "opcode": "music_playNoteForBeats",
+        "shape": 3,
+        "next": true,
+        "start": false,
+        "input": [
+            {},
+            {
+                "name": "NOTE",
+                "type": "i_normal:note"
+            },
+            {
+                "name": "BEATS",
+                "type": "i_normal:math_number"
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"music_playNoteForBeats\" id=\"music_playNoteForBeats\" x=\"12\" y=\"9628\"><value name=\"NOTE\"><shadow type=\"note\" id=\"note\"><field name=\"NOTE\">60</field></shadow></value><value name=\"BEATS\"><shadow type=\"math_number\" id=\"c3={2.7b_J`#qG:Edca@\"><field name=\"NUM\">0.25</field></shadow></value></block>",
+        "text": "演奏音符○○拍",
+        "colour": "#0FBD8C"
+    },
+    {
+        "opcode": "music_setInstrument",
+        "shape": 3,
+        "next": true,
+        "start": false,
+        "input": [
+            {},
+            {
+                "name": "INSTRUMENT",
+                "type": "i_dropdown",
+                "menu": [
+                    "(1) 钢琴",
+                    "(2) 电钢琴",
+                    "(3) 风琴",
+                    "(4) 吉他",
+                    "(5) 电吉他",
+                    "(6) 贝斯",
+                    "(7) 拨弦",
+                    "(8) 大提琴",
+                    "(9) 长号",
+                    "(10) 单簧管",
+                    "(11) 萨克斯管",
+                    "(12) 长笛",
+                    "(13) 木长笛",
+                    "(14) 巴松管",
+                    "(15) 唱诗班",
+                    "(16) 颤音琴",
+                    "(17) 八音盒",
+                    "(18) 钢鼓",
+                    "(19) 马林巴琴",
+                    "(20) 合成主音",
+                    "(21) 合成柔音"
+                ]
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"music_setInstrument\" id=\"music_setInstrument\" x=\"12\" y=\"9704\"><value name=\"INSTRUMENT\"><shadow type=\"music_menu_INSTRUMENT\" id=\"music_menu_INSTRUMENT\"><field name=\"INSTRUMENT\">1</field></shadow></value></block>",
+        "text": "将乐器设为●",
+        "colour": "#0FBD8C"
+    },
+    {
+        "opcode": "music_setTempo",
+        "shape": 3,
+        "next": true,
+        "start": false,
+        "input": [
+            {},
+            {
+                "name": "TEMPO",
+                "type": "i_normal:math_number"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"music_setTempo\" id=\"music_setTempo\" x=\"12\" y=\"9780\"><value name=\"TEMPO\"><shadow type=\"math_number\" id=\"UmSLN()!$C`Xg(+pt[t,\"><field name=\"NUM\">60</field></shadow></value></block>",
+        "text": "将演奏速度设定为○",
+        "colour": "#0FBD8C"
+    },
+    {
+        "opcode": "music_changeTempo",
+        "shape": 3,
+        "next": true,
+        "start": false,
+        "input": [
+            {},
+            {
+                "name": "TEMPO",
+                "type": "i_normal:math_number"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"music_changeTempo\" id=\"music_changeTempo\" x=\"12\" y=\"9856\"><value name=\"TEMPO\"><shadow type=\"math_number\" id=\"~e^CICpSuUoVw+9,j[@8\"><field name=\"NUM\">20</field></shadow></value></block>",
+        "text": "将演奏速度增加○",
+        "colour": "#0FBD8C"
+    },
+    {
+        "opcode": "music_getTempo",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [
+            {},
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"music_getTempo\" id=\"music_getTempo\" x=\"49\" y=\"9932\"></block>",
+        "text": "演奏速度",
+        "colour": "#0FBD8C"
+    },
+    {
+        "opcode": "pen_clear",
+        "shape": 3,
+        "next": true,
+        "start": false,
+        "input": [
+            {},
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"pen_clear\" id=\"pen_clear\" x=\"12\" y=\"10044\"></block>",
+        "text": "全部擦除",
+        "colour": "#0FBD8C"
+    },
+    {
+        "opcode": "pen_stamp",
+        "shape": 3,
+        "next": true,
+        "start": false,
+        "input": [
+            {},
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"pen_stamp\" id=\"pen_stamp\" x=\"12\" y=\"10120\"></block>",
+        "text": "图章",
+        "colour": "#0FBD8C"
+    },
+    {
+        "opcode": "pen_penDown",
+        "shape": 3,
+        "next": true,
+        "start": false,
+        "input": [
+            {},
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"pen_penDown\" id=\"pen_penDown\" x=\"12\" y=\"10196\"></block>",
+        "text": "落笔",
+        "colour": "#0FBD8C"
+    },
+    {
+        "opcode": "pen_penUp",
+        "shape": 3,
+        "next": true,
+        "start": false,
+        "input": [
+            {},
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"pen_penUp\" id=\"pen_penUp\" x=\"12\" y=\"10272\"></block>",
+        "text": "抬笔",
+        "colour": "#0FBD8C"
+    },
+    {
+        "opcode": "pen_setPenColorToColor",
+        "shape": 3,
+        "next": true,
+        "start": false,
+        "input": [
+            {},
+            {
+                "name": "COLOR",
+                "type": "i_normal:colour_picker"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"pen_setPenColorToColor\" id=\"pen_setPenColorToColor\" x=\"12\" y=\"10348\"><value name=\"COLOR\"><shadow type=\"colour_picker\" id=\"/u.%:B[ZMp*QY)PxT8kk\"><field name=\"COLOUR\">#97f615</field></shadow></value></block>",
+        "text": "将笔的颜色设为○",
+        "colour": "#0FBD8C"
+    },
+    {
+        "opcode": "pen_changePenColorParamBy",
+        "shape": 3,
+        "next": true,
+        "start": false,
+        "input": [
+            {},
+            {
+                "name": "COLOR_PARAM",
+                "type": "i_dropdown",
+                "menu": [
+                    "颜色",
+                    "饱和度",
+                    "亮度",
+                    "透明度"
+                ]
+            },
+            {
+                "name": "VALUE",
+                "type": "i_normal:math_number"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"pen_changePenColorParamBy\" id=\"pen_changePenColorParamBy\" x=\"12\" y=\"10424\"><value name=\"COLOR_PARAM\"><shadow type=\"pen_menu_colorParam\" id=\"pen_menu_colorParam\"><field name=\"colorParam\">color</field></shadow></value><value name=\"VALUE\"><shadow type=\"math_number\" id=\"6FURl#Moa+u!9.~ltpB(\"><field name=\"NUM\">10</field></shadow></value></block>",
+        "text": "将笔的●增加○",
+        "colour": "#0FBD8C"
+    },
+    {
+        "opcode": "pen_setPenColorParamTo",
+        "shape": 3,
+        "next": true,
+        "start": false,
+        "input": [
+            {},
+            {
+                "name": "COLOR_PARAM",
+                "type": "i_dropdown",
+                "menu": [
+                    "颜色",
+                    "饱和度",
+                    "亮度",
+                    "透明度"
+                ]
+            },
+            {
+                "name": "VALUE",
+                "type": "i_normal:math_number"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"pen_setPenColorParamTo\" id=\"pen_setPenColorParamTo\" x=\"12\" y=\"10500\"><value name=\"COLOR_PARAM\"><shadow type=\"pen_menu_colorParam\" id=\"v,:-/gHHU{0a,fM|g-(/\"><field name=\"colorParam\">color</field></shadow></value><value name=\"VALUE\"><shadow type=\"math_number\" id=\"kdscxF3+]=dt]N:aN;#h\"><field name=\"NUM\">50</field></shadow></value></block>",
+        "text": "将笔的●设为○",
+        "colour": "#0FBD8C"
+    },
+    {
+        "opcode": "pen_changePenSizeBy",
+        "shape": 3,
+        "next": true,
+        "start": false,
+        "input": [
+            {},
+            {
+                "name": "SIZE",
+                "type": "i_normal:math_number"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"pen_changePenSizeBy\" id=\"pen_changePenSizeBy\" x=\"12\" y=\"10576\"><value name=\"SIZE\"><shadow type=\"math_number\" id=\"yrZu0`CMefY--d4tcg+u\"><field name=\"NUM\">1</field></shadow></value></block>",
+        "text": "将笔的粗细增加○",
+        "colour": "#0FBD8C"
+    },
+    {
+        "opcode": "pen_setPenSizeTo",
+        "shape": 3,
+        "next": true,
+        "start": false,
+        "input": [
+            {},
+            {
+                "name": "SIZE",
+                "type": "i_normal:math_number"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"pen_setPenSizeTo\" id=\"pen_setPenSizeTo\" x=\"12\" y=\"10652\"><value name=\"SIZE\"><shadow type=\"math_number\" id=\"DO3s$lBz}5YKzwAJ.J2}\"><field name=\"NUM\">1</field></shadow></value></block>",
+        "text": "将笔的粗细设为○",
+        "colour": "#0FBD8C"
+    },
+    {
+        "opcode": "videoSensing_whenMotionGreaterThan",
+        "shape": 3,
+        "next": true,
+        "start": true,
+        "input": [
+            {},
+            {
+                "name": "REFERENCE",
+                "type": "i_normal:math_number"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"videoSensing_whenMotionGreaterThan\" id=\"videoSensing_whenMotionGreaterThan\" x=\"12\" y=\"10796\"><value name=\"REFERENCE\"><shadow type=\"math_number\" id=\"k0h6NfKFY0FZB=ayJsI;\"><field name=\"NUM\">10</field></shadow></value></block>",
+        "text": "当视频运动 >○",
+        "colour": "#0FBD8C"
+    },
+    {
+        "opcode": "videoSensing_videoOn",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [
+            {},
+            {
+                "name": "SUBJECT",
+                "type": "i_dropdown",
+                "menu": [
+                    "角色",
+                    "舞台"
+                ]
+            },
+            {
+                "name": "ATTRIBUTE",
+                "type": "i_dropdown",
+                "menu": [
+                    "运动",
+                    "方向"
+                ]
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"videoSensing_videoOn\" id=\"videoSensing_videoOn\" x=\"12\" y=\"10864\"><value name=\"SUBJECT\"><shadow type=\"videoSensing_menu_SUBJECT\" id=\"videoSensing_menu_SUBJECT\"><field name=\"SUBJECT\">this sprite</field></shadow></value><value name=\"ATTRIBUTE\"><shadow type=\"videoSensing_menu_ATTRIBUTE\" id=\"videoSensing_menu_ATTRIBUTE\"><field name=\"ATTRIBUTE\">motion</field></shadow></value></block>",
+        "text": "相对于●的视频●",
+        "colour": "#0FBD8C"
+    },
+    {
+        "opcode": "videoSensing_videoToggle",
+        "shape": 3,
+        "next": true,
+        "start": false,
+        "input": [
+            {},
+            {
+                "name": "VIDEO_STATE",
+                "type": "i_dropdown",
+                "menu": [
+                    "关闭",
+                    "开启",
+                    "镜像开启"
+                ]
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"videoSensing_videoToggle\" id=\"videoSensing_videoToggle\" x=\"12\" y=\"10924\"><value name=\"VIDEO_STATE\"><shadow type=\"videoSensing_menu_VIDEO_STATE\" id=\"videoSensing_menu_VIDEO_STATE\"><field name=\"VIDEO_STATE\">on</field></shadow></value></block>",
+        "text": "●摄像头",
+        "colour": "#0FBD8C"
+    },
+    {
+        "opcode": "videoSensing_setVideoTransparency",
+        "shape": 3,
+        "next": true,
+        "start": false,
+        "input": [
+            {},
+            {
+                "name": "TRANSPARENCY",
+                "type": "i_normal:math_number"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"videoSensing_setVideoTransparency\" id=\"videoSensing_setVideoTransparency\" x=\"12\" y=\"11000\"><value name=\"TRANSPARENCY\"><shadow type=\"math_number\" id=\"7zlL:Q(k!;?(8ByNn7`n\"><field name=\"NUM\">50</field></shadow></value></block>",
+        "text": "将视频透明度设为○",
+        "colour": "#0FBD8C"
+    },
+    {
+        "opcode": "text2speech_speakAndWait",
+        "shape": 3,
+        "next": true,
+        "start": false,
+        "input": [
+            {},
+            {
+                "name": "WORDS",
+                "type": "i_normal:text"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"text2speech_speakAndWait\" id=\"text2speech_speakAndWait\" x=\"12\" y=\"11128\"><value name=\"WORDS\"><shadow type=\"text\" id=\"72}cIe*,oUlJgdz2EKla\"><field name=\"TEXT\">你好</field></shadow></value></block>",
+        "text": "朗读○",
+        "colour": "#0FBD8C"
+    },
+    {
+        "opcode": "text2speech_setVoice",
+        "shape": 3,
+        "next": true,
+        "start": false,
+        "input": [
+            {},
+            {
+                "name": "VOICE",
+                "type": "i_dropdown",
+                "menu": [
+                    "中音",
+                    "男高音",
+                    "尖细",
+                    "巨人",
+                    "小猫"
+                ]
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"text2speech_setVoice\" id=\"text2speech_setVoice\" x=\"12\" y=\"11204\"><value name=\"VOICE\"><shadow type=\"text2speech_menu_voices\" id=\"text2speech_menu_voices\"><field name=\"voices\">ALTO</field></shadow></value></block>",
+        "text": "使用●嗓音",
+        "colour": "#0FBD8C"
+    },
+    {
+        "opcode": "text2speech_setLanguage",
+        "shape": 3,
+        "next": true,
+        "start": false,
+        "input": [
+            {},
+            {
+                "name": "LANGUAGE",
+                "type": "i_dropdown",
+                "menu": [
+                    "Arabic",
+                    "Chinese (Mandarin)",
+                    "Danish",
+                    "Dutch",
+                    "English",
+                    "French",
+                    "German",
+                    "Hindi",
+                    "Icelandic",
+                    "Italian",
+                    "Japanese",
+                    "Korean",
+                    "Norwegian",
+                    "Polish",
+                    "Portuguese (Brazilian)",
+                    "Portuguese (European)",
+                    "Romanian",
+                    "Russian",
+                    "Spanish (European)",
+                    "Spanish (Latin American)",
+                    "Swedish",
+                    "Turkish",
+                    "Welsh"
+                ]
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"text2speech_setLanguage\" id=\"text2speech_setLanguage\" x=\"12\" y=\"11280\"><value name=\"LANGUAGE\"><shadow type=\"text2speech_menu_languages\" id=\"text2speech_menu_languages\"><field name=\"languages\">zh-cn</field></shadow></value></block>",
+        "text": "将朗读语言设置为●",
+        "colour": "#0FBD8C"
+    },
+    {
+        "opcode": "translate_getTranslate",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [
+            {},
+            {
+                "name": "WORDS",
+                "type": "i_normal:text"
+            },
+            {
+                "name": "LANGUAGE",
+                "type": "i_dropdown",
+                "menu": [
+                    "阿拉伯语",
+                    "阿姆哈拉语",
+                    "阿塞拜疆语",
+                    "爱尔兰语",
+                    "爱沙尼亚语",
+                    "巴斯克语",
+                    "保加利亚语",
+                    "冰岛语",
+                    "波兰语",
+                    "波斯语",
+                    "丹麦语",
+                    "德语",
+                    "俄语",
+                    "法语",
+                    "芬兰语",
+                    "韩语",
+                    "荷兰语",
+                    "加利西亚语",
+                    "加泰罗尼亚语",
+                    "捷克语",
+                    "克罗地亚语",
+                    "拉脱维亚语",
+                    "立陶宛语",
+                    "罗马尼亚语",
+                    "毛利语",
+                    "南非祖鲁语",
+                    "挪威语",
+                    "葡萄牙语",
+                    "日语",
+                    "瑞典语",
+                    "塞尔维亚语",
+                    "斯洛伐克语",
+                    "斯洛文尼亚语",
+                    "苏格兰盖尔语",
+                    "泰语",
+                    "土耳其语",
+                    "威尔士语",
+                    "乌克兰语",
+                    "西班牙语",
+                    "希伯来语",
+                    "希腊语",
+                    "匈牙利语",
+                    "意大利语",
+                    "印尼语",
+                    "英语",
+                    "越南语",
+                    "中文(繁体)",
+                    "中文(简体)"
+                ]
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"translate_getTranslate\" id=\"translate_getTranslate\" x=\"12\" y=\"11408\"><value name=\"WORDS\"><shadow type=\"text\" id=\"IJ.yv*;_cT(^EKAB$*JF\"><field name=\"TEXT\">你好</field></shadow></value><value name=\"LANGUAGE\"><shadow type=\"translate_menu_languages\" id=\"translate_menu_languages\"><field name=\"languages\">vi</field></shadow></value></block>",
+        "text": "将○译为●",
+        "colour": "#0FBD8C"
+    },
+    {
+        "opcode": "translate_getViewerLanguage",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [
+            {},
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"translate_getViewerLanguage\" id=\"translate_getViewerLanguage\" x=\"49\" y=\"11468\"></block>",
+        "text": "访客语言",
+        "colour": "#0FBD8C"
+    },
+    {
+        "opcode": "motion_goto",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "TO",
+                "type": "i_dropdown",
+                "menu": [
+                    "随机位置",
+                    "鼠标指针"
+                ]
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"motion_goto\" id=\"motion_goto\" x=\"12\" y=\"292\"><value name=\"TO\"><shadow type=\"motion_goto_menu\" id=\"motion_goto_menu\"><field name=\"TO\">_random_</field></shadow></value></block>",
+        "text": "移到●",
+        "colour": "#4C97FF"
+    },
+    {
+        "opcode": "motion_glideto",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "SECS",
+                "type": "i_normal:math_number"
+            },
+            {
+                "name": "TO",
+                "type": "i_dropdown",
+                "menu": [
+                    "随机位置",
+                    "鼠标指针"
+                ]
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"motion_glideto\" id=\"motion_glideto\" x=\"12\" y=\"428\"><value name=\"SECS\"><shadow type=\"math_number\" id=\"8gtc(M)CtfM+Hc[3:Z)3\"><field name=\"NUM\">1</field></shadow></value><value name=\"TO\"><shadow type=\"motion_glideto_menu\" id=\"motion_glideto_menu\"><field name=\"TO\">_random_</field></shadow></value></block>",
+        "text": "在○秒内滑行到●",
+        "colour": "#4C97FF"
+    },
+    {
+        "opcode": "motion_pointtowards",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "TOWARDS",
+                "type": "i_dropdown",
+                "menu": [
+                    "鼠标指针"
+                ]
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"motion_pointtowards\" id=\"motion_pointtowards\" x=\"12\" y=\"656\"><value name=\"TOWARDS\"><shadow type=\"motion_pointtowards_menu\" id=\"motion_pointtowards_menu\"><field name=\"TOWARDS\">_mouse_</field></shadow></value></block>",
+        "text": "面向●",
+        "colour": "#4C97FF"
+    },
+    {
+        "opcode": "looks_switchcostumeto",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "COSTUME",
+                "type": "i_dropdown",
+                "menu": [
+                    "kada1",
+                    "kaka2",
+                    "kaka3",
+                    "kaka4"
+                ]
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"looks_switchcostumeto\" id=\"^[jaP;CzzZxuMG1z]?86_switchcostumeto\" x=\"12\" y=\"1756\"><value name=\"COSTUME\"><shadow type=\"looks_costume\" id=\"looks_costume\"><field name=\"COSTUME\">kada1</field></shadow></value></block>",
+        "text": "换成●造型",
+        "colour": "#9966FF"
+    },
+    {
+        "opcode": "looks_switchbackdropto",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "BACKDROP",
+                "type": "i_dropdown",
+                "menu": [
+                    "背景1",
+                    "下一个背景",
+                    "上一个背景",
+                    "随机背景"
+                ]
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"looks_switchbackdropto\" id=\"looks_switchbackdropto\" x=\"12\" y=\"1892\"><value name=\"BACKDROP\"><shadow type=\"looks_backdrops\" id=\"looks_backdrops\"><field name=\"BACKDROP\">背景1</field></shadow></value></block>",
+        "text": "换成●背景",
+        "colour": "#9966FF"
+    },
+    {
+        "opcode": "sound_playuntildone",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "SOUND_MENU",
+                "type": "i_dropdown",
+                "menu": [
+                    "kada",
+                    "录制…"
+                ]
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"sound_playuntildone\" id=\"^[jaP;CzzZxuMG1z]?86_sound_playuntildone\" x=\"12\" y=\"2968\"><value name=\"SOUND_MENU\"><shadow type=\"sound_sounds_menu\" id=\"sound_sounds_menu\"><field name=\"SOUND_MENU\">kada</field></shadow></value></block>",
+        "text": "播放声音●等待播完",
+        "colour": "#CF63CF"
+    },
+    {
+        "opcode": "sound_play",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "SOUND_MENU",
+                "type": "i_dropdown",
+                "menu": [
+                    "kada",
+                    "录制…"
+                ]
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"sound_play\" id=\"^[jaP;CzzZxuMG1z]?86_sound_play\" x=\"12\" y=\"3036\"><value name=\"SOUND_MENU\"><shadow type=\"sound_sounds_menu\" id=\"16nX)7zIz|x}te##oCPr\"><field name=\"SOUND_MENU\">kada</field></shadow></value></block>",
+        "text": "播放声音●",
+        "colour": "#CF63CF"
+    },
+    {
+        "opcode": "event_whenbackdropswitchesto",
+        "shape": null,
+        "next": true,
+        "start": true,
+        "input": [
+            {
+                "name": "BACKDROP",
+                "type": "f_dropdown",
+                "menu": [
+                    "背景1"
+                ]
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"event_whenbackdropswitchesto\" id=\"event_whenbackdropswitchesto\" x=\"12\" y=\"3956\"><field name=\"BACKDROP\">背景1</field></block>",
+        "text": "当背景换成■",
+        "colour": "#FFBF00"
+    },
+    {
+        "opcode": "event_whenbroadcastreceived",
+        "shape": null,
+        "next": true,
+        "start": true,
+        "input": [
+            {
+                "name": "BROADCAST_OPTION",
+                "type": "f_variable:broadcast_msg"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"event_whenbroadcastreceived\" id=\"event_whenbroadcastreceived\" x=\"12\" y=\"4172\"><field name=\"BROADCAST_OPTION\" id=\"gAdZx]RjpY7xW/ya!,+L\" variabletype=\"broadcast_msg\">消息1</field></block>",
+        "text": "当接收到■",
+        "colour": "#FFBF00"
+    },
+    {
+        "opcode": "event_broadcast",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "BROADCAST_INPUT",
+                "type": "i_normal:event_broadcast_menu"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"event_broadcast\" id=\"event_broadcast\" x=\"12\" y=\"4240\"><value name=\"BROADCAST_INPUT\"><shadow type=\"event_broadcast_menu\" id=\"event_broadcast_menu\"><field name=\"BROADCAST_OPTION\" id=\"gAdZx]RjpY7xW/ya!,+L\" variabletype=\"broadcast_msg\">消息1</field></shadow></value></block>",
+        "text": "广播○",
+        "colour": "#FFBF00"
+    },
+    {
+        "opcode": "event_broadcastandwait",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "BROADCAST_INPUT",
+                "type": "i_normal:event_broadcast_menu"
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"event_broadcastandwait\" id=\"event_broadcastandwait\" x=\"12\" y=\"4308\"><value name=\"BROADCAST_INPUT\"><shadow type=\"event_broadcast_menu\" id=\"{,w0U3xt0ar{t#J+%=l(\"><field name=\"BROADCAST_OPTION\" id=\"gAdZx]RjpY7xW/ya!,+L\" variabletype=\"broadcast_msg\">消息1</field></shadow></value></block>",
+        "text": "广播○并等待",
+        "colour": "#FFBF00"
+    },
+    {
+        "opcode": "control_stop",
+        "shape": null,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "STOP_OPTION",
+                "type": "f_dropdown",
+                "menu": [
+                    "全部脚本",
+                    "这个脚本",
+                    "该角色的其他脚本"
+                ]
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"control_stop\" id=\"control_stop\" x=\"12\" y=\"5328\"><mutation hasnext=\"false\"></mutation><field name=\"STOP_OPTION\">all</field></block>",
+        "text": "停止■",
+        "colour": "#FFAB19"
+    },
+    {
+        "opcode": "control_create_clone_of",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "CLONE_OPTION",
+                "type": "i_dropdown",
+                "menu": [
+                    "自己"
+                ]
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"control_create_clone_of\" id=\"control_create_clone_of\" x=\"12\" y=\"5496\"><value name=\"CLONE_OPTION\"><shadow type=\"control_create_clone_of_menu\" id=\"control_create_clone_of_menu\"><field name=\"CLONE_OPTION\">_myself_</field></shadow></value></block>",
+        "text": "克隆●",
+        "colour": "#FFAB19"
+    },
+    {
+        "opcode": "sensing_touchingobject",
+        "shape": 1,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "TOUCHINGOBJECTMENU",
+                "type": "i_dropdown",
+                "menu": [
+                    "鼠标指针",
+                    "舞台边缘"
+                ]
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"sensing_touchingobject\" id=\"sensing_touchingobject\" x=\"12\" y=\"5700\"><value name=\"TOUCHINGOBJECTMENU\"><shadow type=\"sensing_touchingobjectmenu\" id=\"sensing_touchingobjectmenu\"><field name=\"TOUCHINGOBJECTMENU\">_mouse_</field></shadow></value></block>",
+        "text": "碰到●?",
+        "colour": "#5CB1D6"
+    },
+    {
+        "opcode": "sensing_distanceto",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "DISTANCETOMENU",
+                "type": "i_dropdown",
+                "menu": [
+                    "鼠标指针"
+                ]
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"sensing_distanceto\" id=\"sensing_distanceto\" x=\"12\" y=\"5856\"><value name=\"DISTANCETOMENU\"><shadow type=\"sensing_distancetomenu\" id=\"sensing_distancetomenu\"><field name=\"DISTANCETOMENU\">_mouse_</field></shadow></value></block>",
+        "text": "到●的距离",
+        "colour": "#5CB1D6"
+    },
+    {
+        "opcode": "sensing_of",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "OBJECT",
+                "type": "i_dropdown",
+                "menu": [
+                    "舞台"
+                ]
+            },
+            {
+                "name": "PROPERTY",
+                "type": "f_dropdown",
+                "menu": [
+                    "背景编号",
+                    "背景名称",
+                    "音量",
+                    "1"
+                ]
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"sensing_of\" id=\"of\" x=\"12\" y=\"6620\"><field name=\"PROPERTY\">backdrop #</field><value name=\"OBJECT\"><shadow type=\"sensing_of_object_menu\" id=\"sensing_of_object_menu\"><field name=\"OBJECT\">_stage_</field></shadow></value></block>",
+        "text": "●的■",
+        "colour": "#5CB1D6"
+    },
+    {
+        "opcode": "data_variable",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "VARIABLE"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"data_variable\" id=\"xfdggtQ=eLn0e!E*MdTB\" x=\"49\" y=\"8160\"><field name=\"VARIABLE\" id=\"xfdggtQ=eLn0e!E*MdTB\" variabletype=\"\">1</field></block>",
+        "text": "1",
+        "colour": "#FF8C1A"
+    },
+    {
+        "opcode": "data_setvariableto",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "VARIABLE",
+                "type": "f_variable:"
+            },
+            {
+                "name": "VALUE",
+                "type": "i_normal:text"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"data_setvariableto\" id=\"data_setvariableto\" x=\"12\" y=\"8224\"><field name=\"VARIABLE\" id=\"xfdggtQ=eLn0e!E*MdTB\" variabletype=\"\">1</field><value name=\"VALUE\"><shadow type=\"text\" id=\"+[IYDeM`=EUC7,mVXCa)\"><field name=\"TEXT\">0</field></shadow></value></block>",
+        "text": "将■设为○",
+        "colour": "#FF8C1A"
+    },
+    {
+        "opcode": "data_changevariableby",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "VARIABLE",
+                "type": "f_variable:"
+            },
+            {
+                "name": "VALUE",
+                "type": "i_normal:math_number"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"data_changevariableby\" id=\"data_changevariableby\" x=\"12\" y=\"8288\"><field name=\"VARIABLE\" id=\"xfdggtQ=eLn0e!E*MdTB\" variabletype=\"\">1</field><value name=\"VALUE\"><shadow type=\"math_number\" id=\"/B.*{k^j=m;V}9|_VI|.\"><field name=\"NUM\">1</field></shadow></value></block>",
+        "text": "将■增加○",
+        "colour": "#FF8C1A"
+    },
+    {
+        "opcode": "data_showvariable",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "VARIABLE",
+                "type": "f_variable:"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"data_showvariable\" id=\"data_showvariable\" x=\"12\" y=\"8352\"><field name=\"VARIABLE\" id=\"xfdggtQ=eLn0e!E*MdTB\" variabletype=\"\">1</field></block>",
+        "text": "显示变量■",
+        "colour": "#FF8C1A"
+    },
+    {
+        "opcode": "data_hidevariable",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "VARIABLE",
+                "type": "f_variable:"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"data_hidevariable\" id=\"data_hidevariable\" x=\"12\" y=\"8416\"><field name=\"VARIABLE\" id=\"xfdggtQ=eLn0e!E*MdTB\" variabletype=\"\">1</field></block>",
+        "text": "隐藏变量■",
+        "colour": "#FF8C1A"
+    },
+    {
+        "opcode": "data_listcontents",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "LIST"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"data_listcontents\" id=\"yxGlua6RZ{w}Xp!N2PuL\" x=\"49\" y=\"8532\"><field name=\"LIST\" id=\"yxGlua6RZ{w}Xp!N2PuL\" variabletype=\"list\">2</field></block>",
+        "text": "2",
+        "colour": "#FF661A"
+    },
+    {
+        "opcode": "data_addtolist",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "ITEM",
+                "type": "i_normal:text"
+            },
+            {
+                "name": "LIST",
+                "type": "f_variable:list"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"data_addtolist\" id=\"data_addtolist\" x=\"12\" y=\"8596\"><field name=\"LIST\" id=\"yxGlua6RZ{w}Xp!N2PuL\" variabletype=\"list\">2</field><value name=\"ITEM\"><shadow type=\"text\" id=\"[6h$I!B7j?,n+_gZsgzz\"><field name=\"TEXT\">东西</field></shadow></value></block>",
+        "text": "将○加入■",
+        "colour": "#FF661A"
+    },
+    {
+        "opcode": "data_deleteoflist",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "LIST",
+                "type": "f_variable:list"
+            },
+            {
+                "name": "INDEX",
+                "type": "i_normal:math_integer"
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"data_deleteoflist\" id=\"data_deleteoflist\" x=\"12\" y=\"8688\"><field name=\"LIST\" id=\"yxGlua6RZ{w}Xp!N2PuL\" variabletype=\"list\">2</field><value name=\"INDEX\"><shadow type=\"math_integer\" id=\"YO74BfI|r{eo,3|8P0*o\"><field name=\"NUM\">1</field></shadow></value></block>",
+        "text": "删除■的第○项",
+        "colour": "#FF661A"
+    },
+    {
+        "opcode": "data_deletealloflist",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "LIST",
+                "type": "f_variable:list"
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"data_deletealloflist\" id=\"data_deletealloflist\" x=\"12\" y=\"8752\"><field name=\"LIST\" id=\"yxGlua6RZ{w}Xp!N2PuL\" variabletype=\"list\">2</field></block>",
+        "text": "删除■的全部项目",
+        "colour": "#FF661A"
+    },
+    {
+        "opcode": "data_insertatlist",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "LIST",
+                "type": "f_variable:list"
+            },
+            {
+                "name": "INDEX",
+                "type": "i_normal:math_integer"
+            },
+            {
+                "name": "ITEM",
+                "type": "i_normal:text"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"data_insertatlist\" id=\"data_insertatlist\" x=\"12\" y=\"8816\"><field name=\"LIST\" id=\"yxGlua6RZ{w}Xp!N2PuL\" variabletype=\"list\">2</field><value name=\"INDEX\"><shadow type=\"math_integer\" id=\"dwu?!{W3)6+j5@m(y#vh\"><field name=\"NUM\">1</field></shadow></value><value name=\"ITEM\"><shadow type=\"text\" id=\";V=osJWBtj=CU)tC(Bu*\"><field name=\"TEXT\">东西</field></shadow></value></block>",
+        "text": "在■的第○项前插入○",
+        "colour": "#FF661A"
+    },
+    {
+        "opcode": "data_replaceitemoflist",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "LIST",
+                "type": "f_variable:list"
+            },
+            {
+                "name": "INDEX",
+                "type": "i_normal:math_integer"
+            },
+            {
+                "name": "ITEM",
+                "type": "i_normal:text"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"data_replaceitemoflist\" id=\"data_replaceitemoflist\" x=\"12\" y=\"8880\"><field name=\"LIST\" id=\"yxGlua6RZ{w}Xp!N2PuL\" variabletype=\"list\">2</field><value name=\"INDEX\"><shadow type=\"math_integer\" id=\"3HcnSYqsj/hhJ/~_=He%\"><field name=\"NUM\">1</field></shadow></value><value name=\"ITEM\"><shadow type=\"text\" id=\"|z+wn:!xAGXtf#]e+b1z\"><field name=\"TEXT\">东西</field></shadow></value></block>",
+        "text": "将■的第○项替换为○",
+        "colour": "#FF661A"
+    },
+    {
+        "opcode": "data_itemoflist",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "LIST",
+                "type": "f_variable:list"
+            },
+            {
+                "name": "INDEX",
+                "type": "i_normal:math_integer"
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"data_itemoflist\" id=\"data_itemoflist\" x=\"12\" y=\"8972\"><field name=\"LIST\" id=\"yxGlua6RZ{w}Xp!N2PuL\" variabletype=\"list\">2</field><value name=\"INDEX\"><shadow type=\"math_integer\" id=\"x#bae%y+_;8Tm.Sfg$wg\"><field name=\"NUM\">1</field></shadow></value></block>",
+        "text": "■的第○项",
+        "colour": "#FF661A"
+    },
+    {
+        "opcode": "data_itemnumoflist",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "LIST",
+                "type": "f_variable:list"
+            },
+            {
+                "name": "ITEM",
+                "type": "i_normal:text"
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"data_itemnumoflist\" id=\"data_itemnumoflist\" x=\"12\" y=\"9020\"><field name=\"LIST\" id=\"yxGlua6RZ{w}Xp!N2PuL\" variabletype=\"list\">2</field><value name=\"ITEM\"><shadow type=\"text\" id=\"ek!x9i02t49HYqVk!vgq\"><field name=\"TEXT\">东西</field></shadow></value></block>",
+        "text": "■中第一个○的编号",
+        "colour": "#FF661A"
+    },
+    {
+        "opcode": "data_lengthoflist",
+        "shape": 2,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "LIST",
+                "type": "f_variable:list"
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"data_lengthoflist\" id=\"data_lengthoflist\" x=\"12\" y=\"9068\"><field name=\"LIST\" id=\"yxGlua6RZ{w}Xp!N2PuL\" variabletype=\"list\">2</field></block>",
+        "text": "■的项目数",
+        "colour": "#FF661A"
+    },
+    {
+        "opcode": "data_listcontainsitem",
+        "shape": 1,
+        "next": false,
+        "start": false,
+        "input": [
+            {
+                "name": "LIST",
+                "type": "f_variable:list"
+            },
+            {
+                "name": "ITEM",
+                "type": "i_normal:text"
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"data_listcontainsitem\" id=\"data_listcontainsitem\" x=\"12\" y=\"9116\"><field name=\"LIST\" id=\"yxGlua6RZ{w}Xp!N2PuL\" variabletype=\"list\">2</field><value name=\"ITEM\"><shadow type=\"text\" id=\"6x#m(EC#xg]KwKclQ,*`\"><field name=\"TEXT\">东西</field></shadow></value></block>",
+        "text": "■包含○?",
+        "colour": "#FF661A"
+    },
+    {
+        "opcode": "data_showlist",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "LIST",
+                "type": "f_variable:list"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"data_showlist\" id=\"data_showlist\" x=\"12\" y=\"9192\"><field name=\"LIST\" id=\"yxGlua6RZ{w}Xp!N2PuL\" variabletype=\"list\">2</field></block>",
+        "text": "显示列表■",
+        "colour": "#FF661A"
+    },
+    {
+        "opcode": "data_hidelist",
+        "shape": null,
+        "next": true,
+        "start": false,
+        "input": [
+            {
+                "name": "LIST",
+                "type": "f_variable:list"
+            }
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"data_hidelist\" id=\"data_hidelist\" x=\"12\" y=\"9256\"><field name=\"LIST\" id=\"yxGlua6RZ{w}Xp!N2PuL\" variabletype=\"list\">2</field></block>",
+        "text": "隐藏列表■",
+        "colour": "#FF661A"
+    },
+    {
+        "opcode": "makeymakey_whenMakeyKeyPressed",
+        "shape": 3,
+        "next": true,
+        "start": true,
+        "input": [
+            {},
+            {
+                "name": "KEY",
+                "type": "i_dropdown",
+                "menu": [
+                    "空格",
+                    "↑",
+                    "↓",
+                    "→",
+                    "←",
+                    "w",
+                    "a",
+                    "s",
+                    "d",
+                    "f",
+                    "g"
+                ]
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"makeymakey_whenMakeyKeyPressed\" id=\"makeymakey_whenMakeyKeyPressed\" x=\"12\" y=\"11596\"><value name=\"KEY\"><shadow type=\"makeymakey_menu_KEY\" id=\"makeymakey_menu_KEY\"><field name=\"KEY\">SPACE</field></shadow></value></block>",
+        "text": "当按下●键",
+        "colour": "#0FBD8C"
+    },
+    {
+        "opcode": "makeymakey_whenCodePressed",
+        "shape": 3,
+        "next": true,
+        "start": true,
+        "input": [
+            {},
+            {
+                "name": "SEQUENCE",
+                "type": "i_dropdown",
+                "menu": [
+                    "左 上 右",
+                    "右 上 左",
+                    "左 右",
+                    "右 左",
+                    "上 下",
+                    "下 上",
+                    "上 右 下 左",
+                    "上 左 下 右",
+                    "上 上 下 下 左 右 左 右"
+                ]
+            },
+        ],
+        "xml": "<block xmlns=\"http://www.w3.org/1999/xhtml\" type=\"makeymakey_whenCodePressed\" id=\"makeymakey_whenCodePressed\" x=\"12\" y=\"11680\"><value name=\"SEQUENCE\"><shadow type=\"makeymakey_menu_SEQUENCE\" id=\"makeymakey_menu_SEQUENCE\"><field name=\"SEQUENCE\">LEFT UP RIGHT</field></shadow></value></block>",
+        "text": "当依次按下●键时",
+        "colour": "#0FBD8C"
+    }
+]
