@@ -1,0 +1,141 @@
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<input style="width:100%;font-size:20px;" type="text" id="inn" />
+<textarea style="width:100%;height:90%;font-size:20px;" type="text" id="out"></textarea>
+<script>
+	var inn = document.getElementById("inn");
+	var out = document.getElementById("out");
+	inn.addEventListener('keydown',function(event){
+		setTimeout(function(){
+			try{
+				out.style.color = "black";
+				out.value = match(inn.value);
+			}catch(e){
+				out.style.color = "red";
+				out.value = e.message;
+			}
+		},0);
+	});
+	out.addEventListener('focus',function(event){
+		out.blur();
+	});
+	var data = [
+		"if . then .",
+		"if . then . else .",
+		". and .",
+		". or .",
+		"not .",
+		"(.)",
+		".+.",
+		".-.",
+		".*.",
+		"./.",
+		".?.:.",
+	];
+
+	function match(text){
+		var ast = [];
+		var conti = [];
+		var deb = '';
+		var difftb = {};
+		var possibt = {};
+		var possib;
+		var _faulty = -1/256;
+		do {
+			_faulty += 1;
+			difftb = {};
+			possibt = {};
+			possib = [];
+			grate(ast);
+		} while(possib.length < 2 && _faulty < text.length * 0.2);
+		return _faulty + "\n" + possib.sort(so).join('\n') + '\n\n\n'; //+ deb;
+		
+		function debug(x){
+			deb+=x+'\n';
+		}
+		function so(a,b){
+			return Number(a.split('\t')[0]) -
+				   Number(b.split('\t')[0]);
+		}
+		function grate(now){
+			var str = comp(ast);
+			var diff0 = difft(str,text);
+			for(var i=0;i<data.length;i++){
+				var diff1 = grate4(now,i);
+				if(diff1 < diff0){
+					grow(now);
+					//diff0 = diff1;
+				}
+			}
+			now.splice(0,now.length);
+			grow([]);
+			return diff0;
+		}
+		function grate4(now,id){
+			now.splice(0,now.length);
+			now.push(id);
+			var pattern = data[id];
+			var re = /\./g;
+			var resu;
+			while((resu = re.exec(pattern)) !== null){
+				now.push([]);
+			}
+			str = comp(ast);
+			return difft(str,text);
+		}
+		function grow(now){
+			for(var i=1;i<now.length;i++){
+				conti.push(now[i]);
+			}
+			if(conti.length !== 0){
+				var go=conti.pop();
+				grate(go);
+				conti.push(go);
+			}else{
+				var str = comp(ast);
+				if(!(str in possibt)){
+					possib.push(difft(str,text) + "\t" + str);
+					possibt[str]=1;
+				}
+			}
+			for(var i=1;i<now.length;i++){
+				conti.pop();
+			}
+		}
+		function comp(ast){
+			if(ast.length == 0){
+				return ".";
+			}else{
+				var cnt=0;
+				return data[ast[0]].replace(/\./g,function(){
+					cnt++;
+					return comp(ast[cnt]);
+				})
+			}
+		}
+		function difft(a,b){
+			if(a in difftb){
+				return difftb[a];
+			}
+			a = a.replace(/\./g,"");
+			var t = [], leftup, min, min2;
+			for(var x=0;x<=a.length;x++){
+				t.push(x * b.length);
+			}
+			for(var y=0;y<b.length;y++){
+				leftup = t[0];
+				t[0] = (y+1) * _faulty;
+				for(var x=0;x<a.length;x++){
+					min = Math.min(
+						t[ x ] + b.length,
+						t[x+1] + _faulty,
+						leftup + (a[x]===b[y] ? 0 :
+						_faulty + b.length)
+					);
+					leftup = t[x+1];
+					t[x+1] = min;
+				}
+			}
+			return t[a.length];
+		}
+	}
+</script>
