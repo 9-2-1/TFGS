@@ -26,14 +26,14 @@
 		var diffCache;
 		var resultIn;
 		var results;
-		var errorLevel = -1/2;
+		var errorLevel = text.length * 0.5;
 		do {
 			errorLevel += 1;
 			diffCache = {};
 			resultIn = {};
 			results = [];
 			search(tree);
-		} while(results.length < 2 && errorLevel < text.length * 0.2);
+		} while(results.length < 2 && errorLevel < text.length * 0.5);
 		return errorLevel + "\n" + results.sort(sortResult).join('\n');
 		
 		function sortResult(a,b){
