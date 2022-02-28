@@ -2,22 +2,62 @@
 <input style="width:100%;font-size:20px;" type="text" id="inn" />
 <textarea style="width:100%;height:90%;font-size:20px;" type="text" id="out"></textarea>
 <script>
+	function WorkerFunc(func){
+		var funcURL = window.URL.createObjectURL(
+			new Blob(["(" + func.toString() + ")()"], {type:"text/javascript"})
+		);
+		var worker = new Worker(funcURL)
+		window.URL.revokeObjectURL(funcURL);
+		return worker;
+	}
+
 	var inn = document.getElementById("inn");
 	var out = document.getElementById("out");
+	var wok = new WorkerFunc(workerF);
+	var workTime = false, workTout = -1;
 	inn.addEventListener('keydown',function(event){
-		setTimeout(function(){
-			try{
-				out.style.color = "black";
-				out.value = match(inn.value);
-			}catch(e){
-				out.style.color = "red";
-				out.value = e.message;
+		if(workTime){
+			if(workTout === null){
+				workTout = setInterval(function(){
+					if(!workTime){
+						startWork();
+						clearInterval(workTout);
+						workTout = null;
+					}
+				},30);
 			}
-		},0);
+		}else{
+			startWork();
+		}
 	});
+	function startWork(){
+		out.style.color = "blue";
+		workTime = true;
+		wok.postMessage(inn.value);
+	}
+	wok.onmessage = function(msg){
+		workTime = false;
+		out.style.color = "black";
+		out.value = msg.data;
+	}
+	wok.onerror = function(err){
+		workTime = false;
+		out.style.color = "red";
+		out.value = err.message;
+		err.preventDefault();
+	}
+
 	out.addEventListener('focus',function(event){
 		out.blur();
 	});
+
+	function workerF() {
+	// start worker
+	
+	onmessage = function(msg){
+		postMessage(match(msg.data));
+	}
+
 	var pattern = [
 		"if . then .",
 		"if . then . else .",
@@ -132,5 +172,7 @@
 			}
 			return dp[str.length];
 		}
+	}
+	// end worker
 	}
 </script>
