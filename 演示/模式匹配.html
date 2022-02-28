@@ -2,22 +2,62 @@
 <input style="width:100%;font-size:20px;" type="text" id="inn" />
 <textarea style="width:100%;height:90%;font-size:20px;" type="text" id="out"></textarea>
 <script>
+	function WorkerFunc(func){
+		var funcURL = window.URL.createObjectURL(
+			new Blob(["(" + func.toString() + ")()"], {type:"text/javascript"})
+		);
+		var worker = new Worker(funcURL)
+		window.URL.revokeObjectURL(funcURL);
+		return worker;
+	}
+
 	var inn = document.getElementById("inn");
 	var out = document.getElementById("out");
+	var wok = new WorkerFunc(workerF);
+	var workTime = false, workTout = -1;
 	inn.addEventListener('keydown',function(event){
-		setTimeout(function(){
-			try{
-				out.style.color = "black";
-				out.value = match(inn.value);
-			}catch(e){
-				out.style.color = "red";
-				out.value = e.message;
+		if(workTime){
+			if(workTout === null){
+				workTout = setInterval(function(){
+					if(!workTime){
+						startWork();
+						clearInterval(workTout);
+						workTout = null;
+					}
+				},30);
 			}
-		},0);
+		}else{
+			startWork();
+		}
 	});
+	function startWork(){
+		out.style.color = "blue";
+		workTime = true;
+		wok.postMessage(inn.value);
+	}
+	wok.onmessage = function(msg){
+		workTime = false;
+		out.style.color = "black";
+		out.value = msg.data;
+	}
+	wok.onerror = function(err){
+		workTime = false;
+		out.style.color = "red";
+		out.value = err.message;
+		err.preventDefault();
+	}
+
 	out.addEventListener('focus',function(event){
 		out.blur();
 	});
+
+	function workerF() {
+	// start worker
+	
+	onmessage = function(msg){
+		postMessage(match(msg.data));
+	}
+
 	var pattern = ["下一个背景","将.特效增加.","将.特效设定为.","清除图形特效","背景.","停止所有声音","将.音效增加.","将.音效设为.","清除音效","将音量增加.","将音量设为.%","当flag被点击","当按下.键","当.>.","等待.秒","重复执行.次.*","重复执行.*","如果.那么.","如果.那么.否则.","等待.","重复执行直到..*","询问.并等待","回答","按下.键?","按下鼠标?","鼠标的x坐标","鼠标的y坐标","响度","计时器","计时器归零","当前时间的.","2000年至今的天数","用户名",".+.",".-.",".*.","./.","在.和.之间取随机数",".>.",".<.",".=.",".与.",".或.",".不成立","连接.和.",".的第.个字符",".的字符数",".包含.?",".除以.的余数","四舍五入.","..","移动.步","右转.度","左转.度","移到 x:.y:.","在.秒内滑行到 x:.y:.","面向.方向","将x坐标增加.","将x坐标设为.","将y坐标增加.","将y坐标设为.","碰到边缘就反弹","将旋转方式设为.","x 坐标","y 坐标","方向","说..秒","说.","思考..秒","思考.","下一个造型","将大小增加.","将大小设为.","显示","隐藏","移到最.","..层","造型.","大小","音量","当角色被点击","当作为克隆体启动时","删除此克隆体","碰到颜色.?","颜色.碰到.?","将拖动模式设为.","击打..拍","休止.拍","演奏音符..拍","将乐器设为.","将演奏速度设定为.","将演奏速度增加.","演奏速度","全部擦除","图章","落笔","抬笔","将笔的颜色设为.","将笔的.增加.","将笔的.设为.","将笔的粗细增加.","将笔的粗细设为.","当视频运动 >.","相对于.的视频.",".摄像头","将视频透明度设为.","朗读.","使用.嗓音","将朗读语言设置为.","将.译为.","访客语言","移到.","在.秒内滑行到.","面向.","换成.造型","换成.背景","播放声音.等待播完","播放声音.","当背景换成.","当接收到.","广播.","广播.并等待","停止.","克隆.","碰到.?","到.的距离",".的.","1","将.设为.","将.增加.","显示变量.","隐藏变量.","2","将.加入.","删除.的第.项","删除.的全部项目","在.的第.项前插入.","将.的第.项替换为.",".的第.项",".中第一个.的编号",".的项目数",".包含.?","显示列表.","隐藏列表.","当按下.键","当依次按下.键时"];
 
 	function match(text){
@@ -120,5 +160,7 @@
 			}
 			return dp[str.length];
 		}
+	}
+	// end worker
 	}
 </script>
