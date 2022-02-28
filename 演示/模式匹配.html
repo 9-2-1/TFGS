@@ -18,7 +18,7 @@
 	out.addEventListener('focus',function(event){
 		out.blur();
 	});
-	var data = [
+	var pattern = [
 		"if . then .",
 		"if . then . else .",
 		". and .",
@@ -33,109 +33,104 @@
 	];
 
 	function match(text){
-		var ast = [];
-		var conti = [];
-		var deb = '';
-		var difftb = {};
-		var possibt = {};
-		var possib;
-		var _faulty = -1/256;
+		var tree = [];
+		var fillings = [];
+		var diffCache;
+		var resultIn;
+		var results;
+		var errorLevel = -1/2;
 		do {
-			_faulty += 1;
-			difftb = {};
-			possibt = {};
-			possib = [];
-			grate(ast);
-		} while(possib.length < 2 && _faulty < text.length * 0.2);
-		return _faulty + "\n" + possib.sort(so).join('\n') + '\n\n\n'; //+ deb;
+			errorLevel += 1;
+			diffCache = {};
+			resultIn = {};
+			results = [];
+			search(tree);
+		} while(results.length < 2 && errorLevel < text.length * 0.2);
+		return errorLevel + "\n" + results.sort(sortResult).join('\n');
 		
-		function debug(x){
-			deb+=x+'\n';
+		function sortResult(a,b){
+			return Number(a.split('\t')[0]) - Number(b.split('\t')[0]);
 		}
-		function so(a,b){
-			return Number(a.split('\t')[0]) -
-				   Number(b.split('\t')[0]);
-		}
-		function grate(now){
-			var str = comp(ast);
-			var diff0 = difft(str,text);
-			for(var i=0;i<data.length;i++){
-				var diff1 = grate4(now,i);
-				if(diff1 < diff0){
-					grow(now);
+		function search(thisTree){
+			var str = tree2str(tree);
+			var diff = diffText(str);
+			for(var i=0;i<pattern.length;i++){
+				var diff1 = tryPattern(thisTree,i);
+				if(diff1 < diff){
+					checkFillings(thisTree);
 					//diff0 = diff1;
 				}
 			}
-			now.splice(0,now.length);
-			grow([]);
-			return diff0;
+			thisTree.splice(0,thisTree.length);
+			checkFillings([]);
+			return diff;
 		}
-		function grate4(now,id){
-			now.splice(0,now.length);
-			now.push(id);
-			var pattern = data[id];
+		function tryPattern(thisTree,id){
+			thisTree.splice(0,thisTree.length);
+			thisTree.push(id);
+			var patte = pattern[id];
 			var re = /\./g;
 			var resu;
-			while((resu = re.exec(pattern)) !== null){
-				now.push([]);
+			while((resu = re.exec(patte)) !== null){
+				thisTree.push([]);
 			}
-			str = comp(ast);
-			return difft(str,text);
+			str = tree2str(tree);
+			return diffText(str);
 		}
-		function grow(now){
-			for(var i=1;i<now.length;i++){
-				conti.push(now[i]);
+		function checkFillings(thisTree){
+			for(var i=1;i<thisTree.length;i++){
+				fillings.push(thisTree[i]);
 			}
-			if(conti.length !== 0){
-				var go=conti.pop();
-				grate(go);
-				conti.push(go);
+			if(fillings.length !== 0){
+				var fill=fillings.pop();
+				search(fill);
+				fillings.push(fill);
 			}else{
-				var str = comp(ast);
-				if(!(str in possibt)){
-					possib.push(difft(str,text) + "\t" + str);
-					possibt[str]=1;
+				var str = tree2str(tree);
+				if(!(str in resultIn)){
+					results.push(diffText(str,text) + "\t" + str);
+					resultIn[str]=1;
 				}
 			}
-			for(var i=1;i<now.length;i++){
-				conti.pop();
+			for(var i=1;i<thisTree.length;i++){
+				fillings.pop();
 			}
 		}
-		function comp(ast){
-			if(ast.length == 0){
+		function tree2str(tree){
+			if(tree.length == 0){
 				return ".";
 			}else{
 				var cnt=0;
-				return data[ast[0]].replace(/\./g,function(){
+				return pattern[tree[0]].replace(/\./g,function(){
 					cnt++;
-					return comp(ast[cnt]);
+					return tree2str(tree[cnt]);
 				})
 			}
 		}
-		function difft(a,b){
-			if(a in difftb){
-				return difftb[a];
+		function diffText(str){
+			if(str in diffCache){
+				return diffCache[str];
 			}
-			a = a.replace(/\./g,"");
-			var t = [], leftup, min, min2;
-			for(var x=0;x<=a.length;x++){
-				t.push(x * b.length);
+			str = str.replace(/\./g,"");
+			var dp = [], leftup, min, min2;
+			for(var x=0;x<=str.length;x++){
+				dp.push(x * text.length);
 			}
-			for(var y=0;y<b.length;y++){
-				leftup = t[0];
-				t[0] = (y+1) * _faulty;
-				for(var x=0;x<a.length;x++){
+			for(var y=0;y<text.length;y++){
+				leftup = dp[0];
+				dp[0] = (y+1) * errorLevel;
+				for(var x=0;x<str.length;x++){
 					min = Math.min(
-						t[ x ] + b.length,
-						t[x+1] + _faulty,
-						leftup + (a[x]===b[y] ? 0 :
-						_faulty + b.length)
+						dp[ x ] + text.length,
+						dp[x+1] + errorLevel,
+						leftup + (str[x]===text[y] ? 0 :
+						errorLevel + text.length)
 					);
-					leftup = t[x+1];
-					t[x+1] = min;
+					leftup = dp[x+1];
+					dp[x+1] = min;
 				}
 			}
-			return t[a.length];
+			return dp[str.length];
 		}
 	}
 </script>
