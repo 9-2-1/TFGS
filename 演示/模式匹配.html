@@ -114,7 +114,7 @@
 			for(var i=0;i<pattern.length;i++){
 				if(parent !== null && specPattern[parent.id]){
 					if(specPattern[i]){
-						if(parent.id < i){
+						if(parent.id > i){
 							continue;
 						}
 						if(parent.id == i && parent.pos == 1){
