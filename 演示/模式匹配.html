@@ -15,21 +15,25 @@
 	var out = document.getElementById("out");
 	var wok = new WorkerFunc(workerF);
 	var workTime = false, workTout = -1;
-	inn.addEventListener('keydown',function(event){
-		if(workTime){
-			if(workTout === null){
-				workTout = setInterval(function(){
-					if(!workTime){
-						startWork();
-						clearInterval(workTout);
-						workTout = null;
-					}
-				},30);
+	inn.addEventListener('keydown',innChange);
+	inn.addEventListener('paste',innChange);
+	function innChange(event){
+		setTimeout(function(){
+			if(workTime){
+				if(workTout === null){
+					workTout = setInterval(function(){
+						if(!workTime){
+							startWork();
+							clearInterval(workTout);
+							workTout = null;
+						}
+					},30);
+				}
+			}else{
+				startWork();
 			}
-		}else{
-			startWork();
-		}
-	});
+		},0);
+	}
 	function startWork(){
 		out.style.color = "blue";
 		workTime = true;
