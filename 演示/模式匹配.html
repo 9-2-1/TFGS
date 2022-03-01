@@ -74,13 +74,14 @@
 
 	function match(text){
 		var tree = [];
-		var fillings = [];
+		var fillings;
 		var diffCache;
 		var resultIn;
 		var results;
 		var errorLevel = -1/2;
 		do {
 			errorLevel += 1;
+			fillings = [];
 			diffCache = {};
 			resultIn = {};
 			results = [];
