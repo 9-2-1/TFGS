@@ -161,7 +161,7 @@
 			}else{
 				var str = tree2str(tree);
 				if(!(str in resultIn)){
-					results.push(diffText(str,text) + "\t" + str);
+					results.push(diffText(str,text) + "\t" + tree2debugstr(tree));
 					resultIn[str]=1;
 				}
 			}
@@ -179,6 +179,17 @@
 					cnt++;
 					return tree2str(tree[cnt]);
 				})
+			}
+		}
+		function tree2debugstr(tree){
+			if(tree.length == 0){
+				return ".";
+			}else{
+				var cnt=0;
+				return '[' + pattern[tree[0]].replace(/\./g,function(){
+					cnt++;
+					return tree2debugstr(tree[cnt]);
+				}) + ']';
 			}
 		}
 		function diffText(str){
