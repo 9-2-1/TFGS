@@ -30,7 +30,7 @@ function TFGSON(tryCount){
 		workspace = Blockly.getMainWorkspace();
 		flyoutWorkspace = workspace.getFlyout().getWorkspace();
 		document.body.addEventListener("keydown",on_keydown,true);
-		//document.body.addEventListener("mousedown",on_mousedown,true);
+		document.body.addEventListener("mousedown",on_mousedown,true);
 		console.log("打开 TFGS");
 		console.log(workspace,flyoutWorkspace);
 	}catch(err){
@@ -62,14 +62,14 @@ function TFGSOFF(){
 	TFGS_T_STOP();
 	// 把事件响应函数卸掉就是关闭了
 	document.body.removeEventListener("keydown",on_keydown,true);
-	//document.body.removeEventListener("mousedown",on_mousedown,true);
+	document.body.removeEventListener("mousedown",on_mousedown,true);
 	console.log("关闭 TFGS");
 }
 
 function on_keydown(event){
 	if(!isCode())
 		return;
-	if(event.path[0] !== document.body)
+	if(event.target !== document.body)
 		return;
 	if(!event.altKey
 		&& !event.shiftKey
@@ -98,6 +98,62 @@ function on_keydown(event){
 	//console.log(event);
 }
 
+function on_mousedown(event){
+	if(!isCode()){
+		return;
+	}
+	switch(event.button){
+		case 2: // 右键
+			var clickSVG = getSVG(event.path);
+			if(clickSVG === null){
+				alert("not clickSVG");
+				return;
+			}
+			if(!inInjectionDiv(clickSVG)){
+				alert("not injectionDiv");
+				return;
+			}
+			if(clickSVG.classList.contains("blocklyFlyout")){
+				// 积木盒
+				var blockId = getBlockId(element);
+			}else{
+				// 积木区
+				var blockId = getBlockId(element);
+				setTimeout(function(){
+					var menu = getElementsByClassName("blocklyContextMenu");
+				},1);
+			}
+			break;
+	}
+}
+function getSVG(element){
+	while(element !== null && element.tagName !== "SVG"){
+		element = element.parentElement;
+	}
+	return element;
+}
+function inInjectionDiv(element){
+	while(element !== null && 
+		! (element.tagName === "SVG"
+		&& element.clasList.contains("injectionDiv"))
+	){
+		element = element.parentElement;
+	}
+	return element !== null;
+}
+function getBlockId(element){
+	while(element !== null 
+		&& element.tagName !== "SVG"
+	){
+		if(element.tagName === "G"){
+			var id = element.getAttribute("data-id");
+			if(id !== null){
+				return id;
+			}
+		}
+	}
+	return null;
+}
 var tfgs_t_input = null,
 	tfgs_t_block = [],
 	tfgs_t_list  = [];
