@@ -39,6 +39,7 @@ function TFGSON(tryCount){
 		injectionDiv.addEventListener("touchstart",on_blockTouch,true);
 		injectionDiv.addEventListener("touchmove",on_blockTouch,true);
 		injectionDiv.addEventListener("touchstop",on_blockTouch,true);
+		document.body.addEventListener("mousedown",on_blockMousedown,true);
 		console.log("打开 TFGS");
 		console.log(workspace,flyoutWorkspace);
 	}catch(err){
@@ -70,7 +71,10 @@ function TFGSOFF(){
 	TFGS_T_STOP();
 	// 把事件响应函数卸掉就是关闭了
 	document.body.removeEventListener("keydown",on_keydown,true);
-	//document.body.removeEventListener("contextmenu",on_blockTouch,true);
+	injectionDiv.removeEventListener("touchstart",on_blockTouch,true);
+	injectionDiv.removeEventListener("touchmove",on_blockTouch,true);
+	injectionDiv.removeEventListener("touchstop",on_blockTouch,true);
+	document.body.removeEventListener("mousedown",on_blockMousedown,true);
 	console.log("关闭 TFGS");
 }
 
