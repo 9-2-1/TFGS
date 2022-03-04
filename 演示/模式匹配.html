@@ -58,119 +58,270 @@
 		postMessage(match(msg.data));
 	}
 
-	var pattern = [
-		"if . then .",
-		"if . then . else .",
-		". and .",
-		". or .",
-		"not .",
+	let pattern = [
+		/* “.”表示输入 */
+		"save.to.",
+		"load.from.",
 		"(.)",
 		".+.",
 		".-.",
 		".*.",
 		"./.",
 		".?.:.",
+		"\".\"",
 	];
-
+	
+	let patternData = [/*
+		{
+			output: 输出类型(目前为1),
+			inputs: [输入类型(目前为1), ...], //有输入个个数
+			texts: ["输入间穿插文本", ...]  //有输入+1个个数
+		},
+		...
+	*/];
+	
+	// 从这里开始匹配。这次换一个比较直觉的方式
 	function match(text){
-		var tree = [];
-		var fillings = [];
-		var diffCache;
-		var resultIn;
-		var results;
-		var errorLevel = -1/2;
-		do {
-			errorLevel += 1;
-			diffCache = {};
-			resultIn = {};
-			results = [];
-			search(tree);
-		} while(results.length < 2 && errorLevel < text.length * 0.2);
-		return errorLevel + "\n" + results.sort(sortResult).join('\n');
+		// 积木结构数据
+		let data = [
+		{
+			type: -1/*代表开始点*/,
+			up:   -1,
+			arg:  [-1/*开始积木编号*/]
+			// 开始的时候，编辑的的参数位置就是这里
+		}/*,
+		// 接下来是正常的数据格式
+		{
+			type: 类型(pattern序号),
+			up:   外面积木序号,
+			arg:  [参数积木的序号(-1表示没有), ...]
+		}, ...
+		*/];
+		let layer = [/*
+		{
+			dataId: 数据位置,
+			argId:  参数位置,
+			text:   匹配文字
+		}, ...
+		*/];
+		preProcessPattern();
+		//return JSON.stringify(patternData);
+		let debugstr = "";
+		function debug(x){
+			debugstr += (typeof x === "string" ? x : JSON.stringify(x)) + "\n";
+			if(debugstr.length > 100000){
+				throw new Error("debug124554066086");
+			}
+		}
+		try{
+			guessPossibleMode();
+			debugstr = lookString(0) + "\n\n" + debugstr;
+		}catch(e){
+			debugstr = e.message + "\n\n" + debugstr;
+		}
+		return debugstr;
 		
-		function sortResult(a,b){
-			return Number(a.split('\t')[0]) - Number(b.split('\t')[0]);
+		function preProcessPattern(){
+			patternData = [];
+			for(let i=0;i<pattern.length;i++){
+				let str = pattern[i];
+				let pat = {
+					output: 1, /*输出类型(目前为1)*/
+					inputs: [/*输入类型(目前为1), ...*/], //有输入个个数
+					texts: [/*"输入间穿插文本", ...*/]  //有输入+1个个数
+				};
+				let ch = "";
+				for(let j=0;j<str.length;j++){
+					if(str[j] === "."){
+						pat.texts.push(ch);
+						pat.inputs.push(1);
+						ch = "";
+					}else{
+						ch += str[j];
+					}
+				}
+				pat.texts.push(ch);
+				patternData.push(pat);
+			}
 		}
-		function search(thisTree){
-			var str = tree2str(tree);
-			var diff = diffText(str);
-			for(var i=0;i<pattern.length;i++){
-				var diff1 = tryPattern(thisTree,i);
-				if(diff1 < diff){
-					checkFillings(thisTree);
-					//diff0 = diff1;
+
+		function guessPossibleMode(){
+			const pD = patternData;
+			const senseRate = 1.5;
+			layer = [];
+			let dataId = 0;
+			let argId = 0;
+			let mode = 1;
+			let textI = 0;
+			while(1){
+				debug(textI);
+				debug(layer);
+				debug(data);
+				debug(lookString(0));
+				// guessPossibleSteps;
+				let steps = [/*
+				{
+					text:   判定文字(可能是空的),
+					layer:  返回层级 或者 -1代表新积木,
+					pattId: 选择/连接积木序号,
+					mode:   1选择，2连接(考虑优先导致重组)
+				}, ...
+				*/];
+				if(mode === 1){
+					//getFirstPlacePattern;
+					for(let i=0;i<pD.length;i++){
+						let pi = pD[i];
+						if(pi.texts[0] !== ""){
+							steps.push({
+								text:   pi.texts[0],
+								layer:  -1,
+								pattId: i,
+								mode:   1,
+							});
+						}
+					}
+				}else{
+					//getSecondPlacePattern;
+					for(let i=0;i<pD.length;i++){
+						let pi = pD[i];
+						if(pi.texts[0] === ""){
+							steps.push({
+								text:   pi.texts[1],
+								layer:  -1,
+								pattId: i,
+								mode:   2,
+							});
+						}
+					}
+					//getRollBackPattern;
+					for(let i=0;i<layer.length;i++){
+						let li = layer[i];
+						steps.push({
+							text:   li.text,
+							layer:  i,
+							pattId: -1,
+							mode:   0,
+						});
+					}
+				}
+				debug(steps);
+				// checkPossibleSteps;
+				let max = 0, choice = -1;
+				for(let i=steps.length-1;i>=0;i--){
+					let si = steps[i];
+					let score;
+					if(si.text === ""){
+						score = 0.5;
+					}else{
+						let ftext = text.slice(textI,textI + Math.floor(senseRate * si.text.length));
+						debug(Math.floor(senseRate * si.text.length));
+						let diff = diffText(si.text,ftext,1,1);
+						score = si.text.length + ftext.length - diff;
+						debug(i+"\t"+si.text+"\t"+ftext+"\t"+score);
+					}
+					if(score > max){
+						max = score;
+						choice = i;
+					}
+				}
+				// doPossibleSteps;
+				if(choice === -1){
+					return;
+				}else{
+					let step = steps[choice];
+					debug(step);
+					textI += step.text.length;
+					if(step.layer !== -1){
+						layer.splice(step.layer+1,layer.length-step.layer-1);
+						let lay = layer.pop();
+						dataId = lay.dataId;
+						argId = lay.argId;
+						argId++;
+					}else if(step.mode === 1){
+						let args = [];
+						for(let i=0;i<pD[step.pattId].inputs.length;i++){
+							args.push(-1);
+						}
+						data.push({
+							type: step.pattId,
+							up:   dataId,
+							arg:  args
+						});
+						data[dataId].arg[argId] = data.length - 1;
+						layer.push({
+							dataId:dataId,
+							argId: argId,
+							text:  data[dataId].type === -1 ? "" : pD[data[dataId].type].texts[argId+1]
+						})
+						dataId = data.length - 1;
+						argId = 0;
+					}else{
+						//巨难无比
+						let args = [];
+						for(let i=0;i<pD[step.pattId].inputs.length;i++){
+							args.push(-1);
+						}
+						args[0] = dataId;
+						let origNode = data[dataId];
+						let newNode = {
+							type: step.pattId,
+							up:   data[dataId].up,
+							arg:  args
+						}
+						data[dataId] = newNode;
+						data.push({
+							type: step.pattId,
+							up:   data[dataId].up,
+							arg:  args
+						});
+						dataId = data.length - 1;
+						argId = 1;
+					}
 				}
 			}
-			thisTree.splice(0,thisTree.length);
-			checkFillings([]);
-			return diff;
 		}
-		function tryPattern(thisTree,id){
-			thisTree.splice(0,thisTree.length);
-			thisTree.push(id);
-			var patte = pattern[id];
-			var re = /\./g;
-			var resu;
-			while((resu = re.exec(patte)) !== null){
-				thisTree.push([]);
+		// 产生能看的表达方式
+		function lookString(p){
+			if(p === -1){
+				return "_";
 			}
-			str = tree2str(tree);
-			return diffText(str);
-		}
-		function checkFillings(thisTree){
-			for(var i=1;i<thisTree.length;i++){
-				fillings.push(thisTree[i]);
-			}
-			if(fillings.length !== 0){
-				var fill=fillings.pop();
-				search(fill);
-				fillings.push(fill);
+			let dp = data[p];
+			debug("p:"+p)
+			let type = dp.type;
+			if(type === -1){
+				return lookString(dp.arg[0]);
 			}else{
-				var str = tree2str(tree);
-				if(!(str in resultIn)){
-					results.push(diffText(str,text) + "\t" + str);
-					resultIn[str]=1;
+				let pDp = patternData[type];
+				let ch = "[" + pDp.texts[0];
+				for(let i=0;i<dp.arg.length;i++){
+					ch += " " + lookString(dp.arg[i]);
+					ch += " " + pDp.texts[i+1];
 				}
-			}
-			for(var i=1;i<thisTree.length;i++){
-				fillings.pop();
+				return ch + "]";
 			}
 		}
-		function tree2str(tree){
-			if(tree.length == 0){
-				return ".";
-			}else{
-				var cnt=0;
-				return pattern[tree[0]].replace(/\./g,function(){
-					cnt++;
-					return tree2str(tree[cnt]);
-				})
+		// 这个函数计算的是a和b之间的编辑距离
+		// 错过a的一个字符，距离增加wa，b则增加wb
+		function diffText(a,b,wa,wb){
+			var dp = [], leftup;
+			for(var x=0;x<=a.length;x++){
+				dp.push(x * wa);
 			}
-		}
-		function diffText(str){
-			if(str in diffCache){
-				return diffCache[str];
-			}
-			str = str.replace(/\./g,"");
-			var dp = [], leftup, min, min2;
-			for(var x=0;x<=str.length;x++){
-				dp.push(x * text.length);
-			}
-			for(var y=0;y<text.length;y++){
+			for(var y=0;y<b.length;y++){
 				leftup = dp[0];
-				dp[0] = (y+1) * errorLevel;
-				for(var x=0;x<str.length;x++){
-					min = Math.min(
-						dp[ x ] + text.length,
-						dp[x+1] + errorLevel,
-						leftup + (str[x]===text[y] ? 0 :
-						errorLevel + text.length)
+				dp[0] = (y+1) * wb;
+				for(var x=0;x<a.length;x++){
+					let min = Math.min(
+						dp[ x ] + wa,
+						dp[x+1] + wb,
+						leftup + (a[x]===b[y] ? 0 :
+						wa + wb)
 					);
 					leftup = dp[x+1];
 					dp[x+1] = min;
 				}
 			}
-			return dp[str.length];
+			return dp[a.length];
 		}
 	}
 	// end worker
