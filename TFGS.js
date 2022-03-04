@@ -159,23 +159,28 @@ function on_blockMenuPossible(x, y){
 }
 function on_blockMenu(blockBox, blockId, menu){
 	if(blockId !== null){
-		addToContextMenu("积木id: "+blockId, function(){
-			copyThisToXML(blockId);
+		addToContextMenu("复制这个积木", function(){
+			copyToXML(blockId, false, true);
 			menu.remove();
 		}, menu);
-		addToContextMenu("复制为XML文本", function(){
-			copyThisToXML(blockId);
+		addToContextMenu("复制以下积木", function(){
+			copyToXML(blockId, false, false);
 			menu.remove();
 		}, menu);
-		addToContextMenu("全部复制为XML文本", function(){
-			copyAllToXML(blockId);
+		addToContextMenu("复制整组积木", function(){
+			copyToXML(blockId, true, false);
+			menu.remove();
+		}, menu);
+	}else{
+		addToContextMenu("复制全部积木", function(){
+			copyToXML(null, true, false);
+			menu.remove();
+		}, menu);
+		addToContextMenu("粘贴积木文本", function(){
+			pasteFromXML();
 			menu.remove();
 		}, menu);
 	}
-	addToContextMenu("从XML文本粘贴", function(){
-		pasteFromXML();
-		menu.remove();
-	}, menu);
 	addToContextMenu("输入积木...", function(){
 		TFGS_T();
 		menu.remove();
@@ -514,10 +519,11 @@ function TFGS_S(){
 function pasteFromXML(){
 	navigator.clipboard.readText().then(function(data){
 		try{
-			let blockXML = Blockly.Xml.textToDom('<xml>'+data+'</xml>');
-			console.log(blockXML);
+			let blockXML = Blockly.Xml.textToDom(data);
 			let blockIds = Blockly.Xml.domToWorkspace(blockXML,workspace);
-			console.log(blockIds);
+			if(blockIds.length === 0){
+				throw new Error("粘贴失败");
+			}
 			let met = workspace.getMetrics();
 			let posX = met.viewLeft + 15;
 			let posY = met.viewTop  + 15;
@@ -539,42 +545,41 @@ function pasteFromXML(){
 		alert(e.message);
 	});
 }
-function copyThisToXML(blockId){
+function copyToXML(blockId, loadPrev, deleNext){
 	try{
 		let blockXML = Blockly.Xml.workspaceToDom(workspace);
-		let blockThis = findBlock(blockXML,blockId);
-		if(blockThis === null){
-			throw new Error('复制失败:找不到积木');
-		}
-		let bc = blockThis.children;
-		for(let i=0;i<bc.length;i++){
-			if(bc[i].tagName.toLowerCase() === "next"){
-				bc[i].remove();
-				i--;
+		let blockThisXML;
+		if(blockid === null){
+			blockThisXML = Blockly.Xml.domToText(blockXML,workspace);
+		}else{
+			let blockThis = findBlock(blockXML,blockId);
+			while(blockThis !== null
+			   && blockThis.tagName.toLowerCase() !== "block"
+			){
+				blockThis = blockThis.parentElement;
 			}
+			if(blockThis === null){
+				throw new Error('复制失败:找不到积木');
+			}
+			if(deleNext){
+				let bc = blockThis.children;
+				for(let i=0;i<bc.length;i++){
+					if(bc[i].tagName.toLowerCase() === "next"){
+						bc[i].remove();
+						i--;
+					}
+				}
+			}
+			if(loadPrev){
+				while(blockThis.parentElement !== null
+				   && (blockThis.parentElement.tagName.toLowerCase() === 'block'
+				    || blockThis.parentElement.tagName.toLowerCase() === 'next')
+				){
+					blockThis = blockThis.parentElement;
+				}
+			}
+			blockThisXML = "<xml>" + Blockly.Xml.domToText(blockThis,workspace) + "</xml>";
 		}
-		let blockThisXML = Blockly.Xml.domToText(blockThis,workspace);
-		navigator.clipboard.writeText(blockThisXML).then(function(){
-			//alert('复制成功');
-		}).catch(function(e){
-			alert(e.message);
-		});
-	}catch(e){
-		alert(e.message);
-	}
-}
-function copyAllToXML(blockId){
-	try{
-		let blockXML = Blockly.Xml.workspaceToDom(workspace);
-		let blockThis = findBlock(blockXML,blockId);
-		if(blockThis === null){
-			throw new Error('复制失败:找不到积木');
-		}
-		while(blockThis.parentElement !== null
-		   && blockThis.parentElement.tagName.toLowerCase() === 'block'){
-			blockThis = blockThis.parentElement;
-		}
-		let blockThisXML = Blockly.Xml.domToText(blockThis,workspace);
 		navigator.clipboard.writeText(blockThisXML).then(function(){
 			//alert('复制成功');
 		}).catch(function(e){
