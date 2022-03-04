@@ -24,18 +24,27 @@ if(typeof Extension !== "function"){
 }
 // 左边是积木区，右边是积木拖出区
 var workspace, flyoutWorkspace;
+var injectionDiv;
 // 打开重试计时器
 var opening = -1;
+// 积木菜单检测计时器 *
+let blockMenuTimer = -1;
+let blockMenuTime = 0;
+const blockMenuTimeout = 1200; // ms
 
 // 打开 tfgs
 function TFGSON(tryCount){
 	var tryCount = tryCount === undefined ? 0 : tryCount;
-	//部分社区的界面会加载，尝试5次
+	//部分社区的界面会加载，尝试多次
 	try{
 		workspace = Blockly.getMainWorkspace();
 		flyoutWorkspace = workspace.getFlyout().getWorkspace();
 		document.body.addEventListener("keydown",on_keydown,true);
-		//document.body.addEventListener("mousedown",on_mousedown,true);
+		injectionDiv = document.getElementsByClassName("injectionDiv")[0];
+		injectionDiv.addEventListener("touchstart",on_blockTouch,true);
+		//injectionDiv.addEventListener("touchmove",on_blockTouch,true);
+		//injectionDiv.addEventListener("touchstop",on_blockTouch,true);
+		document.body.addEventListener("mousedown",on_blockMousedown,true);
 		console.log("打开 TFGS");
 		console.log(workspace,flyoutWorkspace);
 	}catch(err){
@@ -67,14 +76,19 @@ function TFGSOFF(){
 	TFGS_T_STOP();
 	// 把事件响应函数卸掉就是关闭了
 	document.body.removeEventListener("keydown",on_keydown,true);
-	//document.body.removeEventListener("mousedown",on_mousedown,true);
+	if(injectionDiv){
+		injectionDiv.removeEventListener("touchstart",on_blockTouch,true);
+	}
+	//injectionDiv.removeEventListener("touchmove",on_blockTouch,true);
+	//injectionDiv.removeEventListener("touchstop",on_blockTouch,true);
+	document.body.removeEventListener("mousedown",on_blockMousedown,true);
 	console.log("关闭 TFGS");
 }
 
 function on_keydown(event){
 	if(!isCode())
 		return;
-	if(event.path[0] !== document.body)
+	if(event.target !== document.body)
 		return;
 	if(!event.altKey
 		&& !event.shiftKey
@@ -103,6 +117,106 @@ function on_keydown(event){
 	//console.log(event);
 }
 
+function on_blockMousedown(event){
+	if(event.button === 2){ // 右键
+		on_blockMenuPossible(event.clientX, event.clientY);
+	}
+}
+function on_blockTouch(event){
+	if(event.touches.length === 0){
+		return;
+	}
+	let touch = event.touches[0];
+	on_blockMenuPossible(touch.clientX, touch.clientY);
+}
+function on_blockMenuPossible(x, y){
+	let element = document.elementFromPoint(x, y);
+	let blockBox, blockId;
+	if(element === null){
+		return;
+	}
+	//console.log(element);
+	let clickSVG = getSVG(element);
+	if(clickSVG === null){
+		return;
+	}
+	blockBox = clickSVG.classList.contains("blocklyFlyout");
+	blockId = getBlockId(element);
+	if(blockMenuTimer !== -1){
+		clearInterval(blockMenuTimer);
+		blockMenuTimer = -1;
+	}
+	blockMenuTime = 0;
+	blockMenuTimer = setInterval(function(){
+		let menu = document.getElementsByClassName("blocklyContextMenu");
+		if(menu.length !== 0){
+			clearInterval(blockMenuTimer);
+			blockMenuTimer = -1;
+			on_blockMenu(blockBox, blockId, menu[0]);
+		}else{
+			blockMenuTime += 10;
+			if(blockMenuTime >= blockMenuTimeout){
+				clearInterval(blockMenuTimer);
+				blockMenuTimer = -1;
+			}
+		}
+	}, 10);
+}
+function on_blockMenu(blockBox, blockId, menu){
+	if(blockId !== null){
+		addToContextMenu("积木id: "+blockId, function(){
+			copyThisToXML(blockId);
+			menu.remove();
+		}, menu);
+		addToContextMenu("复制为XML文本", function(){
+			copyThisToXML(blockId);
+			menu.remove();
+		}, menu);
+		addToContextMenu("全部复制为XML文本", function(){
+			copyAllToXML(blockId);
+			menu.remove();
+		}, menu);
+	}
+	addToContextMenu("从XML文本粘贴", function(){
+		pasteFromXML();
+		menu.remove();
+	}, menu);
+	addToContextMenu("输入积木...", function(){
+		TFGS_T();
+		menu.remove();
+	}, menu);
+}
+
+function getSVG(element){
+	while(element !== null && element.tagName.toLowerCase() !== "svg"){
+		element = element.parentElement;
+	}
+	return element;
+}
+function getBlockId(element){
+	while(element !== null 
+		&& element.tagName.toLowerCase() !== "svg"
+	){
+		if(element.tagName.toLowerCase() === "g"){
+			let id = element.getAttribute("data-id");
+			if(id !== null){
+				return id;
+			}
+		}
+		element = element.parentElement;
+	}
+	return null;
+}
+function addToContextMenu(name,callback,element){
+	let menuItem = document.createElement("div");
+	menuItem.classList.add("goog-menuitem");
+	menuItem.setAttribute("role", "menuitem");
+	menuItem.style.userSelect = "none";
+	menuItem.innerText = name;
+	menuItem.addEventListener("click", callback);
+	element.parentElement.style.height = "4500px";
+	element.appendChild(menuItem);
+}
 var tfgs_t_input = null,
 	tfgs_t_block = [],
 	tfgs_t_list  = [];
@@ -402,6 +516,93 @@ function TFGS_G(){
 function TFGS_S(){
 }
 
+function pasteFromXML(){
+	navigator.clipboard.readText().then(function(data){
+		try{
+			let blockXML = Blockly.Xml.textToDom('<xml>'+data+'</xml>');
+			console.log(blockXML);
+			let blockIds = Blockly.Xml.domToWorkspace(blockXML,workspace);
+			console.log(blockIds);
+			let met = workspace.getMetrics();
+			let posX = met.viewLeft + 15;
+			let posY = met.viewTop  + 15;
+			for(let i=0;i<blockIds.length;i++){
+				let bl = workspace.getBlockById(blockIds[i]);
+				if(bl.getParent() === null){
+					let oldpos = bl.getRelativeToSurfaceXY();
+					bl.moveBy(
+						posX / workspace.scale - oldpos.x,
+						posY / workspace.scale - oldpos.y
+					);
+					posY += (bl.getHeightWidth().height + 30) * workspace.scale;
+				}
+			}
+		}catch(e){
+			alert(e.message);
+		}
+	}).catch(function(e){
+		alert(e.message);
+	});
+}
+function copyThisToXML(blockId){
+	try{
+		let blockXML = Blockly.Xml.workspaceToDom(workspace);
+		let blockThis = findBlock(blockXML,blockId);
+		if(blockThis === null){
+			throw new Error('复制失败:找不到积木');
+		}
+		let bc = blockThis.children;
+		for(let i=0;i<bc.length;i++){
+			if(bc[i].tagName.toLowerCase() === "next"){
+				bc[i].remove();
+				i--;
+			}
+		}
+		let blockThisXML = Blockly.Xml.domToText(blockThis,workspace);
+		navigator.clipboard.writeText(blockThisXML).then(function(){
+			//alert('复制成功');
+		}).catch(function(e){
+			alert(e.message);
+		});
+	}catch(e){
+		alert(e.message);
+	}
+}
+function copyAllToXML(blockId){
+	try{
+		let blockXML = Blockly.Xml.workspaceToDom(workspace);
+		let blockThis = findBlock(blockXML,blockId);
+		if(blockThis === null){
+			throw new Error('复制失败:找不到积木');
+		}
+		while(blockThis.parentElement !== null
+		   && blockThis.parentElement.tagName.toLowerCase() === 'block'){
+			blockThis = blockThis.parentElement;
+		}
+		let blockThisXML = Blockly.Xml.domToText(blockThis,workspace);
+		navigator.clipboard.writeText(blockThisXML).then(function(){
+			//alert('复制成功');
+		}).catch(function(e){
+			alert(e.message);
+		});
+	}catch(e){
+		alert(e.message);
+	}
+}
+function findBlock(blockXML,blockId){
+	if(blockXML.getAttribute('id') === blockId){
+		return blockXML;
+	}else{
+		let bc = blockXML.children;
+		for(let i=0;i<bc.length;i++){
+			let find = findBlock(bc[i],blockId);
+			if(find !== null){
+				return find;
+			}
+		}
+		return null;
+	}
+}
 function TFGS(){
 	console.log("" +
 		" _____________    _____________      __________    _____________ \n" +
@@ -412,7 +613,7 @@ function TFGS(){
 		"      | |        | |             | |         | |              | |\n" +
 		"      | |        | |             | |_________/ |   ___________| |\n" +
 		"      |_|        |_|             |_____________/  |_____________| 成功载入\n" +
-"");
+	"");
 }
 //} --- TFGS END ---
 
