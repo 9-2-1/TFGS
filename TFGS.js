@@ -37,8 +37,8 @@ function TFGSON(tryCount){
 		document.body.addEventListener("keydown",on_keydown,true);
 		injectionDiv = document.getElementsByClassName("injectionDiv")[0];
 		injectionDiv.addEventListener("touchstart",on_blockTouch,true);
-		injectionDiv.addEventListener("touchmove",on_blockTouch,true);
-		injectionDiv.addEventListener("touchstop",on_blockTouch,true);
+		//injectionDiv.addEventListener("touchmove",on_blockTouch,true);
+		//injectionDiv.addEventListener("touchstop",on_blockTouch,true);
 		document.body.addEventListener("mousedown",on_blockMousedown,true);
 		console.log("打开 TFGS");
 		console.log(workspace,flyoutWorkspace);
@@ -71,9 +71,11 @@ function TFGSOFF(){
 	TFGS_T_STOP();
 	// 把事件响应函数卸掉就是关闭了
 	document.body.removeEventListener("keydown",on_keydown,true);
-	injectionDiv.removeEventListener("touchstart",on_blockTouch,true);
-	injectionDiv.removeEventListener("touchmove",on_blockTouch,true);
-	injectionDiv.removeEventListener("touchstop",on_blockTouch,true);
+	if(injectionDiv){
+		injectionDiv.removeEventListener("touchstart",on_blockTouch,true);
+	}
+	//injectionDiv.removeEventListener("touchmove",on_blockTouch,true);
+	//injectionDiv.removeEventListener("touchstop",on_blockTouch,true);
 	document.body.removeEventListener("mousedown",on_blockMousedown,true);
 	console.log("关闭 TFGS");
 }
@@ -147,13 +149,13 @@ function on_blockMenuPossible(x, y){
 			blockMenuTimer = -1;
 			on_blockMenu(blockBox, blockId, menu[0]);
 		}else{
-			blockMenuTime += 20;
+			blockMenuTime += 10;
 			if(blockMenuTime >= blockMenuTimeout){
 				clearInterval(blockMenuTimer);
 				blockMenuTimer = -1;
 			}
 		}
-	}, 20);
+	}, 10);
 }
 function on_blockMenu(blockBox, blockId, menu){
 	let type = "未知";
@@ -179,7 +181,7 @@ function getBlockId(element){
 		&& element.tagName.toLowerCase() !== "svg"
 	){
 		if(element.tagName.toLowerCase() === "g"){
-			var id = element.getAttribute("data-id");
+			let id = element.getAttribute("data-id");
 			if(id !== null){
 				return id;
 			}
@@ -189,7 +191,7 @@ function getBlockId(element){
 	return null;
 }
 function addToContextMenu(name,callback,element){
-	var menuItem = document.createElement("div");
+	let menuItem = document.createElement("div");
 	menuItem.classList.add("goog-menuitem");
 	menuItem.setAttribute("role", "menuitem");
 	menuItem.style.userSelect = "none";
@@ -507,4 +509,5 @@ function TFGS(){
 		"      | |        | |             | |         | |              | |\n" +
 		"      | |        | |             | |_________/ |   ___________| |\n" +
 		"      |_|        |_|             |_____________/  |_____________| 成功载入\n" +
-"");
+	"");
+}
