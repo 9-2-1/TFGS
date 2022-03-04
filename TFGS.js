@@ -69,7 +69,7 @@ function TFGSOFF(){
 function on_keydown(event){
 	if(!isCode())
 		return;
-	if(event.path[0] !== document.body)
+	if(event.target !== document.body)
 		return;
 	if(!event.altKey
 		&& !event.shiftKey
