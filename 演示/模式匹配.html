@@ -2,6 +2,7 @@
 <input style="width:100%;font-size:20px;" type="text" id="inn" />
 <textarea style="width:100%;height:90%;font-size:20px;" type="text" id="out"></textarea>
 <script>
+"use strict";
 	function WorkerFunc(func){
 		var funcURL = window.URL.createObjectURL(
 			new Blob(["(" + func.toString() + ")()"], {type:"text/javascript"})
@@ -16,7 +17,9 @@
 	var wok = new WorkerFunc(workerF);
 	var workTime = false, workTout = -1;
 	inn.addEventListener('keydown',innChange);
+	inn.addEventListener('select',innChange);
 	inn.addEventListener('paste',innChange);
+	inn.addEventListener('mousedown',innChange);
 	function innChange(event){
 		setTimeout(function(){
 			if(workTime){
@@ -37,7 +40,10 @@
 	function startWork(){
 		out.style.color = "blue";
 		workTime = true;
-		wok.postMessage(inn.value);
+		wok.postMessage({
+			text: inn.value,
+			offset: inn.selectionStart
+		});
 	}
 	wok.onmessage = function(msg){
 		workTime = false;
@@ -54,12 +60,13 @@
 	out.addEventListener('focus',function(event){
 		out.blur();
 	});
+	out.value = "script loaded.";
 
 	function workerF() {
 	// start worker
 	
 	onmessage = function(msg){
-		postMessage(match(msg.data));
+		postMessage(match(msg.data.text,msg.data.offset));
 	}
 
 	let pattern = [
@@ -85,7 +92,7 @@
 	*/];
 	
 	// 从这里开始匹配。这次换一个比较直觉的方式
-	function match(text){
+	function match(text,offset){
 		// 积木结构数据
 		let data = [
 		{
@@ -108,9 +115,11 @@
 			text:   匹配文字
 		}, ...
 		*/];
+		let dataId = 0,  argId = 0;
+		let iDataId = 0, iArgId = 0;
+		let debugstr = "";
 		preProcessPattern();
 		//return JSON.stringify(patternData);
-		let debugstr = "";
 		function debug(x){
 			debugstr += (typeof x === "string" ? x : JSON.stringify(x)) + "\n";
 			// debugstr += " ";
@@ -120,6 +129,11 @@
 		}
 		try{
 			guessPossibleMode();
+			dataId = iDataId;
+			argId  = iArgId;
+			debug(offset);
+			debug(dataId);
+			debug(argId);
 			debugstr = lookString(0) + "\n\n" + debugstr;
 		}catch(e){
 			debugstr = e.message + "\n\n" + debugstr;
@@ -154,8 +168,9 @@
 			const pD = patternData;
 			const senseRate = 1.5;
 			layer = [];
-			let dataId = 0;
-			let argId = 0;
+			dataId = 0;
+			argId = 0;
+			let reachOffset = false;
 			let mode = 1;
 			let textI = 0;
 			while(1){
@@ -215,7 +230,7 @@
 				// checkPossibleSteps;
 				let max = 0.5, choice;
 				let textI0 = textI;
-				for(choice=-1;textI<text.length && choice===-1;textI++){
+				for(choice=-1;textI<text.length && choice===-1; textI++){
 					for(let i=steps.length-1;i>=0;i--){
 						let si = steps[i];
 						let score;
@@ -236,6 +251,11 @@
 				debug({skip:text.slice(textI0,textI-1)});
 				// doPossibleSteps;
 				if(choice === -1){
+					if(!reachOffset){
+						iDataId = dataId;
+						iArgId  = argId;
+						reachOffset = true;
+					}
 					return;
 				}else{
 					let step = steps[choice];
@@ -302,27 +322,42 @@
 							mode = 2;
 						}
 					}
+					if(textI > offset && !reachOffset){
+						iDataId = dataId;
+						iArgId  = argId;
+						reachOffset = true;
+					}
 				}
 			}
 		}
 		// 产生能看的表达方式
 		function lookString(p){
 			if(p === -1){
-				return "_";
+				return "";
 			}
 			let dp = data[p];
-			// debug("p:"+p)
 			let type = dp.type;
+			let ch;
+			if(p === dataId && 0 === argId){
+				ch = "|";
+			}else{
+				ch = "";
+			}
+			// debug("p:"+p)
 			if(type === -1){
-				return lookString(dp.arg[0]);
+				ch += lookString(dp.arg[0]);
+				return ch;
 			}else{
 				let pDp = patternData[type];
-				let ch = "[" + pDp.texts[0];
+				ch += pDp.texts[0];
 				for(let i=0;i<dp.arg.length;i++){
 					ch += " " + lookString(dp.arg[i]);
+					if(p === dataId && i+1 === argId){
+						ch += "|";
+					}
 					ch += " " + pDp.texts[i+1];
 				}
-				return ch + "]";
+				return ch + "";
 			}
 		}
 		// 这个函数计算的是a和b之间的编辑距离
