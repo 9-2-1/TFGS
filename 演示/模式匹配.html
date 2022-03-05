@@ -87,6 +87,7 @@
 	
 	// 从这里开始匹配。这次换一个比较直觉的方式
 	function match(text){
+		return JSON.stringify(matchText.apply(this,text.split("|")));
 		// 积木结构数据
 		let data = [
 		{
@@ -348,28 +349,50 @@
 				return ch + "]";
 			}
 		}
-		// 这个函数计算的是a和b之间的编辑距离
-		// 错过a的一个字符，距离增加wa，b则增加wb
-		function diffText(a,b,wa,wb){
-			var dp = [], leftup;
-			for(var x=0;x<=a.length;x++){
-				dp.push(x * wa);
+		// 比较函数被修改了。
+		// 用途：返回最大匹配左子串比
+		// (假设left是取左侧的字符数，
+		//  char是最长公共子序列数
+		//  如果能匹配，那么让char/(left+1)最大
+		//  如果char/(left+1)相等，left尽量大。
+		//  例如 matchText("aBCdEfgHi","BCEH")
+		//  返回{chars: 3, left: 5}
+		//  说明：直观上有4种情况：
+		//  匹配B    chars: 1, left: 2 (1/3)
+		//  匹配BC   chars: 2, left: 3 (1/2)
+		//  匹配BCE  chars: 3, left: 5 (1/2)
+		//  匹配BCEH chars: 4, left: 8 (4/9)
+		//  结果：匹配BCE(BC和BCE相等，选长的)
+		function matchText(a,b){
+			let chars = [], leftup;
+			// 动态规划
+			for(let x=0;x<=a.length;x++){
+				chars.push(0);
 			}
-			for(var y=0;y<b.length;y++){
-				leftup = dp[0];
-				dp[0] = (y+1) * wb;
+			for(let y=0;y<b.length;y++){
+				leftup = chars[0];
+				chars[0] = 0;
 				for(var x=0;x<a.length;x++){
-					let min = Math.min(
-						dp[ x ] + wa,
-						dp[x+1] + wb,
-						leftup + (a[x]===b[y] ? 0 :
-						wa + wb)
+					let max = Math.max(
+						chars[ x ],  chars[x+1],
+						leftup + (a[x]===b[y] ? 1 : 0)
 					);
-					leftup = dp[x+1];
-					dp[x+1] = min;
+					leftup = chars[x+1];
+					chars[x+1] = max;
 				}
 			}
-			return dp[a.length];
+			let left = 0, max = 0;
+			for(let x=a.length;x!==0;x--){
+				let c_v = chars[x]/(x+1);
+				if(max < c_v){
+					max = c_v;
+					left = x;
+				}
+			}
+			return {
+				chars:chars[left],
+				left:left
+			};
 		}
 	}
 	// end worker
