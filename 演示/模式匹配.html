@@ -349,49 +349,38 @@
 				return ch + "]";
 			}
 		}
-		// 比较函数被修改了。
-		// 用途：返回最大匹配左子串比
-		// (假设left是取左侧的字符数，
-		//  char是最长公共子序列数
-		//  如果能匹配，那么让char/(left+1)最大
-		//  如果char/(left+1)相等，left尽量大。
-		//  例如 matchText("aBCdEfgHi","BCEH")
-		//  返回{chars: 3, left: 5}
-		//  说明：直观上有4种情况：
-		//  匹配B    chars: 1, left: 2 (1/3)
-		//  匹配BC   chars: 2, left: 3 (1/2)
-		//  匹配BCE  chars: 3, left: 5 (1/2)
-		//  匹配BCEH chars: 4, left: 8 (4/9)
-		//  结果：匹配BCE(BC和BCE相等，选长的)
+		// 比较函数又被修改了。
+		// 用途：直观对比字符串(a找b)
 		function matchText(a,b){
-			let chars = [], leftup;
-			// 动态规划
-			for(let x=0;x<=a.length;x++){
-				chars.push(0);
-			}
+			let bmatch = [], strSimilar = 0, left = 0;
 			for(let y=0;y<b.length;y++){
-				leftup = chars[0];
-				chars[0] = 0;
-				for(var x=0;x<a.length;x++){
-					let max = Math.max(
-						chars[ x ],  chars[x+1],
-						leftup + (a[x]===b[y] ? 1 : 0)
-					);
-					leftup = chars[x+1];
-					chars[x+1] = max;
-				}
+				bmatch.push(false);
 			}
-			let left = 0, max = 0;
-			for(let x=a.length;x!==0;x--){
-				let c_v = chars[x]/(x+1);
-				if(max < c_v){
-					max = c_v;
+			for(let x=0;x<a.length;x++){
+				let bestY = -1, best = 0;
+				for(let y=0;y<b.length;y++){
+					if(!bmatch[y]){
+						let similar = 0;
+						if(a[x] === b[y]){
+							// 这里以后会换成更加模糊的判断
+							similar = 1;
+						}
+						similar *= 1-Math.abs(x/a.length-y/b.length)*0.5;
+						if(best < similar){
+							best = similar;
+							bestY = y;
+						}
+					}
+				}
+				if(bestY !== -1){
+					bmatch[bestY] = true;
+					strSimilar += best;
 					left = x;
 				}
 			}
 			return {
-				chars:chars[left],
-				left:left
+				similarity:a.length === 0 ? 0 : strSimilar/a.length,
+				left:left+1
 			};
 		}
 	}
