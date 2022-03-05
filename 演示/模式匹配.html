@@ -42,7 +42,7 @@
 	wok.onmessage = function(msg){
 		workTime = false;
 		out.style.color = "black";
-		out.value = msg.data;
+		out.value = msg.blocksData;
 	}
 	wok.onerror = function(err){
 		workTime = false;
@@ -60,7 +60,7 @@
 	// start worker
 	
 	onmessage = function(msg){
-		postMessage(match(msg.data));
+		postMessage(match(msg.blocksData));
 	}
 
 	let blockText = [
@@ -89,7 +89,7 @@
 	function match(text){
 		return JSON.stringify(matchText.apply(this,text.split("|")));
 		// 积木结构数据
-		let data = [
+		let blocksData = [
 		{
 			type: -1/*代表开始点*/,
 			parent:   -1,
@@ -105,8 +105,8 @@
 		*/];
 		let stack = [/*
 		{
-			dataId: 数据位置,
-			argId:  参数位置,
+			blockId: 数据位置,
+			inputId:  参数位置,
 			text:   匹配文字
 		}, ...
 		*/];
@@ -154,14 +154,14 @@
 
 		function guessPossibleMode(){
 			stack = [];
-			let dataId = 0;
-			let argId = 0;
+			let blockId = 0;
+			let inputId = 0;
 			let mode = 1;
 			let textI = 0;
 			while(1){
 				// debug(textI);
 				// debug(stack);
-				// debug(data);
+				// debug(blocksData);
 				// debug(lookString(0));
 				// guessPossibleSteps;
 				let steps = [/*
@@ -244,22 +244,22 @@
 					if(step.stack !== -1){
 						stack.splice(step.stack+1,stack.length-step.stack-1);
 						let frame = stack.pop();
-						dataId = frame.dataId;
-						argId = frame.argId;
-						argId++;
+						blockId = frame.blockId;
+						inputId = frame.inputId;
+						inputId++;
 					}else if(step.mode === 1){
 						let args = [];
 						for(let i=0;i<pD[step.type].inputs.length;i++){
 							args.push(-1);
 						}
-						data.push({
+						blocksData.push({
 							type: step.type,
-							parent:   dataId,
+							parent:   blockId,
 							args:  args
 						});
-						data[dataId].args[argId] = data.length - 1;
-						dataId = data.length - 1;
-						argId = 0;
+						blocksData[blockId].args[inputId] = blocksData.length - 1;
+						blockId = blocksData.length - 1;
+						inputId = 0;
 					}else{
 						//巨难无比
 						//这里有两个方法：
@@ -271,9 +271,9 @@
 						// 判断使用什么方法：
 						// 检查不能左结合情况
 						// A不是最后一个参数？
-						var tA = data[dataId].type;
+						var tA = blocksData[blockId].type;
 						var tB = step.type;
-						if(argId !== data[dataId].args.length-1){
+						if(inputId !== blocksData[blockId].args.length-1){
 							debug("i");
 							method = 2;
 						}
@@ -287,40 +287,40 @@
 							method = 2;
 						}
 						if(method === 1){
-							let args = [data.length];
+							let args = [blocksData.length];
 							for(let i=1;i<pD[step.type].inputs.length;i++){
 								args.push(-1);
 							}
-							let origNode = data[dataId];
+							let origNode = blocksData[blockId];
 							let newNode = {
 								type: step.type,
-								parent:   data[dataId].parent,
+								parent:   blocksData[blockId].parent,
 								args:  args
 							}
-							data[dataId] = newNode;
-							data.push(origNode);
-							//dataId = dataId;
-							argId = 1;
+							blocksData[blockId] = newNode;
+							blocksData.push(origNode);
+							//blockId = blockId;
+							inputId = 1;
 						}else{
 							let args = [];
 							for(let i=0;i<pD[step.type].inputs.length;i++){
 								args.push(-1);
 							}
-							data.push({
+							blocksData.push({
 								type: step.type,
-								parent:   dataId,
+								parent:   blockId,
 								args:  args
 							});
-							data[dataId].args[argId] = data.length - 1;
-							dataId = data.length - 1;
-							argId = 1;
+							blocksData[blockId].args[inputId] = blocksData.length - 1;
+							blockId = blocksData.length - 1;
+							inputId = 1;
 						}
 					}
-					if(argId !== data[dataId].args.length){
+					if(inputId !== blocksData[blockId].args.length){
 						stack.push({
-							dataId:dataId,
-							argId: argId,
-							text:  pD[data[dataId].type].texts[argId+1]
+							blockId:blockId,
+							inputId: inputId,
+							text:  pD[blocksData[blockId].type].texts[inputId+1]
 						})
 						mode = 1;
 					}else{
@@ -331,27 +331,22 @@
 		}
 		// 产生能看的表达方式
 		function lookString(p){
-			if(p === -1){
-				return "_";
-			}
-			let dp = data[p];
 			// debug("p:"+p)
-			let type = dp.type;
-			if(type === -1){
-				return lookString(dp.args[0]);
-			}else{
-				let pDp = blockType[type];
-				let ch = "[" + pDp.texts[0];
-				for(let i=0;i<dp.args.length;i++){
-					ch += " " + lookString(dp.args[i]);
-					ch += " " + pDp.texts[i+1];
-				}
-				return ch + "]";
+			let block = blocksData[p];
+			let type = block.type;
+			let bType = blockType[type];
+			let ch = "[" + bType.texts[0];
+			for(let i=0;i<block.args.length;i++){
+				ch += " " + lookString(block.args[i]);
+				ch += " " + bType.texts[i+1];
 			}
+			return ch + "]";
 		}
 		// 比较函数又被修改了。
 		// 用途：直观对比字符串(a找b)
 		function matchText(a,b){
+			// 比对器近视程度
+			let MAX_OFFSET = 10;
 			let bmatch = [], strSimilar = 0, left = 0;
 			for(let y=0;y<b.length;y++){
 				bmatch.push(false);
@@ -365,7 +360,7 @@
 							// 这里以后会换成更加模糊的判断
 							similar = 1;
 						}
-						similar *= 1-Math.abs(x/a.length-y/b.length)*0.5;
+						similar *= 1-Math.abs(x/a.length-y/b.length)*(a.length+b.length)/MAX_OFFSET;
 						if(best < similar){
 							best = similar;
 							bestY = y;
