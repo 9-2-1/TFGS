@@ -54,6 +54,7 @@
 	out.addEventListener('focus',function(event){
 		out.blur();
 	});
+	out.value = "Script loaded."
 
 	function workerF() {
 	// start worker
@@ -187,7 +188,7 @@
 					}
 				}
 				
-				if(mode >= 1){
+				if(true /* mode >= 1 */){
 					//getSecondPlacePattern;
 					for(let i=0;i<pD.length;i++){
 						let pi = pD[i];
@@ -247,16 +248,6 @@
 						dataId = lay.dataId;
 						argId = lay.argId;
 						argId++;
-						if(argId !== data[dataId].arg.length){
-							layer.push({
-								dataId:dataId,
-								argId: argId,
-								text:  pD[data[dataId].type].texts[argId+1]
-							})
-							mode = 1;
-						}else{
-							mode = 2; //不接受输入
-						}
 					}else if(step.mode === 1){
 						let args = [];
 						for(let i=0;i<pD[step.pattId].inputs.length;i++){
@@ -270,11 +261,6 @@
 						data[dataId].arg[argId] = data.length - 1;
 						dataId = data.length - 1;
 						argId = 0;
-						layer.push({
-							dataId:dataId,
-							argId: argId,
-							text:  pD[data[dataId].type].texts[argId+1]
-						});
 					}else{
 						//巨难无比
 						let args = [data.length];
@@ -291,16 +277,16 @@
 						data.push(origNode);
 						//dataId = dataId;
 						argId = 1;
-						if(argId !== data[dataId].arg.length){
-							layer.push({
-								dataId:dataId,
-								argId: argId,
-								text:  pD[data[dataId].type].texts[argId+1]
-							});
-							mode = 1;
-						}else{
-							mode = 2;
-						}
+					}
+					if(argId !== data[dataId].arg.length){
+						layer.push({
+							dataId:dataId,
+							argId: argId,
+							text:  pD[data[dataId].type].texts[argId+1]
+						})
+						mode = 1;
+					}else{
+						mode = 2; //不接受输入
 					}
 				}
 			}
