@@ -184,7 +184,9 @@
 							});
 						}
 					}
-				}else{
+				}
+				
+				if(mode === 1){
 					//getSecondPlacePattern;
 					for(let i=0;i<pD.length;i++){
 						let pi = pD[i];
@@ -210,22 +212,24 @@
 				}
 				debug(steps);
 				// checkPossibleSteps;
-				let max = 0, choice = -1;
-				for(let i=steps.length-1;i>=0;i--){
-					let si = steps[i];
-					let score;
-					if(si.text === ""){
-						score = 0.5;
-					}else{
-						let ftext = text.slice(textI,textI + Math.floor(senseRate * si.text.length));
-						debug(Math.floor(senseRate * si.text.length));
-						let diff = diffText(si.text,ftext,1,1);
-						score = si.text.length + ftext.length - diff;
-						debug(i+"\t"+si.text+"\t"+ftext+"\t"+score);
-					}
-					if(score > max){
-						max = score;
-						choice = i;
+				let max = 0, choice;
+				for(choice=-1;textI<text.length && choice===-1;textI++){
+					for(let i=steps.length-1;i>=0;i--){
+						let si = steps[i];
+						let score;
+						if(si.text === ""){
+							score = 0.5;
+						}else{
+							let ftext = text.slice(textI,textI + Math.floor(senseRate * si.text.length));
+							debug(Math.floor(senseRate * si.text.length));
+							let diff = diffText(si.text,ftext,1,1);
+							score = si.text.length + ftext.length - diff;
+							debug(i+"\t"+si.text+"\t"+ftext+"\t"+score);
+						}
+						if(score > max){
+							max = score;
+							choice = i;
+						}
 					}
 				}
 				// doPossibleSteps;
@@ -234,7 +238,7 @@
 				}else{
 					let step = steps[choice];
 					debug(step);
-					textI += step.text.length;
+					textI += step.text.length - 1;
 					if(step.layer !== -1){
 						layer.splice(step.layer+1,layer.length-step.layer-1);
 						let lay = layer.pop();
