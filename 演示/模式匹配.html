@@ -63,7 +63,7 @@
 		postMessage(match(msg.data));
 	}
 
-	let pattern = [
+	let blockText = [
 		/* “.”表示输入 */
 		".*.",
 		"./.",
@@ -76,7 +76,7 @@
 		"load.from.",
 	];
 	
-	let patternData = [/*
+	let blockType = [/*
 		{
 			output: 输出类型(目前为1),
 			inputs: [输入类型(目前为1), ...], //有输入个个数
@@ -91,26 +91,26 @@
 		let data = [
 		{
 			type: -1/*代表开始点*/,
-			up:   -1,
-			arg:  [-1/*开始积木编号*/]
+			parent:   -1,
+			args:  [-1/*开始积木编号*/]
 			// 开始的时候，编辑的的参数位置就是这里
 		}/*,
 		// 接下来是正常的数据格式
 		{
-			type: 类型(pattern序号),
-			up:   外面积木序号,
-			arg:  [参数积木的序号(-1表示没有), ...]
+			type: 类型(blockText序号),
+			parent:   外面积木序号,
+			args:  [参数积木的序号(-1表示没有), ...]
 		}, ...
 		*/];
-		let layer = [/*
+		let stack = [/*
 		{
 			dataId: 数据位置,
 			argId:  参数位置,
 			text:   匹配文字
 		}, ...
 		*/];
-		preProcessPattern();
-		//return JSON.stringify(patternData);
+		blockTextToType();
+		//return JSON.stringify(blockType);
 		let debugstr = "";
 		function debug(x){
 			debugstr += (typeof x === "string" ? x : JSON.stringify(x)) + "\n";
@@ -127,11 +127,11 @@
 		}
 		return debugstr;
 		
-		function preProcessPattern(){
-			patternData = [];
-			for(let i=0;i<pattern.length;i++){
-				let str = pattern[i];
-				let pat = {
+		function blockTextToType(){
+			blockType = [];
+			for(let i=0;i<blockText.length;i++){
+				let str = blockText[i];
+				let block = {
 					output: 1, /*输出类型(目前为1)*/
 					inputs: [/*输入类型(目前为1), ...*/], //有输入个个数
 					texts: [/*"输入间穿插文本", ...*/]  //有输入+1个个数
@@ -139,37 +139,35 @@
 				let ch = "";
 				for(let j=0;j<str.length;j++){
 					if(str[j] === "."){
-						pat.texts.push(ch);
-						pat.inputs.push(1);
+						block.texts.push(ch);
+						block.inputs.push(1);
 						ch = "";
 					}else{
 						ch += str[j];
 					}
 				}
-				pat.texts.push(ch);
-				patternData.push(pat);
+				block.texts.push(ch);
+				blockType.push(block);
 			}
 		}
 
 		function guessPossibleMode(){
-			const pD = patternData;
-			const senseRate = 1.5;
-			layer = [];
+			stack = [];
 			let dataId = 0;
 			let argId = 0;
 			let mode = 1;
 			let textI = 0;
 			while(1){
 				// debug(textI);
-				// debug(layer);
+				// debug(stack);
 				// debug(data);
 				// debug(lookString(0));
 				// guessPossibleSteps;
 				let steps = [/*
 				{
 					text:   判定文字(可能是空的),
-					layer:  返回层级 或者 -1代表新积木,
-					pattId: 选择/连接积木序号,
+					stack:  返回层级 或者 -1代表新积木,
+					type:   选择/连接积木类型,
 					mode:   1选择，2连接(考虑优先导致重组)
 				}, ...
 				*/];
@@ -180,8 +178,8 @@
 						if(pi.texts[0] !== ""){
 							steps.push({
 								text:   pi.texts[0],
-								layer:  -1,
-								pattId: i,
+								stack:  -1,
+								type: i,
 								mode:   1,
 							});
 						}
@@ -195,19 +193,19 @@
 						if(pi.texts[0] === ""){
 							steps.push({
 								text:   pi.texts[1],
-								layer:  -1,
-								pattId: i,
+								stack:  -1,
+								type: i,
 								mode:   2,
 							});
 						}
 					}
 					//getRollBackPattern;
-					for(let i=0;i<layer.length;i++){
-						let li = layer[i];
+					for(let i=0;i<stack.length;i++){
+						let li = stack[i];
 						steps.push({
 							text:   li.text,
-							layer:  i,
-							pattId: -1,
+							stack:  i,
+							type: -1,
 							mode:   0,
 						});
 					}
@@ -242,23 +240,23 @@
 					let step = steps[choice];
 					// debug(step);
 					textI += step.text.length - 1;
-					if(step.layer !== -1){
-						layer.splice(step.layer+1,layer.length-step.layer-1);
-						let lay = layer.pop();
-						dataId = lay.dataId;
-						argId = lay.argId;
+					if(step.stack !== -1){
+						stack.splice(step.stack+1,stack.length-step.stack-1);
+						let frame = stack.pop();
+						dataId = frame.dataId;
+						argId = frame.argId;
 						argId++;
 					}else if(step.mode === 1){
 						let args = [];
-						for(let i=0;i<pD[step.pattId].inputs.length;i++){
+						for(let i=0;i<pD[step.type].inputs.length;i++){
 							args.push(-1);
 						}
 						data.push({
-							type: step.pattId,
-							up:   dataId,
-							arg:  args
+							type: step.type,
+							parent:   dataId,
+							args:  args
 						});
-						data[dataId].arg[argId] = data.length - 1;
+						data[dataId].args[argId] = data.length - 1;
 						dataId = data.length - 1;
 						argId = 0;
 					}else{
@@ -273,8 +271,8 @@
 						// 检查不能左结合情况
 						// A不是最后一个参数？
 						var tA = data[dataId].type;
-						var tB = step.pattId;
-						if(argId !== data[dataId].arg.length-1){
+						var tB = step.type;
+						if(argId !== data[dataId].args.length-1){
 							debug("i");
 							method = 2;
 						}
@@ -289,14 +287,14 @@
 						}
 						if(method === 1){
 							let args = [data.length];
-							for(let i=1;i<pD[step.pattId].inputs.length;i++){
+							for(let i=1;i<pD[step.type].inputs.length;i++){
 								args.push(-1);
 							}
 							let origNode = data[dataId];
 							let newNode = {
-								type: step.pattId,
-								up:   data[dataId].up,
-								arg:  args
+								type: step.type,
+								parent:   data[dataId].parent,
+								args:  args
 							}
 							data[dataId] = newNode;
 							data.push(origNode);
@@ -304,21 +302,21 @@
 							argId = 1;
 						}else{
 							let args = [];
-							for(let i=0;i<pD[step.pattId].inputs.length;i++){
+							for(let i=0;i<pD[step.type].inputs.length;i++){
 								args.push(-1);
 							}
 							data.push({
-								type: step.pattId,
-								up:   dataId,
-								arg:  args
+								type: step.type,
+								parent:   dataId,
+								args:  args
 							});
-							data[dataId].arg[argId] = data.length - 1;
+							data[dataId].args[argId] = data.length - 1;
 							dataId = data.length - 1;
 							argId = 1;
 						}
 					}
-					if(argId !== data[dataId].arg.length){
-						layer.push({
+					if(argId !== data[dataId].args.length){
+						stack.push({
 							dataId:dataId,
 							argId: argId,
 							text:  pD[data[dataId].type].texts[argId+1]
@@ -339,12 +337,12 @@
 			// debug("p:"+p)
 			let type = dp.type;
 			if(type === -1){
-				return lookString(dp.arg[0]);
+				return lookString(dp.args[0]);
 			}else{
-				let pDp = patternData[type];
+				let pDp = blockType[type];
 				let ch = "[" + pDp.texts[0];
-				for(let i=0;i<dp.arg.length;i++){
-					ch += " " + lookString(dp.arg[i]);
+				for(let i=0;i<dp.args.length;i++){
+					ch += " " + lookString(dp.args[i]);
 					ch += " " + pDp.texts[i+1];
 				}
 				return ch + "]";
