@@ -112,16 +112,17 @@
 		//return JSON.stringify(patternData);
 		let debugstr = "";
 		function debug(x){
-			debugstr += (typeof x === "string" ? x : JSON.stringify(x)) + "\n";
+			//debugstr += (typeof x === "string" ? x : JSON.stringify(x)) + "\n";
+			debugstr += " "
 			if(debugstr.length > 100000){
 				throw new Error("debug124554066086");
 			}
 		}
 		try{
 			guessPossibleMode();
-			debugstr = lookString(0) + "\n\n" + debugstr;
+			debugstr = lookString(0) + "\n\n"// + debugstr;
 		}catch(e){
-			debugstr = e.message + "\n\n" + debugstr;
+			debugstr = e.message + "\n\n"// + debugstr;
 		}
 		return debugstr;
 		
@@ -186,7 +187,7 @@
 					}
 				}
 				
-				if(mode === 1){
+				if(mode >= 1){
 					//getSecondPlacePattern;
 					for(let i=0;i<pD.length;i++){
 						let pi = pD[i];
@@ -218,12 +219,11 @@
 						let si = steps[i];
 						let score;
 						if(si.text === ""){
-							score = 0.5;
+							score = 1e-10;
 						}else{
-							let ftext = text.slice(textI,textI + Math.floor(senseRate * si.text.length));
-							debug(Math.floor(senseRate * si.text.length));
+							let ftext = text.slice(textI,textI + si.text.length);
 							let diff = diffText(si.text,ftext,1,1);
-							score = si.text.length + ftext.length - diff;
+							score = (si.text.length + ftext.length - diff) / 2 / si.text.length;
 							debug(i+"\t"+si.text+"\t"+ftext+"\t"+score);
 						}
 						if(score > max){
@@ -245,6 +245,16 @@
 						dataId = lay.dataId;
 						argId = lay.argId;
 						argId++;
+						if(argId !== data[dataId].arg.length){
+							layer.push({
+								dataId:dataId,
+								argId: argId,
+								text:  pD[data[dataId].type].texts[argId+1]
+							})
+							mode = 1;
+						}else{
+							mode = 2; //不接受输入
+						}
 					}else if(step.mode === 1){
 						let args = [];
 						for(let i=0;i<pD[step.pattId].inputs.length;i++){
@@ -256,20 +266,19 @@
 							arg:  args
 						});
 						data[dataId].arg[argId] = data.length - 1;
+						dataId = data.length - 1;
+						argId = 0;
 						layer.push({
 							dataId:dataId,
 							argId: argId,
-							text:  data[dataId].type === -1 ? "" : pD[data[dataId].type].texts[argId+1]
-						})
-						dataId = data.length - 1;
-						argId = 0;
+							text:  pD[data[dataId].type].texts[argId+1]
+						});
 					}else{
 						//巨难无比
-						let args = [];
-						for(let i=0;i<pD[step.pattId].inputs.length;i++){
+						let args = [data.length];
+						for(let i=1;i<pD[step.pattId].inputs.length;i++){
 							args.push(-1);
 						}
-						args[0] = dataId;
 						let origNode = data[dataId];
 						let newNode = {
 							type: step.pattId,
@@ -277,13 +286,19 @@
 							arg:  args
 						}
 						data[dataId] = newNode;
-						data.push({
-							type: step.pattId,
-							up:   data[dataId].up,
-							arg:  args
-						});
-						dataId = data.length - 1;
+						data.push(origNode);
+						//dataId = dataId;
 						argId = 1;
+						if(argId !== data[dataId].arg.length){
+							layer.push({
+								dataId:dataId,
+								argId: argId,
+								text:  pD[data[dataId].type].texts[argId+1]
+							});
+							mode = 1;
+						}else{
+							mode = 2;
+						}
 					}
 				}
 			}
