@@ -112,17 +112,17 @@
 		//return JSON.stringify(patternData);
 		let debugstr = "";
 		function debug(x){
-			//debugstr += (typeof x === "string" ? x : JSON.stringify(x)) + "\n";
-			debugstr += " "
+			debugstr += (typeof x === "string" ? x : JSON.stringify(x)) + "\n";
+			// debugstr += " ";
 			if(debugstr.length > 100000){
 				throw new Error("debug124554066086");
 			}
 		}
 		try{
 			guessPossibleMode();
-			debugstr = lookString(0) + "\n\n"// + debugstr;
+			debugstr = lookString(0) + "\n\n" + debugstr;
 		}catch(e){
-			debugstr = e.message + "\n\n"// + debugstr;
+			debugstr = e.message + "\n\n" + debugstr;
 		}
 		return debugstr;
 		
@@ -159,10 +159,10 @@
 			let mode = 1;
 			let textI = 0;
 			while(1){
-				debug(textI);
-				debug(layer);
-				debug(data);
-				debug(lookString(0));
+				// debug(textI);
+				// debug(layer);
+				// debug(data);
+				// debug(lookString(0));
 				// guessPossibleSteps;
 				let steps = [/*
 				{
@@ -211,20 +211,21 @@
 						});
 					}
 				}
-				debug(steps);
+				// debug(steps);
 				// checkPossibleSteps;
-				let max = 0, choice;
+				let max = 0.5, choice;
+				let textI0 = textI;
 				for(choice=-1;textI<text.length && choice===-1;textI++){
 					for(let i=steps.length-1;i>=0;i--){
 						let si = steps[i];
 						let score;
 						if(si.text === ""){
-							score = 1e-10;
+							score = 0;
 						}else{
 							let ftext = text.slice(textI,textI + si.text.length);
 							let diff = diffText(si.text,ftext,1,1);
 							score = (si.text.length + ftext.length - diff) / 2 / si.text.length;
-							debug(i+"\t"+si.text+"\t"+ftext+"\t"+score);
+							// debug(i+"\t"+si.text+"\t"+ftext+"\t"+score);
 						}
 						if(score > max){
 							max = score;
@@ -232,12 +233,13 @@
 						}
 					}
 				}
+				debug({skip:text.slice(textI0,textI-1)});
 				// doPossibleSteps;
 				if(choice === -1){
 					return;
 				}else{
 					let step = steps[choice];
-					debug(step);
+					// debug(step);
 					textI += step.text.length - 1;
 					if(step.layer !== -1){
 						layer.splice(step.layer+1,layer.length-step.layer-1);
@@ -309,7 +311,7 @@
 				return "_";
 			}
 			let dp = data[p];
-			debug("p:"+p)
+			// debug("p:"+p)
 			let type = dp.type;
 			if(type === -1){
 				return lookString(dp.arg[0]);
