@@ -65,15 +65,15 @@
 
 	let pattern = [
 		/* “.”表示输入 */
-		"save.to.",
-		"load.from.",
-		"(.)",
-		".+.",
-		".-.",
 		".*.",
 		"./.",
+		".+.",
+		".-.",
 		".?.:.",
+		"(.)",
 		"\".\"",
+		"save.to.",
+		"load.from.",
 	];
 	
 	let patternData = [/*
@@ -263,20 +263,59 @@
 						argId = 0;
 					}else{
 						//巨难无比
-						let args = [data.length];
-						for(let i=1;i<pD[step.pattId].inputs.length;i++){
-							args.push(-1);
+						//这里有两个方法：
+						// (1) 左结合（把前面的积木换成这个积木的第一个参数）
+						//  ((  A  )B  )
+						// (2) 右结合（把这个积木变成前面的积木的最后一个参数）
+						//  (  A(  B  ))
+						let method = 1;
+						// 判断使用什么方法：
+						// 检查不能左结合情况
+						// A不是最后一个参数？
+						var tA = data[dataId].type;
+						var tB = step.pattId;
+						if(argId !== data[dataId].arg.length-1){
+							debug("i");
+							method = 2;
 						}
-						let origNode = data[dataId];
-						let newNode = {
-							type: step.pattId,
-							up:   data[dataId].up,
-							arg:  args
+						debug("ii");
+						debug(tA);
+						debug(tB);
+						if(tA !== -1 && tB !== -1 && pD[tA].texts[pD[tA].texts.length-1] === ""
+						&& pD[tB].texts[0] === ""
+						&& tA > tB){
+							debug("II");
+							method = 2;
 						}
-						data[dataId] = newNode;
-						data.push(origNode);
-						//dataId = dataId;
-						argId = 1;
+						if(method === 1){
+							let args = [data.length];
+							for(let i=1;i<pD[step.pattId].inputs.length;i++){
+								args.push(-1);
+							}
+							let origNode = data[dataId];
+							let newNode = {
+								type: step.pattId,
+								up:   data[dataId].up,
+								arg:  args
+							}
+							data[dataId] = newNode;
+							data.push(origNode);
+							//dataId = dataId;
+							argId = 1;
+						}else{
+							let args = [];
+							for(let i=0;i<pD[step.pattId].inputs.length;i++){
+								args.push(-1);
+							}
+							data.push({
+								type: step.pattId,
+								up:   dataId,
+								arg:  args
+							});
+							data[dataId].arg[argId] = data.length - 1;
+							dataId = data.length - 1;
+							argId = 1;
+						}
 					}
 					if(argId !== data[dataId].arg.length){
 						layer.push({
