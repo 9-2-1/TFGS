@@ -81,9 +81,10 @@
 	// 从这里开始匹配。这次换一个比较直觉的方式
 	function match(text){
 		// 测试子函数
-		// return JSON.stringify(matchText.apply(this,text.split("|")));
+		return JSON.stringify(matchText.apply(this,text.split("|")));
 		// return JSON.stringify(matchChar.apply(this,text.split("")));
-		return JSON.stringify(matchTextSimple.apply(this,text.split("|")));
+		// return JSON.stringify(getPinYin(text));
+		// return JSON.stringify(matchTextSimple.apply(this,text.split("|")));
 		// 积木结构数据
 		let blocksData = [{
 			type: 0, // 初始文本积木
@@ -361,16 +362,26 @@
 		}
 		// 比对字符
 		function matchChar(a,b){
+			let PINYIN_WEIGHT = 0.9;
 			if(a+b in matchCharCache){
 				return matchCharCache[a+b];
 			}else{
-				a = getPinYin(a).concat(a);
-				b = getPinYin(b).concat(b);
+				a = [a].concat(getPinYin(a));
+				b = [b].concat(getPinYin(b));
 				let max = 0;
 				for(let x=0;x<a.length;x++){
 					for(let y=0;y<b.length;y++){
 						// 和matchText不同，不考虑left和拼音问题
-						matchTextSimple(a[x],b[y]);
+						let score = matchTextSimple(a[x],b[y]);
+						if(x !== 0){
+							score *= PINYIN_WEIGHT;
+						}
+						if(y !== 0){
+							score *= PINYIN_WEIGHT;
+						}
+						if(max < score){
+							max = score;
+						}
 					}
 				}
 				matchCharCache[a+b] = max;
@@ -380,6 +391,7 @@
 		// 和matchText不同，不考虑left和拼音问题
 		function matchTextSimple(a,b){
 			// 比对器近视程度
+			let CASE_WEIGHT = 0.8;
 			let MAX_OFFSET = 4;
 			let bmatch = [], strSimilar = 0, left = -1;
 			for(let y=0;y<b.length;y++){
@@ -393,7 +405,7 @@
 						if(a[x] === b[y]){
 							similar = 1;
 						}else if(a[x].toLowerCase() === b[y].toLowerCase()){
-							similar = 0.7;
+							similar = CASE_WEIGHT;
 						}
 						similar *= 1-Math.abs(x-y)/MAX_OFFSET;
 						if(best < similar){
@@ -409,7 +421,7 @@
 			}
 			return strSimilar / (a.length + b.length) * 2;
 		}
-		// 获取可能的拼音(及表述方式)
+		// 获取单字可能的拼音(及表述方式)
 		function getPinYin(x){
 			if(x in getPinYinCache){
 				return getPinYinCache[x];
@@ -417,7 +429,7 @@
 				let list = [];
 				for(let p in pinYin){
 					if(pinYin[p].includes(x)){
-						list.push[p];
+						list.push(p);
 					}
 				}
 				getPinYinCache[x] = list;
