@@ -160,9 +160,9 @@
 			let mode = 1; // 1替换还是2右结合模式
 			let textI = 0;
 			while(1){
-				debug(textI);
-				debug(blockStack);
-				debug(blocksData);
+				// debug(textI);
+				// debug(blockStack);
+				// debug(blocksData);
 				debug(lookString(0));
 				// guessPossibleSteps;
 				let steps = [/*
@@ -212,7 +212,7 @@
 						});
 					}
 				}
-				debug(steps);
+				// debug(steps);
 				// checkPossibleSteps;
 				let max = 0.5, choice, mlength;
 				let textI0 = textI;
@@ -223,7 +223,7 @@
 						let ftext = text.slice(textI, textI + Math.floor(si.text.length * 1.2));
 						match = matchText(ftext, si.text);
 						score = match.similarity*match.left/si.text.length;
-						debug(i+"\t"+si.text+"\t"+ftext+"\t"+match.left+"\t"+score);
+						// debug(i+"\t"+si.text+"\t"+ftext+"\t"+match.left+"\t"+score);
 						if(score > max){
 							max = score;
 							choice = i;
