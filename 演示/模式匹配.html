@@ -15,21 +15,25 @@
 	var out = document.getElementById("out");
 	var wok = new WorkerFunc(workerF);
 	var workTime = false, workTout = -1;
-	inn.addEventListener('keydown',function(event){
-		if(workTime){
-			if(workTout === null){
-				workTout = setInterval(function(){
-					if(!workTime){
-						startWork();
-						clearInterval(workTout);
-						workTout = null;
-					}
-				},30);
+	inn.addEventListener('keydown',innChange);
+	inn.addEventListener('paste',innChange);
+	function innChange(event){
+		setTimeout(function(){
+			if(workTime){
+				if(workTout === null){
+					workTout = setInterval(function(){
+						if(!workTime){
+							startWork();
+							clearInterval(workTout);
+							workTout = null;
+						}
+					},30);
+				}
+			}else{
+				startWork();
 			}
-		}else{
-			startWork();
-		}
-	});
+		},0);
+	}
 	function startWork(){
 		out.style.color = "blue";
 		workTime = true;
@@ -50,6 +54,7 @@
 	out.addEventListener('focus',function(event){
 		out.blur();
 	});
+	out.value = "Script loaded."
 
 	function workerF() {
 	// start worker
@@ -58,107 +63,297 @@
 		postMessage(match(msg.data));
 	}
 
-	var pattern = ["下一个背景","将.特效增加.","将.特效设定为.","清除图形特效","背景.","停止所有声音","将.音效增加.","将.音效设为.","清除音效","将音量增加.","将音量设为.%","当flag被点击","当按下.键","当.>.","等待.秒","重复执行.次.*","重复执行.*","如果.那么.","如果.那么.否则.","等待.","重复执行直到..*","询问.并等待","回答","按下.键?","按下鼠标?","鼠标的x坐标","鼠标的y坐标","响度","计时器","计时器归零","当前时间的.","2000年至今的天数","用户名",".+.",".-.",".*.","./.","在.和.之间取随机数",".>.",".<.",".=.",".与.",".或.",".不成立","连接.和.",".的第.个字符",".的字符数",".包含.?",".除以.的余数","四舍五入.","..","移动.步","右转.度","左转.度","移到 x:.y:.","在.秒内滑行到 x:.y:.","面向.方向","将x坐标增加.","将x坐标设为.","将y坐标增加.","将y坐标设为.","碰到边缘就反弹","将旋转方式设为.","x 坐标","y 坐标","方向","说..秒","说.","思考..秒","思考.","下一个造型","将大小增加.","将大小设为.","显示","隐藏","移到最.","..层","造型.","大小","音量","当角色被点击","当作为克隆体启动时","删除此克隆体","碰到颜色.?","颜色.碰到.?","将拖动模式设为.","击打..拍","休止.拍","演奏音符..拍","将乐器设为.","将演奏速度设定为.","将演奏速度增加.","演奏速度","全部擦除","图章","落笔","抬笔","将笔的颜色设为.","将笔的.增加.","将笔的.设为.","将笔的粗细增加.","将笔的粗细设为.","当视频运动 >.","相对于.的视频.",".摄像头","将视频透明度设为.","朗读.","使用.嗓音","将朗读语言设置为.","将.译为.","访客语言","移到.","在.秒内滑行到.","面向.","换成.造型","换成.背景","播放声音.等待播完","播放声音.","当背景换成.","当接收到.","广播.","广播.并等待","停止.","克隆.","碰到.?","到.的距离",".的.","1","将.设为.","将.增加.","显示变量.","隐藏变量.","2","将.加入.","删除.的第.项","删除.的全部项目","在.的第.项前插入.","将.的第.项替换为.",".的第.项",".中第一个.的编号",".的项目数",".包含.?","显示列表.","隐藏列表.","当按下.键","当依次按下.键时"];
-
+	let blockText = ["下一个背景","将.特效增加.","将.特效设定为.","清除图形特效","背景.","停止所有声音","将.音效增加.","将.音效设为.","清除音效","将音量增加.","将音量设为.%","当flag被点击","当按下.键","当.>.","等待.秒","重复执行.次.*","重复执行.*","如果.那么.","如果.那么.否则.","等待.","重复执行直到..*","询问.并等待","回答","按下.键?","按下鼠标?","鼠标的x坐标","鼠标的y坐标","响度","计时器","计时器归零","当前时间的.","2000年至今的天数","用户名",".+.",".-.",".*.","./.","在.和.之间取随机数",".>.",".<.",".=.",".与.",".或.",".不成立","连接.和.",".的第.个字符",".的字符数",".包含.?",".除以.的余数","四舍五入.","..","移动.步","右转.度","左转.度","移到 x:.y:.","在.秒内滑行到 x:.y:.","面向.方向","将x坐标增加.","将x坐标设为.","将y坐标增加.","将y坐标设为.","碰到边缘就反弹","将旋转方式设为.","x 坐标","y 坐标","方向","说..秒","说.","思考..秒","思考.","下一个造型","将大小增加.","将大小设为.","显示","隐藏","移到最.","..层","造型.","大小","音量","当角色被点击","当作为克隆体启动时","删除此克隆体","碰到颜色.?","颜色.碰到.?","将拖动模式设为.","击打..拍","休止.拍","演奏音符..拍","将乐器设为.","将演奏速度设定为.","将演奏速度增加.","演奏速度","全部擦除","图章","落笔","抬笔","将笔的颜色设为.","将笔的.增加.","将笔的.设为.","将笔的粗细增加.","将笔的粗细设为.","当视频运动 >.","相对于.的视频.",".摄像头","将视频透明度设为.","朗读.","使用.嗓音","将朗读语言设置为.","将.译为.","访客语言","移到.","在.秒内滑行到.","面向.","换成.造型","换成.背景","播放声音.等待播完","播放声音.","当背景换成.","当接收到.","广播.","广播.并等待","停止.","克隆.","碰到.?","到.的距离",".的.","将.设为.","将.增加.","显示变量.","隐藏变量.","将.加入.","删除.的第.项","删除.的全部项目","在.的第.项前插入.","将.的第.项替换为.",".的第.项",".中第一个.的编号",".的项目数",".包含.?","显示列表.","隐藏列表.","当按下.键","当依次按下.键时","(.)","\".\""];
+	
+	let blockType = [/*
+		{
+			output: 输出类型(目前为1),
+			inputs: [输入类型(目前为1), ...], //有输入个个数
+			texts: ["输入间穿插文本", ...]  //有输入+1个个数
+		},
+		...
+	*/];
+	
+	// 从这里开始匹配。这次换一个比较直觉的方式
 	function match(text){
-		var tree = [];
-		var fillings = [];
-		var diffCache;
-		var resultIn;
-		var results;
-		var errorLevel = text.length * 0.5;
-		do {
-			errorLevel += 1;
-			diffCache = {};
-			resultIn = {};
-			results = [];
-			search(tree);
-		} while(results.length < 2 && errorLevel < text.length * 0.5);
-		return errorLevel + "\n" + results.sort(sortResult).join('\n');
-		
-		function sortResult(a,b){
-			return Number(a.split('\t')[0]) - Number(b.split('\t')[0]);
+		// 积木结构数据
+		let blocksData = [{
+			type: 0, // 初始文本积木
+			parent: -1,
+			inputs: [""]
+		}/*,
+		{
+			type: 类型(blockText序号，0表示文本),
+			parent:   外面积木序号,
+			inputs:  [参数积木的序号，type=0表示文本, ...]
+		}, ...
+		*/];
+		let blockStack = [/*
+		{
+			blockId: 数据位置,
+			inputId:  参数位置,
+			text:   匹配文字
+		}, ...
+		*/];
+		blockTextToType();
+		//return JSON.stringify(blockType);
+		let debugstr = "";
+		function debug(x){
+			debugstr += (typeof x === "string" ? x : JSON.stringify(x)) + "\n";
+			// debugstr += " ";
+			if(debugstr.length > 100000){
+				throw new Error("debug124554066086");
+			}
 		}
-		function search(thisTree){
-			var str = tree2str(tree);
-			var diff = diffText(str);
-			for(var i=0;i<pattern.length;i++){
-				var diff1 = tryPattern(thisTree,i);
-				if(diff1 < diff){
-					checkFillings(thisTree);
-					//diff0 = diff1;
+		try{
+			guessPossibleMode();
+			debugstr = String(lookString(0)) + "\n\n" + debugstr;
+		}catch(e){
+			debugstr = e.message + "\n\n" + debugstr;
+		}
+		return debugstr;
+
+		function blockTextToType(){
+			blockType = [{ //特殊的type=0
+				output: 1,
+				inputs: [1], //这里对应的是文本，不是积木编号
+				texts:  ["",""]
+			}];
+			for(let i=0;i<blockText.length;i++){
+				let str = blockText[i];
+				let block = {
+					output: 1, /*输出类型(目前为1)*/
+					inputs: [/*输入类型(目前为1), ...*/], //有输入个个数
+					texts: [/*"输入间穿插文本", ...*/]  //有输入+1个个数
+				};
+				let ch = "";
+				for(let j=0;j<str.length;j++){
+					if(str[j] === "."){
+						block.texts.push(ch);
+						block.inputs.push(1);
+						ch = "";
+					}else{
+						ch += str[j];
+					}
+				}
+				block.texts.push(ch);
+				blockType.push(block);
+			}
+		}
+
+		function guessPossibleMode(){
+			const bT = blockType;
+			let blockId = 0;
+			let inputId = 0;
+			let mode = 1; // 1替换还是2右结合模式
+			let textI = 0;
+			while(1){
+				// debug(textI);
+				// debug(blockStack);
+				// debug(blocksData);
+				debug(lookString(0));
+				// guessPossibleSteps;
+				let steps = [/*
+				{
+					text:   判定文字(可能是空的),
+					stack:  返回层级 或者 -1代表新积木,
+					type:   选择/连接积木类型,
+					mode:   1替换或者2右结合
+				}, ...
+				*/];
+				if(mode === 1){
+					// getFirstPlacePattern;
+					for(let i=0;i<bT.length;i++){
+						let bi = bT[i];
+						if(bi.texts[0] !== ""){
+							steps.push({
+								text:   bi.texts[0],
+								stack:  -1,
+								type:   i,
+								mode:   1,
+							});
+						}
+					}
+				}
+				
+				if(true /* mode >= 1 */){
+					// getSecondPlacePattern;
+					for(let i=0;i<bT.length;i++){
+						let bi = bT[i];
+						if(bi.texts[0] === ""){
+							steps.push({
+								text:   bi.texts[1],
+								stack:  -1,
+								type:   i,
+								mode:   2,
+							});
+						}
+					}
+					//getRollBackPattern;
+					for(let i=0;i<blockStack.length;i++){
+						let si = blockStack[i];
+						steps.push({
+							text:   si.text,
+							stack:  i,
+							type:  -1,
+							mode:   0,
+						});
+					}
+				}
+				// debug(steps);
+				// checkPossibleSteps;
+				let max = 0.5, choice, mlength;
+				let textI0 = textI;
+				for(choice=-1;textI<text.length && choice===-1;){
+					for(let i=steps.length-1;i>=0;i--){
+						let si = steps[i];
+						let match, score;
+						let ftext = text.slice(textI, textI + Math.floor(si.text.length * 1.2));
+						match = matchText(ftext, si.text);
+						score = match.similarity*match.left/si.text.length;
+						// debug(i+"\t"+si.text+"\t"+ftext+"\t"+match.left+"\t"+score);
+						if(score > max){
+							max = score;
+							choice = i;
+							mlength = match.left;
+						}
+					}
+					if(choice === -1){
+						textI++;
+					}
+				}
+				if(mode === 1){
+					blocksData[blockId].inputs[inputId] += text.slice(textI0,textI);
+				}else{
+					debug({skip:text.slice(textI0,textI)});
+				}
+				// doPossibleSteps;
+				if(choice === -1){
+					return;
+				}else{
+					let step = steps[choice];
+					debug(step);
+					textI += mlength;
+					if(step.stack !== -1){
+						blockStack.splice(step.stack+1,blockStack.length-step.stack-1);
+						let frame = blockStack.pop();
+						blockId = frame.blockId;
+						inputId = frame.inputId;
+						inputId++;
+					}else if(step.mode === 1){
+						let inputs = [];
+						for(let i=0;i<bT[step.type].inputs.length;i++){
+							inputs.push(-1);
+						}
+						blocksData.push({
+							type:   step.type,
+							parent: blockId,
+							inputs: inputs
+						});
+						let bbii = blocksData[blockId].inputs[inputId];
+						debug({skip:(bbii)});
+						blocksData[blockId].inputs[inputId] = blocksData.length - 1;
+						blockId = blocksData.length - 1;
+						inputId = 0;
+					}else{
+						//右结合（把这个积木变成前面的积木的最后一个参数）
+						//  (  A(  B  ))
+						let inputs = [blocksData.length];
+						for(let i=1;i<bT[step.type].inputs.length;i++){
+							inputs.push(-1);
+						}
+						let origNode = blocksData[blockId];
+						let newNode = {
+							type:   step.type,
+							parent: blocksData[blockId].parent,
+							inputs: inputs
+						}
+						blocksData[blockId] = newNode;
+						blocksData.push(origNode);
+						//blockId = blockId;
+						inputId = 1;
+					}
+					if(inputId !== blocksData[blockId].inputs.length){
+						blockStack.push({
+							blockId: blockId,
+							inputId: inputId,
+							text:  bT[blocksData[blockId].type].texts[inputId+1]
+						})
+						blocksData[blockId].inputs[inputId] = blocksData.length;
+						blocksData.push({
+							type: 0,
+							parent: blockId,
+							inputs: [""]
+						})
+						blockId = blocksData.length - 1;
+						inputId = 0;
+						mode = 1;
+					}else{
+						mode = 2; //不接受输入
+					}
 				}
 			}
-			thisTree.splice(0,thisTree.length);
-			checkFillings([]);
-			return diff;
 		}
-		function tryPattern(thisTree,id){
-			thisTree.splice(0,thisTree.length);
-			thisTree.push(id);
-			var patte = pattern[id];
-			var re = /\./g;
-			var resu;
-			while((resu = re.exec(patte)) !== null){
-				thisTree.push([]);
+		// 产生能看的表达方式
+		function lookString(p){
+			// debug("p:"+p)
+			if(p === -1){
+				return "?";
 			}
-			str = tree2str(tree);
-			return diffText(str);
-		}
-		function checkFillings(thisTree){
-			for(var i=1;i<thisTree.length;i++){
-				fillings.push(thisTree[i]);
-			}
-			if(fillings.length !== 0){
-				var fill=fillings.pop();
-				search(fill);
-				fillings.push(fill);
-			}else{
-				var str = tree2str(tree);
-				if(!(str in resultIn)){
-					results.push(diffText(str,text) + "\t" + str);
-					resultIn[str]=1;
+			let block = blocksData[p];
+			let type = block.type;
+			if(type === 0){
+				p = block.inputs[0];
+				if(typeof p === "string"){
+					return JSON.stringify(p);
+				}else{
+					return lookString(p);
 				}
 			}
-			for(var i=1;i<thisTree.length;i++){
-				fillings.pop();
+			let bType = blockType[type];
+			let ch = "[" + bType.texts[0];
+			for(let i=0;i<block.inputs.length;i++){
+				ch += " " + lookString(block.inputs[i]);
+				ch += " " + bType.texts[i+1];
 			}
+			return ch + "]";
 		}
-		function tree2str(tree){
-			if(tree.length == 0){
-				return ".";
-			}else{
-				var cnt=0;
-				return pattern[tree[0]].replace(/\./g,function(){
-					cnt++;
-					return tree2str(tree[cnt]);
-				})
+		// 比较函数又被修改了。
+		// 用途：直观对比字符串(a找b)
+		function matchText(a,b){
+			// 比对器近视程度
+			let MAX_OFFSET = 10;
+			let bmatch = [], strSimilar = 0, left = -1;
+			for(let y=0;y<b.length;y++){
+				bmatch.push(false);
 			}
-		}
-		function diffText(str){
-			if(str in diffCache){
-				return diffCache[str];
-			}
-			str = str.replace(/\./g,"");
-			var dp = [], leftup, min, min2;
-			for(var x=0;x<=str.length;x++){
-				dp.push(x * text.length);
-			}
-			for(var y=0;y<text.length;y++){
-				leftup = dp[0];
-				dp[0] = (y+1) * errorLevel;
-				for(var x=0;x<str.length;x++){
-					min = Math.min(
-						dp[ x ] + text.length,
-						dp[x+1] + errorLevel,
-						leftup + (str[x]===text[y] ? 0 :
-						errorLevel + text.length)
-					);
-					leftup = dp[x+1];
-					dp[x+1] = min;
+			for(let x=0;x<a.length;x++){
+				let bestY = -1, best = 0;
+				for(let y=0;y<b.length;y++){
+					if(!bmatch[y]){
+						let similar = 0;
+						if(a[x] === b[y]){
+							// 这里以后会换成更加模糊的判断
+							similar = 1;
+						}
+						similar *= 1-Math.abs(x-y)/MAX_OFFSET;
+						if(best < similar){
+							best = similar;
+							bestY = y;
+						}
+					}
+				}
+				if(bestY !== -1){
+					bmatch[bestY] = true;
+					strSimilar += best;
+					left = x;
 				}
 			}
-			return dp[str.length];
+			left+=1;
+			return {
+				similarity:left === 0 ? 0 : strSimilar/left,
+				left:left
+			};
 		}
 	}
 	// end worker
