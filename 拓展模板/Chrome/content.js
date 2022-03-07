@@ -1,4 +1,4 @@
-var TFGS_installed = false;
+﻿var TFGS_installed = false;
 watchWhiteList(function(){
 	if(getStatus(document.location.href)){
 		if(!TFGS_installed){

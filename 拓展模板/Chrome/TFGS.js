@@ -1,4 +1,4 @@
-//当检测到有Extension的存在，也就是被作为ClipCC拓展加载的时候，不自启动。
+﻿//当检测到有Extension的存在，也就是被作为ClipCC拓展加载的时候，不自启动。
 if(typeof Extension !== "function"){
 	// 在规则配对之前这个脚本不会加载，只有打开之后才会加载。因此加载必是要打开。
 	TFGS();

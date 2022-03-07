@@ -1,4 +1,4 @@
-var listInput = document.getElementById("whiteList");
+﻿var listInput = document.getElementById("whiteList");
 
 listInput.addEventListener("keydown",setWhiteList2);
 

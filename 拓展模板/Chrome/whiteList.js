@@ -1,4 +1,4 @@
-var defaultList = [
+﻿var defaultList = [
 	"+ https://scratch.mit.edu/projects/0000/editor",
 	"+ https://aerfaying.com/project/0000/editor",
 	"+ https://gitblock.cn/project/0000/editor",

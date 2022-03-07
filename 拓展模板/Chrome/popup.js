@@ -1,4 +1,4 @@
-var switch1 = document.getElementById("switch");
+Ôªøvar switch1 = document.getElementById("switch");
 switch1.addEventListener("click",modify);
 
 var url;
@@ -10,9 +10,9 @@ chrome.tabs.query({'active': true, 'currentWindow': true}, function(tab){
 
 function wWhiteList(){
 	if(getStatus(url)){
-		switch1.value = "πÿ±’ TFGS";
+		switch1.value = "ÂÖ≥Èó≠ TFGS";
 	}else{
-		switch1.value = "ø™∆Ù TFGS";
+		switch1.value = "ÂºÄÂêØ TFGS";
 	}
 	switch1.disabled = false;
 }
