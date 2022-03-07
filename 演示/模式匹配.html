@@ -216,28 +216,59 @@
 				}
 				// debug(steps);
 				// checkPossibleSteps;
-				let max = 0.5, choice, mlength;
+				const SCORE_INPUT = 0.5;
+				const PINYIN_DEC = 0.9;
+				let choice = -1;
+				let max = (mode === 1 ? SCORE_INPUT : 0), textIto;
 				let textI0 = textI;
-				for(choice=-1;textI<text.length && choice===-1;){
+				let haveString = false;
+				while(textI<text.length && choice===-1){
+					// 处理一段相似字符
 					for(let i=steps.length-1;i>=0;i--){
 						let si = steps[i];
-						let match, score;
-						let ftext = text.slice(textI, textI + Math.floor(si.text.length * 1.2));
-						match = matchText(ftext, si.text);
-						score = match.similarity*match.left/si.text.length;
-						// debug(i+"\t"+si.text+"\t"+ftext+"\t"+match.left+"\t"+score);
-						if(score > max){
-							max = score;
+						if(haveString && si.mode === 1){
+							continue;
+						}
+						let stext = si.text;
+						//let stextP = getPinYin(stext);
+						let subScore, subMax = 0, subTextIto;
+						let subTextI = textI;
+						while(textI<text.length){
+							subTextI = gWord(subTextI);
+							let ftext = text.slice(textI, subTextI);
+							//let ftextP = getPinYin(ftext);
+							let match, subScore/*, subScoreP*/;
+							match = matchText(ftext, stext);
+							subScore = match.similarity/* * match.left*/;
+							debug(i+"\t"+stext+"\t"+ftext+"\t"+match.left+"\t"+subScore);
+							//match = matchText(ftextP, stextP);
+							//subScoreP = match.similarity * match.left * PINYIN_DEC;
+							//debug(i+"\t"+stextP+"\t"+ftextP+"\t"+match.left+"\t"+scoreP);
+							//if(subScoreP > subScore){
+							//	subScore = subScoreP;
+							//}
+							if(subScore > subMax){
+								subMax = subScore;
+								subTextIto = subTextI;
+							}else{
+								break;
+							}
+						}
+						if(subMax > max){
+							max = subMax;
 							choice = i;
-							mlength = match.left;
+							textIto = subTextIto;
 						}
 					}
 					if(choice === -1){
-						textI++;
+						if(cType(text[textI]) !== 0){
+							haveString = true;
+						}
+						textI = gWord(textI);
 					}
 				}
 				if(mode === 1){
-					blocksData[blockId].inputs[inputId] += text.slice(textI0,textI);
+					blocksData[blockId].inputs[inputId] = text.slice(textI0,textI).trim();
 				}else{
 					debug({skip:text.slice(textI0,textI)});
 				}
@@ -245,9 +276,9 @@
 				if(choice === -1){
 					return;
 				}else{
+					textI = textIto;
 					let step = steps[choice];
 					debug(step);
-					textI += mlength;
 					if(step.stack !== -1){
 						blockStack.splice(step.stack+1,blockStack.length-step.stack-1);
 						let frame = blockStack.pop();
@@ -308,6 +339,32 @@
 				}
 			}
 		}
+		
+		function gWord(textI){
+			let type = cType(text[textI]);
+			textI++;
+			while(textI<text.length && cType(text[textI])===type){
+				textI++;
+			}
+			return textI;
+		}
+		
+		function cType(x){
+			const cTypeTable = [
+				"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+				"0123456789",
+				",.?!:;…~_-'/@*+()<>{}[]=%&$|\\#¥\"^`",
+				"，。？！：；…～“”、（）—‘’·@＆＊＃《》￥〈〉＄［］￡｛｝￠【】％〖〗／〔〕＼『』＾「」｜﹁﹂—｀．",
+				" \t　" /* \t左边是半角空格，右边是全角空格 */
+			];
+			let i;
+			for(i=0;i<cTypeTable.length;i++){
+				if(cTypeTable[i].includes(x)){
+					break;
+				}
+			}
+			return i;
+		}
 		// 产生能看的表达方式
 		function lookString(p){
 			// debug("p:"+p)
@@ -338,6 +395,12 @@
 			// 比对器近视程度
 			let MAX_OFFSET = 10;
 			let bmatch = [], strSimilar = 0, left = -1;
+			if(a===""){
+				return {
+					similarity: 0,
+					left: 0
+				}
+			}
 			for(let y=0;y<b.length;y++){
 				bmatch.push(false);
 			}
@@ -365,8 +428,8 @@
 			}
 			left+=1;
 			return {
-				similarity:left === 0 ? 0 : strSimilar/left,
-				left:left
+				similarity: strSimilar/(a.length+b.length)*2,
+				left: left
 			};
 		}
 	}
