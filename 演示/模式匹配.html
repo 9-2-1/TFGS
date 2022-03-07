@@ -81,7 +81,7 @@
 	// 从这里开始匹配。这次换一个比较直觉的方式
 	function match(text){
 		// 测试子函数
-		return JSON.stringify(matchText.apply(this,text.split("|")));
+		// return JSON.stringify(matchText.apply(this,text.split("|")));
 		// return JSON.stringify(matchChar.apply(this,text.split("")));
 		// return JSON.stringify(getPinYin(text));
 		// return JSON.stringify(matchTextSimple.apply(this,text.split("|")));
@@ -212,19 +212,24 @@
 				// debug(steps);
 				// checkPossibleSteps;
 				let max = 0.5, choice, mlength;
+				if(mode === 1){
+					max = 0.8;
+				}
 				let textI0 = textI;
 				for(choice=-1;textI<text.length && choice===-1;){
 					for(let i=steps.length-1;i>=0;i--){
 						let si = steps[i];
 						let match, score;
-						let ftext = text.slice(textI, textI + Math.floor(si.text.length * 1.2));
-						match = matchText(ftext, si.text);
-						score = match.similarity*match.left/si.text.length;
-						// debug(i+"\t"+si.text+"\t"+ftext+"\t"+match.left+"\t"+score);
-						if(score > max){
-							max = score;
-							choice = i;
-							mlength = match.left;
+						if(matchText(text[textI], si.text).similarity !== 0){
+							let ftext = text.slice(textI, textI + Math.floor(si.text.length * 2));
+							match = matchText(ftext, si.text);
+							score = match.similarity*(match.left/(match.left+0.2));
+							// debug(i+"\t"+si.text+"\t"+ftext+"\t"+match.left+"\t"+score);
+							if(score > max){
+								max = score;
+								choice = i;
+								mlength = match.left;
+							}
 						}
 					}
 					if(choice === -1){
