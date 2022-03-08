@@ -1,5 +1,5 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<div style="border:1px black solid;width:100%;height:28px;padding: 2px;font-size:20px;box-sizing: border-box;" type="text" id="inn" ><font color="red">123</font><font color="green">456</font>789</div>
+<div style="border:1px black solid;width:100%;height:auto;padding: 2px;font-size:20px;box-sizing: border-box;" type="text" id="inn" ><font color="red">123</font><font color="green">456</font>789</div>
 <textarea style="width:100%;height:90%;font-size:20px;" type="text" id="out"></textarea>
 <script>
 	function WorkerFunc(func,callback){
@@ -33,6 +33,7 @@
 	var workTime = false, workTout = -1;
 	inn.contentEditable = true;
 	inn.addEventListener('input',innChange);
+	inn.addEventListener('paste',innChange);
 	function innChange(event){
 		setTimeout(function(){
 			if(workTime){
@@ -51,21 +52,138 @@
 		},0);
 	}
 	function startWork(){
-		out.style.color = "blue";
-		workTime = true;
-		wok.postMessage(inn.innerText.replace(/[\r\n]/g,""));
+		//out.style.color = "blue";
+		//workTime = true;
+		//wok.postMessage(inn.innerText.replace(/[\r\n]/g,""));
 		let tx = inn.innerText;
-		let toffset = document.getSelection();
+		let select = document.getSelection();
+		let offset = select.focusOffset;
+		let offNode = select.focusNode;
+		while(offNode !== null && offNode.nodeName.toLowerCase() !== "div"){
+			let prevNode = offNode.previousSibling;
+			if(prevNode === null){
+				offNode = offNode.parentElement;
+			}else{
+				offNode = prevNode;
+				offset += offNode.innerText.length;
+			}
+		}
+		if(offNode === null){
+			alert("offNode");
+			return;
+		}
+
 		inn.innerHTML = "";
-		let font = document.createElement("font");
-		font.style.color="rgb("+rand()+","+rand()+","+rand()+")";
-		font.innerText = tx;
-		inn.appendChild(font);
+		let colorSet = [/*
+		{
+			pos:  开始变色的文字位置(绘制的时候必须递增，可以提前用sort函数做到)
+			type: 类型 set=设定 push=设定但保留上一个颜色 pop=取回上一个颜色
+			color:设定的颜色
+		}
+		*/];
+		
+		// 演示代码开始（a变红，b变蓝，()变黄，[]变绿）
+		for(let i=0;i<tx.length;i++){
+			switch(tx[i]){
+				case 'a':
+					colorSet.push({
+						pos:i,
+						type:"push",
+						color:"red",
+					});
+					colorSet.push({
+						pos:i+1,
+						type:"pop"
+					});
+					break;
+				case 'b':
+					colorSet.push({
+						pos:i,
+						type:"push",
+						color:"blue"
+					});
+					colorSet.push({
+						pos:i+1,
+						type:"pop"
+					});
+					break;
+				case '(':
+					colorSet.push({
+						pos:i,
+						type:"push",
+						color:"olive"
+					});
+					break;
+				case '[':
+					colorSet.push({
+						pos:i,
+						type:"push",
+						color:"green",
+						bgcolor:"lightgreen"
+					});
+					break;
+				case ')':
+				case ']':
+					colorSet.push({
+						pos:i+1,
+						type:"pop"
+					});
+					break;
+			}
+		}
+		// 演示代码结束
+		
+		let colorStack = [/* 颜色 */];
+		let bgcolor = "white", color = "black", txI = 0, ch = "";
+		let range = document.createRange(), rangeSet = false;
+		for(let i=0;i<colorSet.length;i++){
+			if(colorSet[i].pos !== txI){
+				let font = document.createElement("font");
+				font.style.color=color;
+				font.style.backgroundColor=bgcolor;
+				font.innerText = tx.slice(txI, colorSet[i].pos);
+				inn.appendChild(font);
+				if(!rangeSet && offset<=colorSet[i].pos){
+					range.setStart(font.childNodes[0], offset - txI);
+					range.setEnd  (font.childNodes[0], offset - txI);
+					rangeSet = true;
+				}
+				txI = colorSet[i].pos;
+			}
+			switch(colorSet[i].type){
+				case "push":
+					colorStack.push(bgcolor);
+					colorStack.push(  color);
+					// break;
+				case "set":
+					if("color"   in colorSet[i]){
+						color   = colorSet[i].color;
+					}
+					if("bgcolor" in colorSet[i]){
+						bgcolor = colorSet[i].bgcolor;
+					}
+					break;
+				case "pop":
+					color   = colorStack.pop();
+					bgcolor = colorStack.pop();
+					break;
+			}
+		}
+		if(tx.length !== txI){
+			let font = document.createElement("font");
+			font.style.color=color;
+			font.style.backgroundColor=bgcolor;
+			font.innerText = tx.slice(txI, tx.length);
+			inn.appendChild(font);
+			if(!rangeSet){
+				range.setStart(font.childNodes[0], offset - txI);
+				range.setEnd  (font.childNodes[0], offset - txI);
+			}
+		}
+		select.removeAllRanges();
+		select.addRange(range);
 	}
 
-	function rand(){
-		return Math.floor(Math.random()*256);
-	}
 	out.addEventListener('focus',function(event){
 		out.blur();
 	});
