@@ -393,7 +393,7 @@
 		// 用途：直观对比字符串(a找b)
 		function matchText(a,b){
 			// 比对器近视程度
-			let MAX_OFFSET = 10;
+			const MAX_OFFSET = 10;
 			let bmatch = [], strSimilar = 0, left = -1;
 			if(a===""){
 				return {
@@ -413,7 +413,7 @@
 							// 这里以后会换成更加模糊的判断
 							similar = 1;
 						}
-						similar *= 1-Math.abs(x-y)/MAX_OFFSET;
+						similar *= 1-Math.abs(x/a.length-y/b.length)*(a.length+b.length)/2/MAX_OFFSET;
 						if(best < similar){
 							best = similar;
 							bestY = y;
