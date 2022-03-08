@@ -2,49 +2,58 @@
 <input style="width:100%;font-size:20px;" type="text" id="inn" />
 <textarea style="width:100%;height:90%;font-size:20px;" type="text" id="out"></textarea>
 <script>
-	function WorkerFunc(func){
-		var funcURL = window.URL.createObjectURL(
-			new Blob(["(" + func.toString() + ")()"], {type:"text/javascript"})
-		);
-		var worker = new Worker(funcURL)
-		window.URL.revokeObjectURL(funcURL);
-		return worker;
+	function WorkerFunc(func,callback){
+		let blob = new Blob(["(" + func.toString() + ")()"], {type:"text/javascript"});
+		let reader = new FileReader();
+		reader.addEventListener('loadend', function(event){
+			// alert(event.target.result);
+			worker = new Worker(event.target.result)
+			callback(worker);
+		});
+		reader.readAsDataURL(blob);
 	}
 
 	var inn = document.getElementById("inn");
 	var out = document.getElementById("out");
-	var wok = new WorkerFunc(workerF);
-	var workTime = false, workTout = -1;
-	inn.addEventListener('keydown',function(event){
-		if(workTime){
-			if(workTout === null){
-				workTout = setInterval(function(){
-					if(!workTime){
-						startWork();
-						clearInterval(workTout);
-						workTout = null;
-					}
-				},30);
-			}
-		}else{
-			startWork();
+	var wok;
+	WorkerFunc(workerF,function(wo){
+		wok = wo;
+		wok.onmessage = function(msg){
+			workTime = false;
+			out.style.color = "black";
+			out.value = msg.data;
+		}
+		wok.onerror = function(err){
+			workTime = false;
+			out.style.color = "red";
+			out.value = err.message;
+			err.preventDefault();
 		}
 	});
+	var workTime = false, workTout = -1;
+	inn.addEventListener('keydown',innChange);
+	inn.addEventListener('paste',innChange);
+	function innChange(event){
+		setTimeout(function(){
+			if(workTime){
+				if(workTout === null){
+					workTout = setInterval(function(){
+						if(!workTime){
+							startWork();
+							clearInterval(workTout);
+							workTout = null;
+						}
+					},30);
+				}
+			}else{
+				startWork();
+			}
+		},0);
+	}
 	function startWork(){
 		out.style.color = "blue";
 		workTime = true;
 		wok.postMessage(inn.value);
-	}
-	wok.onmessage = function(msg){
-		workTime = false;
-		out.style.color = "black";
-		out.value = msg.data;
-	}
-	wok.onerror = function(err){
-		workTime = false;
-		out.style.color = "red";
-		out.value = err.message;
-		err.preventDefault();
 	}
 
 	out.addEventListener('focus',function(event){
@@ -62,27 +71,49 @@
 
 	function match(text){
 		var tree = [];
-		var fillings = [];
+		var fillings, fillParent;
 		var diffCache;
 		var resultIn;
 		var results;
 		var errorLevel = text.length * 0.5;
+		var specPattern;
+		getSpecialPattern();
 		do {
 			errorLevel += 1;
+			fillings = [];
+			fillParent = [];
 			diffCache = {};
 			resultIn = {};
 			results = [];
 			search(tree);
 		} while(results.length < 2 && errorLevel < text.length * 0.5);
 		return errorLevel + "\n" + results.sort(sortResult).join('\n');
-		
+		function getSpecialPattern(){
+			specPattern = [];
+			for(var i=0;i<pattern.length;i++){
+				specPattern.push(
+					pattern[i].substr(0,1) === "." &&
+					pattern[i].substr(-1) === "."
+				);
+			}
+		}
 		function sortResult(a,b){
 			return Number(a.split('\t')[0]) - Number(b.split('\t')[0]);
 		}
-		function search(thisTree){
+		function search(thisTree,parent){
 			var str = tree2str(tree);
 			var diff = diffText(str);
 			for(var i=0;i<pattern.length;i++){
+				if(parent !== null && specPattern[parent.id]){
+					if(specPattern[i]){
+						if(parent.id > i){
+							continue;
+						}
+						if(parent.id == i && parent.pos == 1){
+							continue;
+						}
+					}
+				}
 				var diff1 = tryPattern(thisTree,i);
 				if(diff1 < diff){
 					checkFillings(thisTree);
@@ -108,20 +139,27 @@
 		function checkFillings(thisTree){
 			for(var i=1;i<thisTree.length;i++){
 				fillings.push(thisTree[i]);
+				fillParent.push({
+					id: thisTree[0],
+					pos: i
+				});
 			}
 			if(fillings.length !== 0){
 				var fill=fillings.pop();
-				search(fill);
+				var pare=fillParent.pop();
+				search(fill,pare);
 				fillings.push(fill);
+				fillParent.push(pare);
 			}else{
 				var str = tree2str(tree);
 				if(!(str in resultIn)){
-					results.push(diffText(str,text) + "\t" + str);
+					results.push(diffText(str,text) + "\t" + tree2debugstr(tree));
 					resultIn[str]=1;
 				}
 			}
 			for(var i=1;i<thisTree.length;i++){
 				fillings.pop();
+				fillParent.pop();
 			}
 		}
 		function tree2str(tree){
@@ -133,6 +171,17 @@
 					cnt++;
 					return tree2str(tree[cnt]);
 				})
+			}
+		}
+		function tree2debugstr(tree){
+			if(tree.length == 0){
+				return ".";
+			}else{
+				var cnt=0;
+				return '[' + pattern[tree[0]].replace(/\./g,function(){
+					cnt++;
+					return tree2debugstr(tree[cnt]);
+				}) + ']';
 			}
 		}
 		function diffText(str){
