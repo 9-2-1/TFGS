@@ -1,5 +1,5 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<input style="width:100%;font-size:20px;" type="text" id="inn" />
+<div style="border:1px black solid;width:100%;font-size:20px;" type="text" id="inn" ></div>
 <textarea style="width:100%;height:90%;font-size:20px;" type="text" id="out"></textarea>
 <script>
 	function WorkerFunc(func){
@@ -15,8 +15,8 @@
 	var out = document.getElementById("out");
 	var wok = new WorkerFunc(workerF);
 	var workTime = false, workTout = -1;
-	inn.addEventListener('keydown',innChange);
-	inn.addEventListener('paste',innChange);
+	//inn.contentEditable = true;
+	//inn.addEventListener('input',innChange);
 	function innChange(event){
 		setTimeout(function(){
 			if(workTime){
@@ -37,7 +37,7 @@
 	function startWork(){
 		out.style.color = "blue";
 		workTime = true;
-		wok.postMessage(inn.value);
+		wok.postMessage(inn.innerText);
 	}
 	wok.onmessage = function(msg){
 		workTime = false;
