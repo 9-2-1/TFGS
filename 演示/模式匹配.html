@@ -2,18 +2,34 @@
 <input style="width:100%;font-size:20px;" type="text" id="inn" />
 <textarea style="width:100%;height:90%;font-size:20px;" type="text" id="out"></textarea>
 <script>
-	function WorkerFunc(func){
-		var funcURL = window.URL.createObjectURL(
-			new Blob(["(" + func.toString() + ")()"], {type:"text/javascript"})
-		);
-		var worker = new Worker(funcURL)
-		window.URL.revokeObjectURL(funcURL);
-		return worker;
+	function WorkerFunc(func,callback){
+		let blob = new Blob(["(" + func.toString() + ")()"], {type:"text/javascript"});
+		let reader = new FileReader();
+		reader.addEventListener('loadend', function(event){
+			// alert(event.target.result);
+			worker = new Worker(event.target.result)
+			callback(worker);
+		});
+		reader.readAsDataURL(blob);
 	}
 
 	var inn = document.getElementById("inn");
 	var out = document.getElementById("out");
-	var wok = new WorkerFunc(workerF);
+	var wok;
+	WorkerFunc(workerF,function(wo){
+		wok = wo;
+		wok.onmessage = function(msg){
+			workTime = false;
+			out.style.color = "black";
+			out.value = msg.data;
+		}
+		wok.onerror = function(err){
+			workTime = false;
+			out.style.color = "red";
+			out.value = err.message;
+			err.preventDefault();
+		}
+	});
 	var workTime = false, workTout = -1;
 	inn.addEventListener('keydown',function(event){
 		if(workTime){
@@ -34,17 +50,6 @@
 		out.style.color = "blue";
 		workTime = true;
 		wok.postMessage(inn.value);
-	}
-	wok.onmessage = function(msg){
-		workTime = false;
-		out.style.color = "black";
-		out.value = msg.data;
-	}
-	wok.onerror = function(err){
-		workTime = false;
-		out.style.color = "red";
-		out.value = err.message;
-		err.preventDefault();
 	}
 
 	out.addEventListener('focus',function(event){
