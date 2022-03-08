@@ -1,5 +1,5 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<div style="border:1px black solid;width:100%;font-size:20px;" type="text" id="inn" ></div>
+<div style="border:1px black solid;width:100%;height:28px;padding: 2px;font-size:20px;box-sizing: border-box;" type="text" id="inn" ><font color="red">123</font><font color="green">456</font>789</div>
 <textarea style="width:100%;height:90%;font-size:20px;" type="text" id="out"></textarea>
 <script>
 	function WorkerFunc(func,callback){
@@ -31,8 +31,8 @@
 		}
 	});
 	var workTime = false, workTout = -1;
-	//inn.contentEditable = true;
-	//inn.addEventListener('input',innChange);
+	inn.contentEditable = true;
+	inn.addEventListener('input',innChange);
 	function innChange(event){
 		setTimeout(function(){
 			if(workTime){
@@ -53,9 +53,19 @@
 	function startWork(){
 		out.style.color = "blue";
 		workTime = true;
-		wok.postMessage(inn.innerText);
+		wok.postMessage(inn.innerText.replace(/[\r\n]/g,""));
+		let tx = inn.innerText;
+		let toffset = document.getSelection();
+		inn.innerHTML = "";
+		let font = document.createElement("font");
+		font.style.color="rgb("+rand()+","+rand()+","+rand()+")";
+		font.innerText = tx;
+		inn.appendChild(font);
 	}
 
+	function rand(){
+		return Math.floor(Math.random()*256);
+	}
 	out.addEventListener('focus',function(event){
 		out.blur();
 	});
