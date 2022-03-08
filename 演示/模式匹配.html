@@ -90,6 +90,19 @@
 	
 	// 从这里开始匹配。这次换一个比较直觉的方式
 	function match(text){
+		const cTypeTable = [
+			" \t　", // 空白，\t左边是半角空格，右边是全角空格
+			"\"“”",  // 引号
+			"\'‘’",  // 引号2
+			"()（）",// 括号
+			"0123456789",
+			"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+			",.?!:;…~_-'/@*+()<>{}[]=%&$|\\#¥\"^`",
+			"，。？！：；…～“”、（）—‘’·@＆＊＃《》￥〈〉＄［］￡｛｝￠【】％〖〗／〔〕＼『』＾「」｜﹁﹂—｀．"
+		];
+		const CTYPE_SPACE = 0;
+		const CTYPE_QUOTES = [1, 2];
+		const CTYPE_BRACS = 3;
 		// 积木结构数据
 		let blocksData = [{
 			type: 0, // 初始文本积木
@@ -350,13 +363,6 @@
 		}
 		
 		function cType(x){
-			const cTypeTable = [
-				"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
-				"0123456789",
-				",.?!:;…~_-'/@*+()<>{}[]=%&$|\\#¥\"^`",
-				"，。？！：；…～“”、（）—‘’·@＆＊＃《》￥〈〉＄［］￡｛｝￠【】％〖〗／〔〕＼『』＾「」｜﹁﹂—｀．",
-				" \t　" /* \t左边是半角空格，右边是全角空格 */
-			];
 			let i;
 			for(i=0;i<cTypeTable.length;i++){
 				if(cTypeTable[i].includes(x)){
