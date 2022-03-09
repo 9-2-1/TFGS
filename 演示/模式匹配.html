@@ -1,21 +1,54 @@
 ﻿<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<input style="width:100%;font-size:20px;" type="text" id="inn" />
-<textarea style="width:100%;height:90%;font-size:20px;" type="text" id="out"></textarea>
+
+<div style="
+border:1px black solid;
+width:100%;
+padding:1px;
+font-family:courier,monospace;
+font-size:20px;
+box-sizing:border-box;"
+id="inn"></div>
+
+<textarea style="
+width:100%;
+height:90%;
+font-family:courier,monospace;
+font-size:20px;"
+id="out"></textarea>
+
 <script>
-	function WorkerFunc(func){
-		var funcURL = window.URL.createObjectURL(
-			new Blob(["(" + func.toString() + ")()"], {type:"text/javascript"})
-		);
-		var worker = new Worker(funcURL)
-		window.URL.revokeObjectURL(funcURL);
-		return worker;
+	function WorkerFunc(func,callback){
+		let blob = new Blob(["(" + func.toString() + ")()"], {type:"text/javascript"});
+		let reader = new FileReader();
+		reader.addEventListener('loadend', function(event){
+			// alert(event.target.result);
+			worker = new Worker(event.target.result)
+			callback(worker);
+		});
+		reader.readAsDataURL(blob);
 	}
 
 	var inn = document.getElementById("inn");
 	var out = document.getElementById("out");
-	var wok = new WorkerFunc(workerF);
+	var wok;
+	WorkerFunc(workerF,function(wo){
+		wok = wo;
+		wok.onmessage = function(msg){
+			workTime = false;
+			out.style.color = "black";
+			out.value = msg.data.text;
+			applyColorChange(msg.data.colorSet);
+		}
+		wok.onerror = function(err){
+			workTime = false;
+			out.style.color = "red";
+			out.value = err.message;
+			err.preventDefault();
+		}
+	});
 	var workTime = false, workTout = -1;
-	inn.addEventListener('keydown',innChange);
+	inn.contentEditable = true;
+	inn.addEventListener('input',innChange);
 	inn.addEventListener('paste',innChange);
 	function innChange(event){
 		setTimeout(function(){
@@ -37,18 +70,76 @@
 	function startWork(){
 		out.style.color = "blue";
 		workTime = true;
-		wok.postMessage(inn.value);
+		wok.postMessage(inn.innerText.replace(/[\r\n]/g,""));
 	}
-	wok.onmessage = function(msg){
-		workTime = false;
-		out.style.color = "black";
-		out.value = msg.data;
-	}
-	wok.onerror = function(err){
-		workTime = false;
-		out.style.color = "red";
-		out.value = err.message;
-		err.preventDefault();
+	function applyColorChange(colorSet){
+		let tx = inn.innerText;
+		let select = document.getSelection();
+		let offset = select.focusOffset;
+		let offNode = select.focusNode;
+		while(offNode !== null && offNode.nodeName.toLowerCase() !== "div"){
+			let prevNode = offNode.previousSibling;
+			if(prevNode === null){
+				offNode = offNode.parentElement;
+			}else{
+				offNode = prevNode;
+				offset += offNode.innerText.length;
+			}
+		}
+		if(offNode === null){
+			return;
+		}
+	
+		inn.innerHTML = "";
+		let colorStack = [/* 颜色 */];
+		let bgcolor = "white", color = "black", txI = 0, ch = "";
+		let range = document.createRange(), rangeSet = false;
+		for(let i=0;i<colorSet.length;i++){
+			if(colorSet[i].pos !== txI){
+				let font = document.createElement("font");
+				font.style.color=color;
+				font.style.backgroundColor=bgcolor;
+				font.innerText = tx.slice(txI, colorSet[i].pos);
+				inn.appendChild(font);
+				if(!rangeSet && offset<=colorSet[i].pos){
+					range.setStart(font.childNodes[0], offset - txI);
+					range.setEnd  (font.childNodes[0], offset - txI);
+					rangeSet = true;
+				}
+				txI = colorSet[i].pos;
+			}
+			switch(colorSet[i].type){
+				case "push":
+					colorStack.push(bgcolor);
+					colorStack.push(  color);
+					// break;
+				case "set":
+					if("color"   in colorSet[i]){
+						color   = colorSet[i].color;
+					}
+					if("bgcolor" in colorSet[i]){
+						bgcolor = colorSet[i].bgcolor;
+					}
+					break;
+				case "pop":
+					color   = colorStack.pop();
+					bgcolor = colorStack.pop();
+					break;
+			}
+		}
+		if(tx.length !== txI){
+			let font = document.createElement("font");
+			font.style.color=color;
+			font.style.backgroundColor=bgcolor;
+			font.innerText = tx.slice(txI, tx.length);
+			inn.appendChild(font);
+			if(!rangeSet){
+				range.setStart(font.childNodes[0], offset - txI);
+				range.setEnd  (font.childNodes[0], offset - txI);
+			}
+		}
+		select.removeAllRanges();
+		select.addRange(range);
 	}
 
 	out.addEventListener('focus',function(event){
@@ -60,7 +151,9 @@
 	// start worker
 	
 	onmessage = function(msg){
-		postMessage(match(msg.data));
+		// setTimeout(function(){
+			postMessage(match(msg.data));
+		// },1000);
 	}
 
 	let blockText = [
@@ -122,6 +215,14 @@
 			text:   匹配文字
 		}, ...
 		*/];
+		let colorSet = [/*
+		{
+			pos:  开始变色的文字位置(绘制的时候必须递增，可以提前用sort函数做到)
+			type: 类型 set=设定 push=设定但保留上一个颜色 pop=取回上一个颜色
+			color:设定的颜色
+		}
+		*/];
+
 		blockTextToType();
 		//return JSON.stringify(blockType);
 		let debugstr = "";
@@ -138,8 +239,25 @@
 		}catch(e){
 			debugstr = e.message + "\n\n" + debugstr;
 		}
-		return debugstr;
+		return {text:debugstr,colorSet:colorSet};
 		
+		function textColor(color,bgcolor,start,end){
+			let cSet = {
+				pos:start,
+				type:"push",
+			}
+			if(color){
+				cSet.color = color;
+			}
+			if(bgcolor){
+				cSet.bgcolor = bgcolor;
+			}
+			colorSet.push(cSet);
+			colorSet.push({
+				pos:end,
+				type:"pop"
+			});
+		}
 		function blockTextToType(){
 			blockType = [{ //特殊的type=0
 				output: 1,
@@ -280,6 +398,7 @@
 						textI = gWord(textI);
 					}
 				}
+				let textI1 = textI;
 				if(mode === 1){
 					blocksData[blockId].inputs[inputId] = text.slice(textI0,textI).trim();
 				}else{
@@ -287,18 +406,25 @@
 				}
 				// doPossibleSteps;
 				if(choice === -1){
+					if(mode === 1){
+						textColor("black","white",textI0,textI1);
+					}else{
+						textColor("red","pink",textI0,textI1);
+					}
 					return;
 				}else{
 					textI = textIto;
 					let step = steps[choice];
 					debug(step);
 					if(step.stack !== -1){
+						textColor("black","white",textI0,textI1);
 						blockStack.splice(step.stack+1,blockStack.length-step.stack-1);
 						let frame = blockStack.pop();
 						blockId = frame.blockId;
 						inputId = frame.inputId;
 						inputId++;
 					}else if(step.mode === 1){
+						textColor("red","pink",textI0,textI1);
 						let inputs = [];
 						for(let i=0;i<bT[step.type].inputs.length;i++){
 							inputs.push(-1);
@@ -316,6 +442,7 @@
 					}else{
 						//右结合（把这个积木变成前面的积木的最后一个参数）
 						//  (  A(  B  ))
+						textColor("black","white",textI0,textI1);
 						let inputs = [blocksData.length];
 						for(let i=1;i<bT[step.type].inputs.length;i++){
 							inputs.push(-1);
@@ -331,6 +458,15 @@
 						//blockId = blockId;
 						inputId = 1;
 					}
+					const stackColor = [
+						"#800",
+						"#880",
+						"#080",
+						"#008",
+						"#808",
+					];
+					let color = stackColor[blockStack.length % stackColor.length];
+					textColor("white",color,textI1,textI);
 					if(inputId !== blocksData[blockId].inputs.length){
 						blockStack.push({
 							blockId: blockId,
