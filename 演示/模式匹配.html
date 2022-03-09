@@ -21,7 +21,8 @@
 		wok.onmessage = function(msg){
 			workTime = false;
 			out.style.color = "black";
-			out.value = msg.data;
+			out.value = msg.data.text;
+			applyColorChange(msg.data.colorSet);
 		}
 		wok.onerror = function(err){
 			workTime = false;
@@ -52,9 +53,11 @@
 		},0);
 	}
 	function startWork(){
-		//out.style.color = "blue";
-		//workTime = true;
-		//wok.postMessage(inn.innerText.replace(/[\r\n]/g,""));
+		out.style.color = "blue";
+		workTime = true;
+		wok.postMessage(inn.innerText.replace(/[\r\n]/g,""));
+	}
+	function applyColorChange(colorSet){
 		let tx = inn.innerText;
 		let select = document.getSelection();
 		let offset = select.focusOffset;
@@ -69,70 +72,10 @@
 			}
 		}
 		if(offNode === null){
-			alert("offNode");
 			return;
 		}
-
+	
 		inn.innerHTML = "";
-		let colorSet = [/*
-		{
-			pos:  开始变色的文字位置(绘制的时候必须递增，可以提前用sort函数做到)
-			type: 类型 set=设定 push=设定但保留上一个颜色 pop=取回上一个颜色
-			color:设定的颜色
-		}
-		*/];
-		
-		// 演示代码开始（a变红，b变蓝，()变黄，[]变绿）
-		for(let i=0;i<tx.length;i++){
-			switch(tx[i]){
-				case 'a':
-					colorSet.push({
-						pos:i,
-						type:"push",
-						color:"red",
-					});
-					colorSet.push({
-						pos:i+1,
-						type:"pop"
-					});
-					break;
-				case 'b':
-					colorSet.push({
-						pos:i,
-						type:"push",
-						color:"blue"
-					});
-					colorSet.push({
-						pos:i+1,
-						type:"pop"
-					});
-					break;
-				case '(':
-					colorSet.push({
-						pos:i,
-						type:"push",
-						color:"olive"
-					});
-					break;
-				case '[':
-					colorSet.push({
-						pos:i,
-						type:"push",
-						color:"green",
-						bgcolor:"lightgreen"
-					});
-					break;
-				case ')':
-				case ']':
-					colorSet.push({
-						pos:i+1,
-						type:"pop"
-					});
-					break;
-			}
-		}
-		// 演示代码结束
-		
 		let colorStack = [/* 颜色 */];
 		let bgcolor = "white", color = "black", txI = 0, ch = "";
 		let range = document.createRange(), rangeSet = false;
@@ -193,7 +136,9 @@
 	// start worker
 	
 	onmessage = function(msg){
-		postMessage(match(msg.data));
+		// setTimeout(function(){
+			postMessage(match(msg.data));
+		// },1000);
 	}
 
 	let blockText = [
@@ -240,6 +185,14 @@
 			text:   匹配文字
 		}, ...
 		*/];
+		let colorSet = [/*
+		{
+			pos:  开始变色的文字位置(绘制的时候必须递增，可以提前用sort函数做到)
+			type: 类型 set=设定 push=设定但保留上一个颜色 pop=取回上一个颜色
+			color:设定的颜色
+		}
+		*/];
+
 		blockTextToType();
 		//return JSON.stringify(blockType);
 		let debugstr = "";
@@ -256,8 +209,61 @@
 		}catch(e){
 			debugstr = e.message + "\n\n" + debugstr;
 		}
-		return debugstr;
+		textColorExample();
+		return {text:debugstr,colorSet:colorSet};
 		
+		function textColorExample(){
+			// 演示代码开始（a变红，b变蓝，()变黄，[]变绿）
+			for(let i=0;i<text.length;i++){
+				switch(text[i]){
+					case 'a':
+						colorSet.push({
+							pos:i,
+							type:"push",
+							color:"red",
+						});
+						colorSet.push({
+							pos:i+1,
+							type:"pop"
+						});
+						break;
+					case 'b':
+						colorSet.push({
+							pos:i,
+							type:"push",
+							color:"blue"
+						});
+						colorSet.push({
+							pos:i+1,
+							type:"pop"
+						});
+						break;
+					case '(':
+						colorSet.push({
+							pos:i,
+							type:"push",
+							color:"olive"
+						});
+						break;
+					case '[':
+						colorSet.push({
+							pos:i,
+							type:"push",
+							color:"green",
+							bgcolor:"lightgreen"
+						});
+						break;
+					case ')':
+					case ']':
+						colorSet.push({
+							pos:i+1,
+							type:"pop"
+						});
+						break;
+				}
+			}
+			// 演示代码结束
+		}
 		function blockTextToType(){
 			blockType = [{ //特殊的type=0
 				output: 1,
