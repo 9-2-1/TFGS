@@ -48,9 +48,12 @@ id="out"></textarea>
 	});
 	var workTime = false, workTout = -1;
 	inn.contentEditable = true;
-	inn.addEventListener('input',innChange);
+	inn.addEventListener('keydown',innChange,true);
 	inn.addEventListener('paste',innChange);
 	function innChange(event){
+		if(event.keyCode === 13){
+			event.preventDefault();;
+		}
 		setTimeout(function(){
 			if(workTime){
 				if(workTout === null){
