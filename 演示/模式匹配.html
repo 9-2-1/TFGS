@@ -168,6 +168,7 @@ id="out"></textarea>
 		".?.:.",
 		"(.)",
 		"\".\"",
+		"load disk1",
 		"load.disk1.",
 		"load.disk2.",
 		"load.disk3.",
@@ -352,6 +353,7 @@ id="out"></textarea>
 				// checkPossibleSteps;
 				const SCORE_INPUT = 0.5;
 				const PINYIN_DEC = 0.9;
+				const TEXT_WEIGHT = 0.01;
 				let choice = -1;
 				let max = (mode === 1 ? SCORE_INPUT : 0), textIto;
 				let textI0 = textI;
@@ -373,7 +375,7 @@ id="out"></textarea>
 							//let ftextP = getPinYin(ftext);
 							let match, subScore/*, subScoreP*/;
 							match = matchText(ftext, stext);
-							subScore = match.similarity/* * match.left*/;
+							subScore = match.similarity + match.left * TEXT_WEIGHT/* * match.left*/;
 							debug(i+"\t"+stext+"\t"+ftext+"\t"+match.left+"\t"+subScore);
 							//match = matchText(ftextP, stextP);
 							//subScoreP = match.similarity * match.left * PINYIN_DEC;
@@ -586,7 +588,7 @@ id="out"></textarea>
 			}
 			left+=1;
 			return {
-				similarity: strSimilar/(a.length+b.length)*2,
+				similarity: strSimilar/Math.max(a.length,b.length),
 				left: left
 			};
 		}
