@@ -417,7 +417,11 @@ id="out"></textarea>
 					let step = steps[choice];
 					debug(step);
 					if(step.stack !== -1){
-						textColor("black","white",textI0,textI1);
+						if(mode === 1){
+							textColor("black","white",textI0,textI1);
+						}else{
+							textColor("red","pink",textI0,textI1);
+						}
 						blockStack.splice(step.stack+1,blockStack.length-step.stack-1);
 						let frame = blockStack.pop();
 						blockId = frame.blockId;
@@ -442,7 +446,11 @@ id="out"></textarea>
 					}else{
 						//右结合（把这个积木变成前面的积木的最后一个参数）
 						//  (  A(  B  ))
-						textColor("black","white",textI0,textI1);
+						if(mode === 1){
+							textColor("black","white",textI0,textI1);
+						}else{
+							textColor("red","pink",textI0,textI1);
+						}
 						let inputs = [blocksData.length];
 						for(let i=1;i<bT[step.type].inputs.length;i++){
 							inputs.push(-1);
