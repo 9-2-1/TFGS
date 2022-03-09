@@ -73,7 +73,7 @@ id="out"></textarea>
 	function startWork(){
 		out.style.color = "blue";
 		workTime = true;
-		wok.postMessage(inn.innerText.replace(/[\r\n]/g,""));
+		wok.postMessage(inn.innerText.replace(/[\r\n]/g,"").replace(/\u00A0/g," "));
 	}
 	function applyColorChange(colorSet){
 		let tx = inn.innerText;
