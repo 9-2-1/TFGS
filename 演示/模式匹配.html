@@ -1,6 +1,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<div style="border:1px black solid;width:100%;height:auto;padding: 2px;font-size:20px;box-sizing: border-box;" type="text" id="inn" ><font color="red">123</font><font color="green">456</font>789</div>
-<textarea style="width:100%;height:90%;font-size:20px;" type="text" id="out"></textarea>
+
+<div style="
+border:1px black solid;
+width:100%;
+padding:1px;
+font-family:courier,monospace;
+font-size:20px;
+box-sizing:border-box;"
+id="inn"></div>
+
+<textarea style="
+width:100%;
+height:90%;
+font-family:courier,monospace;
+font-size:20px;"
+id="out"></textarea>
+
 <script>
 	function WorkerFunc(func,callback){
 		let blob = new Blob(["(" + func.toString() + ")()"], {type:"text/javascript"});
