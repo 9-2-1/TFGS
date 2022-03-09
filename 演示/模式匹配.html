@@ -224,60 +224,24 @@ id="out"></textarea>
 		}catch(e){
 			debugstr = e.message + "\n\n" + debugstr;
 		}
-		textColorExample();
 		return {text:debugstr,colorSet:colorSet};
 		
-		function textColorExample(){
-			// 演示代码开始（a变红，b变蓝，()变黄，[]变绿）
-			for(let i=0;i<text.length;i++){
-				switch(text[i]){
-					case 'a':
-						colorSet.push({
-							pos:i,
-							type:"push",
-							color:"red",
-						});
-						colorSet.push({
-							pos:i+1,
-							type:"pop"
-						});
-						break;
-					case 'b':
-						colorSet.push({
-							pos:i,
-							type:"push",
-							color:"blue"
-						});
-						colorSet.push({
-							pos:i+1,
-							type:"pop"
-						});
-						break;
-					case '(':
-						colorSet.push({
-							pos:i,
-							type:"push",
-							color:"olive"
-						});
-						break;
-					case '[':
-						colorSet.push({
-							pos:i,
-							type:"push",
-							color:"green",
-							bgcolor:"lightgreen"
-						});
-						break;
-					case ')':
-					case ']':
-						colorSet.push({
-							pos:i+1,
-							type:"pop"
-						});
-						break;
-				}
+		function textColor(color,bgcolor,start,end){
+			let cSet = {
+				pos:start,
+				type:"push",
 			}
-			// 演示代码结束
+			if(color){
+				cSet.color = color;
+			}
+			if(bgcolor){
+				cSet.bgcolor = bgcolor;
+			}
+			colorSet.push(cSet);
+			colorSet.push({
+				pos:end,
+				type:"pop"
+			});
 		}
 		function blockTextToType(){
 			blockType = [{ //特殊的type=0
@@ -388,6 +352,7 @@ id="out"></textarea>
 						textI++;
 					}
 				}
+				let textI1 = textI;
 				if(mode === 1){
 					blocksData[blockId].inputs[inputId] += text.slice(textI0,textI);
 				}else{
@@ -395,18 +360,25 @@ id="out"></textarea>
 				}
 				// doPossibleSteps;
 				if(choice === -1){
+					if(mode === 1){
+						textColor("black","white",textI0,textI1);
+					}else{
+						textColor("red","pink",textI0,textI1);
+					}
 					return;
 				}else{
 					let step = steps[choice];
 					debug(step);
 					textI += mlength;
 					if(step.stack !== -1){
+						textColor("black","white",textI0,textI1);
 						blockStack.splice(step.stack+1,blockStack.length-step.stack-1);
 						let frame = blockStack.pop();
 						blockId = frame.blockId;
 						inputId = frame.inputId;
 						inputId++;
 					}else if(step.mode === 1){
+						textColor("red","pink",textI0,textI1);
 						let inputs = [];
 						for(let i=0;i<bT[step.type].inputs.length;i++){
 							inputs.push(-1);
@@ -424,6 +396,7 @@ id="out"></textarea>
 					}else{
 						//右结合（把这个积木变成前面的积木的最后一个参数）
 						//  (  A(  B  ))
+						textColor("black","white",textI0,textI1);
 						let inputs = [blocksData.length];
 						for(let i=1;i<bT[step.type].inputs.length;i++){
 							inputs.push(-1);
@@ -439,6 +412,15 @@ id="out"></textarea>
 						//blockId = blockId;
 						inputId = 1;
 					}
+					const stackColor = [
+						"#800",
+						"#880",
+						"#080",
+						"#008",
+						"#808",
+					];
+					let color = stackColor[blockStack.length % stackColor.length];
+					textColor("white",color,textI1,textI);
 					if(inputId !== blocksData[blockId].inputs.length){
 						blockStack.push({
 							blockId: blockId,
