@@ -184,7 +184,7 @@ id="out"></textarea>
 	// 从这里开始匹配。这次换一个比较直觉的方式
 	function match(text){
 		const cTypeTable = [
-			" \t　", // 空白，\t左边是半角空格，右边是全角空格
+			" \t　\u00A0", // 空白，\t左边是半角空格，右边是全角空格
 			"\"“”",  // 引号
 			"\'‘’",  // 引号2
 			"()（）",// 括号
@@ -392,8 +392,11 @@ id="out"></textarea>
 						}
 					}
 					if(choice === -1){
-						if(cType(text[textI]) !== 0){
+						debug({text:text[textI].charCodeAt(0),cType:cType(text[textI]),CTYPE_SPACE:CTYPE_SPACE});
+						if(cType(text[textI]) !== CTYPE_SPACE){
 							haveString = true;
+						}else{
+							//textI0 = textI;
 						}
 						textI = gWord(textI);
 					}
@@ -500,8 +503,10 @@ id="out"></textarea>
 		function gWord(textI){
 			let type = cType(text[textI]);
 			textI++;
-			while(textI<text.length && cType(text[textI])===type){
-				textI++;
+			if(type===4||type===5){
+				while(textI<text.length && cType(text[textI])===type){
+					textI++;
+				}
 			}
 			return textI;
 		}
