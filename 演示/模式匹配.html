@@ -293,15 +293,15 @@ id="out"></textarea>
 			let inputId = 0;
 			let mode = 1; // 1替换还是2右结合模式
 			let textI = 0;
-			debug(blockType);
+			// debug(blockType);
 			while(1){
 				// debug(textI);
-				debug("#1");
-				debug(blockStack);
-				debug("#2");
-				debug(blocksData);
-				debug("#3");
-				debug(lookString(0));
+				// debug("#1");
+				// debug(blockStack);
+				// debug("#2");
+				// debug(blocksData);
+				// debug("#3");
+				// debug(lookString(0));
 				// guessPossibleSteps;
 				let steps = [/*
 				{
@@ -351,8 +351,8 @@ id="out"></textarea>
 						});
 					}
 				}
-				debug("#4");
-				debug(steps);
+				// debug("#4");
+				// debug(steps);
 				// checkPossibleSteps;
 				const SCORE_INPUT = 0.8;
 				const PINYIN_DEC = 0.9;
@@ -361,7 +361,7 @@ id="out"></textarea>
 				let max = (mode === 1 && blocksData.length !== 1 ? SCORE_INPUT : 0), textIto;
 				let textI0 = textI;
 				let haveString = false;
-				debug("#4");
+				// debug("#4");
 				while(textI<text.length && choice===-1){
 					// 处理一段相似字符
 					for(let i=steps.length-1;i>=0;i--){
@@ -373,7 +373,7 @@ id="out"></textarea>
 							continue;
 						}
 						let stext = si.text;
-						debug(i+"\t"+stext);
+						// debug(i+"\t"+stext);
 						let stextP = getPinYin(stext);
 						let subScore, subMax = 0, subTextIto;
 						let subTextI = textI;
@@ -389,11 +389,11 @@ id="out"></textarea>
 							match = matchText(ftext, stext);
 							// ftext stext
 							subScore = match.similarity + match.left * TEXT_WEIGHT/* * match.left*/;
-							debug(i+"\t"+stext+"\t"+ftext+"\t"+match.left+"\t"+subScore);
+							// debug(i+"\t"+stext+"\t"+ftext+"\t"+match.left+"\t"+subScore);
 							// !!!
 							match = matchText(ftextP, stextP);
 							subScoreP = match.similarity * match.left * TEXT_WEIGHT;
-							debug(i+"\t"+stextP+"\t"+ftextP+"\t"+match.left+"\t"+subScoreP);
+							// debug(i+"\t"+stextP+"\t"+ftextP+"\t"+match.left+"\t"+subScoreP);
 							if(subScoreP > subScore){
 								subScore = subScoreP;
 							}
@@ -411,8 +411,8 @@ id="out"></textarea>
 						}
 					}
 					if(choice === -1){
-						debug("#5");
-						debug({text:text[textI].charCodeAt(0),cType:cType(text[textI]),CTYPE_SPACE:CTYPE_SPACE});
+						// debug("#5");
+						// debug({text:text[textI].charCodeAt(0),cType:cType(text[textI]),CTYPE_SPACE:CTYPE_SPACE});
 						if(cType(text[textI]) !== CTYPE_SPACE){
 							haveString = true;
 						}else{
@@ -425,8 +425,8 @@ id="out"></textarea>
 				if(mode === 1){
 					blocksData[blockId].inputs[inputId] = text.slice(textI0,textI).trim();
 				}else{
-					debug("#6");
-					debug({skip:text.slice(textI0,textI)});
+					// debug("#6");
+					// debug({skip:text.slice(textI0,textI)});
 				}
 				// doPossibleSteps;
 				if(choice === -1){
@@ -440,8 +440,8 @@ id="out"></textarea>
 					textI = textIto;
 					let matchWord = text.slice(textI1,textI);
 					let step = steps[choice];
-					debug("#7");
-					debug(step);
+					// debug("#7");
+					// debug(step);
 					if(step.stack !== -1){
 						if(mode === 1){
 							textColor("black","white",textI0,textI1);
@@ -473,8 +473,8 @@ id="out"></textarea>
 							text:   matchWord
 						});
 						let bbii = blocksData[blockId].inputs[inputId];
-						debug("#8");
-						debug({skip:(bbii)});
+						// debug("#8");
+						// debug({skip:(bbii)});
 						blocksData[blockId].inputs[inputId] = blocksData.length - 1;
 						blockId = blocksData.length - 1;
 						inputId = 0;
