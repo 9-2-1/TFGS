@@ -194,7 +194,7 @@ id="out"></textarea>
 			"()（）",// 括号
 			"0123456789",
 			"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
-			",.?!:;…~_-'/@*+()<>{}[]=%&$|\\#¥\"^`",
+			",.?!:;…~_-'/@*+()<>{}[]=%&$|\\#￥\"^`",
 			"，。？！：；…～“”、（）—‘’·@＆＊＃《》￥〈〉＄［］￡｛｝￠【】％〖〗／〔〕＼『』＾「」｜﹁﹂—｀．"
 		];
 		const CTYPE_SPACE = 0;
@@ -204,19 +204,23 @@ id="out"></textarea>
 		let blocksData = [{
 			type: 0, // 初始文本积木
 			parent: -1,
-			inputs: [""]
+			inputs: [""],
+			text: ""
 		}/*,
 		{
 			type: 类型(blockText序号，0表示文本),
 			parent:   外面积木序号,
-			inputs:  [参数积木的序号，type=0表示文本, ...]
+			inputs:  [参数积木的序号，type=0表示文本, ...],
+			text: 已经匹配的文字，用于判断是否需要修改
 		}, ...
 		*/];
 		let blockStack = [/*
 		{
 			blockId: 数据位置,
-			inputId:  参数位置,
-			text:   匹配文字
+			inputId: 参数位置,
+			stack:   层级编号(有可能同一层有多个text)
+			type:    修改成的类型,
+			text:    匹配文字
 		}, ...
 		*/];
 		let colorSet = [/*
@@ -291,29 +295,33 @@ id="out"></textarea>
 		}
 
 		function guessPossibleMode(){
-			const bT = blockType;
 			let blockId = 0;
 			let inputId = 0;
 			let mode = 1; // 1替换还是2右结合模式
 			let textI = 0;
+			debug(blockType);
 			while(1){
 				// debug(textI);
-				// debug(blockStack);
-				// debug(blocksData);
+				debug("#1");
+				debug(blockStack);
+				debug("#2");
+				debug(blocksData);
+				debug("#3");
 				debug(lookString(0));
 				// guessPossibleSteps;
 				let steps = [/*
 				{
 					text:   判定文字(可能是空的),
 					stack:  返回层级 或者 -1代表新积木,
-					type:   选择/连接积木类型,
+					type:   选择/连接/修改积木类型,
 					mode:   1替换或者2右结合
 				}, ...
 				*/];
 				if(mode === 1){
 					// getFirstPlacePattern;
-					for(let i=0;i<bT.length;i++){
-						let bi = bT[i];
+					// i从1开始是为了跳过特殊的“.”模板
+					for(let i=1;i<blockType.length;i++){
+						let bi = blockType[i];
 						if(bi.texts[0] !== ""){
 							steps.push({
 								text:   bi.texts[0],
@@ -327,8 +335,8 @@ id="out"></textarea>
 				
 				if(true /* mode >= 1 */){
 					// getSecondPlacePattern;
-					for(let i=0;i<bT.length;i++){
-						let bi = bT[i];
+					for(let i=1;i<blockType.length;i++){
+						let bi = blockType[i];
 						if(bi.texts[0] === ""){
 							steps.push({
 								text:   bi.texts[1],
@@ -344,39 +352,51 @@ id="out"></textarea>
 						steps.push({
 							text:   si.text,
 							stack:  i,
-							type:  -1,
+							type:   si.type,
 							mode:   0,
 						});
 					}
 				}
-				// debug(steps);
+				debug("#4");
+				debug(steps);
 				// checkPossibleSteps;
-				const SCORE_INPUT = 0.5;
+				const SCORE_INPUT = 0.8;
 				const PINYIN_DEC = 0.9;
 				const TEXT_WEIGHT = 0.01;
 				let choice = -1;
-				let max = (mode === 1 ? SCORE_INPUT : 0), textIto;
+				let max = (mode === 1 && blocksData.length !== 1 ? SCORE_INPUT : 0), textIto;
 				let textI0 = textI;
 				let haveString = false;
+				debug("#4");
 				while(textI<text.length && choice===-1){
 					// 处理一段相似字符
 					for(let i=steps.length-1;i>=0;i--){
 						let si = steps[i];
+						if(!haveString && si.stack !== -1){
+							continue;
+						}
 						if(haveString && si.mode === 1){
 							continue;
 						}
 						let stext = si.text;
+						debug(i+"\t"+stext);
 						//let stextP = getPinYin(stext);
 						let subScore, subMax = 0, subTextIto;
 						let subTextI = textI;
 						while(textI<text.length){
 							subTextI = gWord(subTextI);
 							let ftext = text.slice(textI, subTextI);
+							
+							if(si.stack !== -1){
+								ftext = blocksData[blockStack[si.stack].blockId].text + "◆" + ftext;
+							}
 							//let ftextP = getPinYin(ftext);
 							let match, subScore/*, subScoreP*/;
 							match = matchText(ftext, stext);
+							// ftext stext
 							subScore = match.similarity + match.left * TEXT_WEIGHT/* * match.left*/;
 							debug(i+"\t"+stext+"\t"+ftext+"\t"+match.left+"\t"+subScore);
+							// !!!
 							//match = matchText(ftextP, stextP);
 							//subScoreP = match.similarity * match.left * PINYIN_DEC;
 							//debug(i+"\t"+stextP+"\t"+ftextP+"\t"+match.left+"\t"+scoreP);
@@ -397,6 +417,7 @@ id="out"></textarea>
 						}
 					}
 					if(choice === -1){
+						debug("#5");
 						debug({text:text[textI].charCodeAt(0),cType:cType(text[textI]),CTYPE_SPACE:CTYPE_SPACE});
 						if(cType(text[textI]) !== CTYPE_SPACE){
 							haveString = true;
@@ -410,6 +431,7 @@ id="out"></textarea>
 				if(mode === 1){
 					blocksData[blockId].inputs[inputId] = text.slice(textI0,textI).trim();
 				}else{
+					debug("#6");
 					debug({skip:text.slice(textI0,textI)});
 				}
 				// doPossibleSteps;
@@ -422,7 +444,9 @@ id="out"></textarea>
 					return;
 				}else{
 					textI = textIto;
+					let matchWord = text.slice(textI1,textI);
 					let step = steps[choice];
+					debug("#7");
 					debug(step);
 					if(step.stack !== -1){
 						if(mode === 1){
@@ -430,23 +454,32 @@ id="out"></textarea>
 						}else{
 							textColor("red","pink",textI0,textI1);
 						}
-						blockStack.splice(step.stack+1,blockStack.length-step.stack-1);
-						let frame = blockStack.pop();
+						let frame = blockStack[step.stack];
 						blockId = frame.blockId;
 						inputId = frame.inputId;
 						inputId++;
+						blocksData[blockId].type = step.type;
+						while(blocksData[blockId].inputs.length < blockType[step.type].inputs.length){
+							blocksData[blockId].inputs.push(-1)
+						}
+						blocksData[blockId].text += "◆" + matchWord;
+						while(blockStack.length !== 0 && blockStack[blockStack.length-1].stack >= frame.stack){
+							blockStack.splice(blockStack.length-1,1);
+						}
 					}else if(step.mode === 1){
 						textColor("red","pink",textI0,textI1);
 						let inputs = [];
-						for(let i=0;i<bT[step.type].inputs.length;i++){
+						for(let i=0;i<blockType[step.type].inputs.length;i++){
 							inputs.push(-1);
 						}
 						blocksData.push({
 							type:   step.type,
 							parent: blockId,
-							inputs: inputs
+							inputs: inputs,
+							text:   matchWord
 						});
 						let bbii = blocksData[blockId].inputs[inputId];
+						debug("#8");
 						debug({skip:(bbii)});
 						blocksData[blockId].inputs[inputId] = blocksData.length - 1;
 						blockId = blocksData.length - 1;
@@ -460,14 +493,15 @@ id="out"></textarea>
 							textColor("red","pink",textI0,textI1);
 						}
 						let inputs = [blocksData.length];
-						for(let i=1;i<bT[step.type].inputs.length;i++){
+						for(let i=1;i<blockType[step.type].inputs.length;i++){
 							inputs.push(-1);
 						}
 						let origNode = blocksData[blockId];
 						let newNode = {
 							type:   step.type,
 							parent: blocksData[blockId].parent,
-							inputs: inputs
+							inputs: inputs,
+							text:   matchWord
 						}
 						blocksData[blockId] = newNode;
 						blocksData.push(origNode);
@@ -481,20 +515,32 @@ id="out"></textarea>
 						"#008",
 						"#808",
 					];
-					let color = stackColor[blockStack.length % stackColor.length];
+					let stackcnt = blockStack.length === 0 ? 0 : blockStack[blockStack.length-1].stack + 1;
+					let color = stackColor[stackcnt % stackColor.length];
 					textColor("white",color,textI1,textI);
+
+					//let haveInput = false;
+					let stackId = blockStack.length === 0 ? 0 : blockStack[blockStack.length-1].stack + 1;
+					for(let i=0;i<blockType.length;i++){
+						let bi = blockType[i];
+						if(bi.inputs.length > inputId){
+							blockStack.push({
+								blockId: blockId,
+								inputId: inputId,
+								stack: stackId,
+								type:  i,
+								text:  bi.texts.slice(0,inputId+2).join("◆")
+							});
+							//haveInput = true;
+						}
+					}
 					if(inputId !== blocksData[blockId].inputs.length){
-						blockStack.push({
-							blockId: blockId,
-							inputId: inputId,
-							text:  bT[blocksData[blockId].type].texts[inputId+1]
-						})
 						blocksData[blockId].inputs[inputId] = blocksData.length;
 						blocksData.push({
 							type: 0,
 							parent: blockId,
 							inputs: [""]
-						})
+						});
 						blockId = blocksData.length - 1;
 						inputId = 0;
 						mode = 1;
