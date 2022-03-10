@@ -172,18 +172,18 @@ id="out"></textarea>
 	
 	let pinYin = get_pinyin_dict_notone();
 	let getPinYinCache = {};
-	let matchCharCache = {};
+	// let matchCharCache = {};
 	
 	// 从这里开始匹配。这次换一个比较直觉的方式
 	function match(text){
 		const cTypeTable = [
-			" \t　\u00A0", // 空白，\t左边是半角空格，右边是全角空格
+			" \t　", // 空白，\t左边是半角空格，右边是全角空格
 			"\"“”",  // 引号
 			"\'‘’",  // 引号2
 			"()（）",// 括号
 			"0123456789",
 			"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
-			",.?!:;…~_-'/@*+()<>{}[]=%&$|\\#￥\"^`",
+			",.?!:;…~_-'/@*+()<>{}[]=%&$|\\#\"^`",
 			"，。？！：；…～“”、（）—‘’·@＆＊＃《》￥〈〉＄［］￡｛｝￠【】％〖〗／〔〕＼『』＾「」｜﹁﹂—｀．"
 		];
 		const CTYPE_SPACE = 0;
@@ -192,7 +192,7 @@ id="out"></textarea>
 		// 测试子函数
 		// return JSON.stringify(matchText.apply(this,text.split("|")));
 		// return JSON.stringify(matchChar.apply(this,text.split("")));
-		// return JSON.stringify(getPinYin(text));
+		// return JSON.stringify(getPinYins(text));
 		// return JSON.stringify(matchTextSimple.apply(this,text.split("|")));
 		// 积木结构数据
 		let blocksData = [{
@@ -355,7 +355,7 @@ id="out"></textarea>
 				// debug(steps);
 				// checkPossibleSteps;
 				const SCORE_INPUT = 0.8;
-				const PINYIN_DEC = 0.9;
+				const PINYIN_DEC = 0.95;
 				const TEXT_WEIGHT = 0.01;
 				let choice = -1;
 				let max = (mode === 1 && blocksData.length !== 1 ? SCORE_INPUT : 0), textIto;
@@ -366,7 +366,7 @@ id="out"></textarea>
 					// 处理一段相似字符
 					for(let i=steps.length-1;i>=0;i--){
 						let si = steps[i];
-						if(!haveString && si.stack !== -1){
+						if(mode === 1 && !haveString && (si.stack !== -1 || si.mode !== 1)){
 							continue;
 						}
 						if(haveString && si.mode === 1){
@@ -374,7 +374,7 @@ id="out"></textarea>
 						}
 						let stext = si.text;
 						// debug(i+"\t"+stext);
-						let stextP = getPinYin(stext);
+						let stextPs = getPinYins(stext);
 						let subScore, subMax = 0, subTextIto;
 						let subTextI = textI;
 						while(textI<text.length){
@@ -384,20 +384,24 @@ id="out"></textarea>
 							if(si.stack !== -1){
 								ftext = blocksData[blockStack[si.stack].blockId].text + "◆" + ftext;
 							}
-							let ftextP = getPinYin(ftext);
+							let ftextPs = getPinYins(ftext);
 							let match, subScore, subScoreP;
 							match = matchText(ftext, stext);
-							// ftext stext
-							subScore = match.similarity + match.left * TEXT_WEIGHT/* * match.left*/;
-							// debug(i+"\t"+stext+"\t"+ftext+"\t"+match.left+"\t"+subScore);
-							// !!!
-							match = matchText(ftextP, stextP);
-							subScoreP = match.similarity * match.left * TEXT_WEIGHT;
-							// debug(i+"\t"+stextP+"\t"+ftextP+"\t"+match.left+"\t"+subScoreP);
-							if(subScoreP > subScore){
-								subScore = subScoreP;
+							subScore = match.similarity + match.left * TEXT_WEIGHT;
+							for(let x=0;x<ftextPs.length;x++){
+								for(let y=0;y<stextPs.length;y++){
+									match = matchText(ftextPs[x], stextPs[y]);
+									subScoreP = (match.similarity + match.left * TEXT_WEIGHT) * PINYIN_DEC;
+									if(subScoreP > subScore){
+										if(subScoreP > subMax){
+											// debug(i+"\t"+stextPs[y]+"\t"+ftextPs[x]+"\t"+match.left+"\t"+subScoreP);
+										}
+										subScore = subScoreP;
+									}
+								}
 							}
 							if(subScore > subMax){
+								// debug(i+"\t"+stext+"\t"+ftext+"\t"+match.left+"\t"+subScore);
 								subMax = subScore;
 								subTextIto = subTextI;
 							}else{
@@ -609,7 +613,7 @@ id="out"></textarea>
 				for(let y=0;y<b.length;y++){
 					if(!bmatch[y]){
 						let similar = matchChar(a[x],b[y]);
-						similar *= 1-Math.abs(x/a.length-y/b.length)*(a.length+b.length)/2/MAX_OFFSET;
+						similar *= 1-Math.abs(x-y)/*Math.max(a.length,b.length)*/ /MAX_OFFSET;
 						if(best < similar){
 							best = similar;
 							bestY = y;
@@ -630,78 +634,43 @@ id="out"></textarea>
 		}
 		// 比对字符
 		function matchChar(a,b){
-			let PINYIN_WEIGHT = 0.9;
-			if(a+b in matchCharCache){
-				return matchCharCache[a+b];
-			}else{
-				a = [a].concat(getPinYin(a));
-				b = [b].concat(getPinYin(b));
-				let max = 0;
-				for(let x=0;x<a.length;x++){
-					for(let y=0;y<b.length;y++){
-						// 和matchText不同，不考虑left和拼音问题
-						let score = matchTextSimple(a[x],b[y]);
-						if(x !== 0){
-							score *= PINYIN_WEIGHT;
-						}
-						if(y !== 0){
-							score *= PINYIN_WEIGHT;
-						}
-						if(max < score){
-							max = score;
-						}
-					}
-				}
-				matchCharCache[a+b] = max;
-				return max;
+			const CASE_WEIGHT = 0.9;
+			let similar = 0;
+			if(a === b){
+				similar = 1;
+			}else if(a.toLowerCase() === b.toLowerCase()){
+				similar = CASE_WEIGHT;
 			}
+			return similar;
 		}
-		// 和matchText不同，不考虑left和拼音问题
-		function matchTextSimple(a,b){
-			// 比对器近视程度
-			let CASE_WEIGHT = 0.8;
-			let MAX_OFFSET = 4;
-			let bmatch = [], strSimilar = 0, left = -1;
-			for(let y=0;y<b.length;y++){
-				bmatch.push(false);
-			}
-			for(let x=0;x<a.length;x++){
-				let bestY = -1, best = 0;
-				for(let y=0;y<b.length;y++){
-					if(!bmatch[y]){
-						let similar = 0;
-						if(a[x] === b[y]){
-							similar = 1;
-						}else if(a[x].toLowerCase() === b[y].toLowerCase()){
-							similar = CASE_WEIGHT;
-						}
-						similar *= 1-Math.abs(x-y)/MAX_OFFSET;
-						if(best < similar){
-							best = similar;
-							bestY = y;
-						}
-					}
-				}
-				if(bestY !== -1){
-					bmatch[bestY] = true;
-					strSimilar += best;
-				}
-			}
-			return strSimilar / (a.length + b.length) * 2;
-		}
-		// 获取单字可能的拼音(及表述方式)
-		function getPinYin(x){
+		// 获取可能的拼音(先不考虑多音字)
+		function getPinYins(x){
+			let list;
 			if(x in getPinYinCache){
 				return getPinYinCache[x];
 			}else{
-				let list = [];
-				for(let p in pinYin){
-					if(pinYin[p].includes(x)){
-						list.push(p);
-					}
-				}
+				list = [];
+				getPinYinCh(0,"");
 				getPinYinCache[x] = list;
 				return list;
+			}
+			
+			function getPinYinCh(i,str){
+				if(i === x.length){
+					list.push(str);
+					return;
+				}
+				let match = false;
+				for(let p in pinYin){
+					if(pinYin[p].includes(x[i])){
+						getPinYinCh(i+1,str + p[0].toUpperCase() + p.slice(1));
+						match = true;
+						break;
+					}
+				}
+				if(!match){
+					getPinYinCh(i+1,str + x[i]);
+				}
 			}
 		}
 	}
