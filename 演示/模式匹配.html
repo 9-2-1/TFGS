@@ -387,21 +387,21 @@ id="out"></textarea>
 							let ftextPs = getPinYins(ftext);
 							let match, subScore, subScoreP;
 							match = matchText(ftext, stext);
-							subScore = match.similarity + match.left * TEXT_WEIGHT;
+							subScore = match.similarleft + stext.length * TEXT_WEIGHT;
 							for(let x=0;x<ftextPs.length;x++){
 								for(let y=0;y<stextPs.length;y++){
 									match = matchText(ftextPs[x], stextPs[y]);
-									subScoreP = (match.similarity + match.left * TEXT_WEIGHT) * PINYIN_DEC;
+									subScoreP = (match.similarleft + stext.length * TEXT_WEIGHT) * PINYIN_DEC;
 									if(subScoreP > subScore){
 										if(subScoreP > subMax){
-											// debug(i+"\t"+stextPs[y]+"\t"+ftextPs[x]+"\t"+match.left+"\t"+subScoreP);
+											debug(i+"\t"+stextPs[y]+"\t"+ftextPs[x]+"\t"+match.left+"\t"+subScoreP);
 										}
 										subScore = subScoreP;
 									}
 								}
 							}
 							if(subScore > subMax){
-								// debug(i+"\t"+stext+"\t"+ftext+"\t"+match.left+"\t"+subScore);
+								debug(i+"\t"+stext+"\t"+ftext+"\t"+match.left+"\t"+subScore);
 								subMax = subScore;
 								subTextIto = subTextI;
 							}else{
@@ -598,11 +598,11 @@ id="out"></textarea>
 		function matchText(a,b){
 			// 比对器近视程度
 			const MAX_OFFSET = 10;
-			let bmatch = [], strSimilar = 0, left = -1;
-			if(a===""){
+			let bmatch = [], strSimilar = 0;
+			if(a === ""){
 				return {
 					similarity: 0,
-					left: 0
+					similarleft: 0
 				}
 			}
 			for(let y=0;y<b.length;y++){
@@ -613,7 +613,7 @@ id="out"></textarea>
 				for(let y=0;y<b.length;y++){
 					if(!bmatch[y]){
 						let similar = matchChar(a[x],b[y]);
-						similar *= 1-Math.abs(x-y)/*Math.max(a.length,b.length)*/ /MAX_OFFSET;
+						similar *= 1-Math.abs(x-y)/MAX_OFFSET;
 						if(best < similar){
 							best = similar;
 							bestY = y;
@@ -623,13 +623,11 @@ id="out"></textarea>
 				if(bestY !== -1){
 					bmatch[bestY] = true;
 					strSimilar += best;
-					left = x;
 				}
 			}
-			left+=1;
 			return {
 				similarity: strSimilar/Math.max(a.length,b.length),
-				left: left
+				similarleft: strSimilar/a.length,
 			};
 		}
 		// 比对字符
