@@ -1,0 +1,30 @@
+<html>
+
+<head>
+	<title>功能选项画面演示</title>
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+	<link rel="stylesheet" href="setting.css" />
+</head>
+
+<body>
+	<!--<textarea id="test"></textarea>-->
+	<script src="inspect.js"></script>
+	<script src="saveload.js"></script>
+	<script src="setting.js"></script>
+	<button id="show">show</button>
+	<button id="hide">hide</button>
+	<script>
+		function eleid(id) {
+			return document.getElementById(id);
+		}
+		eleid("show").addEventListener("click", function() {
+			tfgs.setting.showbutton();
+		})
+		eleid("hide").addEventListener("click", function() {
+			tfgs.setting.hidebutton();
+		})
+
+	</script>
+</body>
+
+</html>

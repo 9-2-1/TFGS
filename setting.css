@@ -1,0 +1,11 @@
+.-tfgs-setting-button {
+	position: absolute;
+	/*display: block;*/
+	width: 40px;
+	height: 40px;
+	top: 100px;
+	left: 100px;
+	background-color: grey;
+	border: 1px black solid;
+	border-radius: 5px;
+}
