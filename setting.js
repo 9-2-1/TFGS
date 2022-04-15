@@ -15,10 +15,11 @@ setting.menu = null;
  * @function */
 setting.showbutton = setting_show;
 
+function element(tag) {
+	return document.createElement(tag);
+}
+
 function setting_show() {
-	function element(tag) {
-		return document.createElement(tag);
-	}
 	if (setting.window === null) {
 
 		// 菜单
@@ -60,10 +61,14 @@ function setting_show() {
 		button.addEventListener("click", function(event) {
 			setting.button.style.display = "none";
 			setting.window.style.display = "block";
+			setting_menu();
 		});
 		setting.button = document.body.appendChild(button);
 	}
+	setting.button.style.display = "block";
+}
 
+function setting_menu() {
 	let menus = setting.menu.childNodes;
 	while (menus.length !== 0) menus[0].remove();
 	let id = String(Math.random());
@@ -116,6 +121,7 @@ function setting_show() {
 
 	setting.menu.appendChild(block);
 }
+
 
 /** @member {function} - 隐藏选项按钮
  * @function */
