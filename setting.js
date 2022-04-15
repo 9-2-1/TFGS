@@ -63,7 +63,58 @@ function setting_show() {
 		});
 		setting.button = document.body.appendChild(button);
 	}
-	setting.button.style.display = "block";
+
+	let menus = setting.menu.childNodes;
+	while (menus.length !== 0) menus[0].remove();
+	let id = String(Math.random());
+
+	let on_off = element("input");
+	on_off.type = "checkbox";
+	on_off.id = id;
+
+	let label = element("label");
+	label.innerText = "asdasd";
+	label.setAttribute("for", id);
+
+	let title = element("div");
+	title.classList.add("-tfgs-setting-title");
+	title.appendChild(on_off);
+	title.appendChild(label);
+
+	let block = element("div");
+	block.classList.add("-tfgs-setting-block");
+	block.appendChild(title);
+
+	function newoption(type, lab) {
+		let id = String(Math.random());
+
+		let label = element("label");
+		label.innerText = lab;
+		label.setAttribute("for", id);
+
+		let input = element("input");
+		input.type = type;
+		input.id = id;
+
+		let option = element("span");
+		option.classList.add("-tfgs-setting-option");
+
+		if (type === "radio" || type === "checkbox") {
+			option.appendChild(input);
+			option.appendChild(label);
+		} else {
+			option.appendChild(label);
+			option.appendChild(input);
+		}
+		block.appendChild(option);
+	}
+
+	newoption("text", "abcdef");
+	newoption("number", "kelios");
+	newoption("checkbox", "lleeww");
+	newoption("radio", "dsjkee");
+
+	setting.menu.appendChild(block);
 }
 
 /** @member {function} - 隐藏选项按钮

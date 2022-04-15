@@ -9,7 +9,7 @@
 	color: white;
 	word-wrap: break-word;
 	font: 15px monospace;
-	border: 1px black solid;
+	border: 1px solid black;
 	border-radius: 5px;
 }
 
@@ -29,6 +29,7 @@
 	left: 20px;
 	right: 20px;
 	bottom: 20px;
+	padding: 10px;
 	background: white;
 	box-shadow: 0px 0px 5px black;
 	border: 1px solid black;
@@ -50,3 +51,56 @@
 	overflow-y: scroll;
 	background: white;
 }
+
+.-tfgs-setting-block {
+	border-radius: 2px;
+	border: 1px solid black;
+	padding: 2px;
+	/*background: lightblue;*/
+}
+
+.-tfgs-setting-title {
+	padding: 2px;
+	border-radius: 2px;
+	background: lightblue;
+}
+
+.-tfgs-setting-title input {
+	position: relative;
+}
+
+/*
+.-tfgs-setting-title input:before {
+	content: " ";
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	border-radius: 2px;
+	background: blue;
+}
+
+.-tfgs-setting-title input:checked:before {
+	background: red;
+}
+*/
+
+.-tfgs-setting-option {
+	display: inline-block;
+	background: lightgreen;
+	border-radius: 2px;
+	border: 1px solid black;
+	margin: 2px;
+	padding: 2px;
+}
+
+.-tfgs-setting-option input[type=text] {
+	width: 50px;
+}
+
+/*
+.-tfgs-setting-option input[type=radio] {}
+
+.-tfgs-setting-option input[type=checkbox] {}
+*/
