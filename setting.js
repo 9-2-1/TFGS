@@ -8,6 +8,8 @@ let setting = {};
 setting.button = null;
 /** @member {Element} - 选项画面(包括灰色背景) */
 setting.window = null;
+/** @member {Element} - 选项菜单，选项直接在这里添加 */
+setting.menu = null;
 
 /** @member {function} - 显示选项按钮
  * @function */
@@ -45,10 +47,12 @@ function setting_show() {
 		winbg.classList.add("-tfgs-setting-windowbg");
 		winbg.appendChild(win);
 
-		setting.window = document.body.appendChild(winbg);
+		document.body.appendChild(winbg);
 
-		setting.window.style.display = "none";
+		setting.window = winbg;
+		setting.menu = menu;
 	}
+
 	if (setting.button === null) {
 		let button = element("span");
 		button.classList.add("-tfgs-setting-button");

@@ -1,6 +1,6 @@
 .-tfgs-setting-button {
 	position: absolute;
-	/*display: block;*/
+	display: block;
 	width: 40px;
 	height: 40px;
 	top: 100px;
@@ -15,6 +15,7 @@
 
 .-tfgs-setting-windowbg {
 	position: fixed;
+	display: none;
 	top: 0px;
 	left: 0px;
 	right: 0px;
