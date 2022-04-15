@@ -5,7 +5,47 @@
 	height: 40px;
 	top: 100px;
 	left: 100px;
-	background-color: grey;
+	background: grey;
+	color: white;
+	word-wrap: break-word;
+	font: 15px monospace;
 	border: 1px black solid;
 	border-radius: 5px;
+}
+
+.-tfgs-setting-windowbg {
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	background: rgba(0, 0, 0, 0.5);
+}
+
+.-tfgs-setting-window {
+	position: absolute;
+	top: 20px;
+	left: 20px;
+	right: 20px;
+	bottom: 20px;
+	background: white;
+	box-shadow: 0px 0px 5px black;
+	border: 1px solid black;
+}
+
+.-tfgs-setting-okbutton {
+	position: absolute;
+	height: 30px;
+	width: 30px;
+	right: 0px;
+	top: 0px;
+	background: grey;
+	color: white;
+	font: 20px monospace;
+	text-align: center;
+}
+
+.-tfgs-setting-menu {
+	overflow-y: scroll;
+	background: white;
 }
