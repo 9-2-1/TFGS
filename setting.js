@@ -11,13 +11,15 @@ setting.window = null;
 /** @member {Element} - 选项菜单，选项直接在这里添加 */
 setting.menu = null;
 
-/** @member {function} - 显示选项按钮
- * @function */
-setting.showbutton = setting_show;
-
+/** ## document.createElement
+ * @param {string} tag - tagName */
 function element(tag) {
 	return document.createElement(tag);
 }
+
+/** @member {function} - 显示选项按钮
+ * @function */
+setting.showbutton = setting_show;
 
 function setting_show() {
 	if (setting.window === null) {
@@ -61,65 +63,103 @@ function setting_show() {
 		button.addEventListener("click", function(event) {
 			setting.button.style.display = "none";
 			setting.window.style.display = "block";
-			setting_menu();
+			setting_menu(tfgs.optioninfo);
 		});
 		setting.button = document.body.appendChild(button);
 	}
 	setting.button.style.display = "block";
 }
 
-function setting_menu() {
-	let menus = setting.menu.childNodes;
-	while (menus.length !== 0) menus[0].remove();
-	let id = String(Math.random());
+/** ##
+ * @param {Object} optioninfo - ##
+ * @param {function} callback - callback() ## */
+setting._menu = setting_menu;
 
-	let on_off = element("input");
-	on_off.type = "checkbox";
-	on_off.id = id;
+function setting_menu(optioninfo) {
+	try {
+		let menus = setting.menu.childNodes;
+		while (menus.length !== 0) menus[0].remove();
 
-	let label = element("label");
-	label.innerText = "asdasd";
-	label.setAttribute("for", id);
+		for (let funcname in optioninfo) {
+			let menuid = "-tfgs-setting-" + funcname;
+			let funcinfo = optioninfo[funcname];
 
-	let title = element("div");
-	title.classList.add("-tfgs-setting-title");
-	title.appendChild(on_off);
-	title.appendChild(label);
+			let info = "";
+			if ("author" in funcinfo) {
+				info += "Author: " + funcinfo.author + "\n";
+			}
+			if ("version" in funcinfo) {
+				info += "Version: " + funcinfo.version + "\n";
+			}
+			if ("info" in funcinfo) {
+				info += "\n" + funcinfo.info;
+			}
 
-	let block = element("div");
-	block.classList.add("-tfgs-setting-block");
-	block.appendChild(title);
+			let enable = element("input");
+			enable.type = "checkbox";
+			enable.id = menuid;
 
-	function newoption(type, lab) {
-		let id = String(Math.random());
+			let label = element("label");
+			label.innerText = funcinfo.name;
+			label.setAttribute("for", menuid);
 
-		let label = element("label");
-		label.innerText = lab;
-		label.setAttribute("for", id);
+			let title = element("div");
+			title.classList.add("-tfgs-setting-title");
+			title.appendChild(enable);
+			title.appendChild(label);
 
-		let input = element("input");
-		input.type = type;
-		input.id = id;
+			function addinfo(target, info) {
+				if(typeof info !== "string" || info === "")return;
+				let infospan = element("span");
+				infospan.classList.add("-tfgs-setting-info");
+				infospan.innerText = info;
 
-		let option = element("span");
-		option.classList.add("-tfgs-setting-option");
+				let infobutton = element("span");
+				infobutton.classList.add("-tfgs-setting-infobutton");
+				infobutton.innerText = "i";
+				infobutton.appendChild(infospan);
 
-		if (type === "radio" || type === "checkbox") {
-			option.appendChild(input);
-			option.appendChild(label);
-		} else {
-			option.appendChild(label);
-			option.appendChild(input);
+				target.appendChild(infobutton);
+			}
+
+				addinfo(title, info);
+
+			let optiondiv = element("div");
+
+			for (let name in funcinfo.options) {
+				let option = funcinfo.options[name];
+
+				let toption = element("span");
+				toption.classList.add("-tfgs-setting-option");
+
+				let tlabel = element("label");
+				tlabel.innerText = option.name;
+
+				addinfo(tlabel, option.info);
+
+				let optioninput = null;
+				switch (option.type) {
+					case "text":
+						optioninput = element("input");
+						optioninput.type = "text";
+						toption.appendChild(tlabel);
+						toption.appendChild(optioninput);
+						break;
+
+				}
+				optiondiv.appendChild(toption);
+			}
+
+			let block = element("div");
+			block.classList.add("-tfgs-setting-block");
+			block.appendChild(title);
+			block.appendChild(optiondiv);
+
+			setting.menu.appendChild(block);
 		}
-		block.appendChild(option);
+	} catch (e) {
+		alert(e.message);
 	}
-
-	newoption("text", "abcdef");
-	newoption("number", "kelios");
-	newoption("checkbox", "lleeww");
-	newoption("radio", "dsjkee");
-
-	setting.menu.appendChild(block);
 }
 
 
