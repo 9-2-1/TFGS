@@ -67,7 +67,7 @@ try {
 					}
 				},
 				"tips": {
-					"type": "tip",
+					"type": "tips",
 					"name": "This is a tip"
 				}
 			}
