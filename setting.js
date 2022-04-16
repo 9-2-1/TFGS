@@ -11,10 +11,26 @@ setting.window = null;
 /** @member {Element} - 选项菜单，选项直接在这里添加 */
 setting.menu = null;
 
-/** ## document.createElement
- * @param {string} tag - tagName */
-function element(tag) {
-	return document.createElement(tag);
+/** ## createelement
+ * @param {string} tag - tagName
+ * @param {?string} className - className
+ * @param {?string} type - type of input
+ * @return {Element} */
+function element(tag, className, type) {
+	let ele = document.createElement(tag);
+	if (className !== undefined && className !== null) ele.className = className;
+	if (type !== undefined && type !== null) ele.type = type;
+	return ele;
+}
+
+/** ##
+ * @param {Element} input
+ * @param {Element} label */
+function matchInputLabel(input, label, id) {
+	if (id === undefined) id = input.id;
+	if (id === undefined || id === null) id = Math.random();
+	input.id = id;
+	label.setAttribute("for", id);
 }
 
 /** @member {function} - 显示选项按钮
@@ -25,12 +41,10 @@ function setting_show() {
 	if (setting.window === null) {
 
 		// 菜单
-		let menu = element("span");
-		menu.classList.add("-tfgs-setting-menu");
+		let menu = element("span", "-tfgs-setting-menu");
 
 		// 关闭按钮
-		let okbutton = element("span");
-		okbutton.classList.add("-tfgs-setting-okbutton");
+		let okbutton = element("span", "-tfgs-setting-okbutton");
 		okbutton.innerText = "x";
 		okbutton.addEventListener("click", function(event) {
 
@@ -40,14 +54,12 @@ function setting_show() {
 		});
 
 		// 选项窗口
-		let win = element("span");
-		win.classList.add("-tfgs-setting-window");
+		let win = element("span", "-tfgs-setting-window");
 		win.appendChild(menu);
 		win.appendChild(okbutton);
 
 		// 背景
-		let winbg = element("span");
-		winbg.classList.add("-tfgs-setting-windowbg");
+		let winbg = element("span", "-tfgs-setting-windowbg");
 		winbg.appendChild(win);
 
 		document.body.appendChild(winbg);
@@ -57,8 +69,7 @@ function setting_show() {
 	}
 
 	if (setting.button === null) {
-		let button = element("span");
-		button.classList.add("-tfgs-setting-button");
+		let button = element("span", "-tfgs-setting-button");
 		button.innerText = "选项";
 		button.addEventListener("click", function(event) {
 			setting.button.style.display = "none";
@@ -77,6 +88,18 @@ setting._menu = setting_menu;
 
 function setting_menu(optioninfo) {
 	try {
+		function addinfo(target, info) {
+			if (typeof info !== "string" || info === "") return;
+			let infospan = element("span", "-tfgs-setting-info");
+			infospan.innerText = info;
+
+			let infobutton = element("span", "-tfgs-setting-infobutton");
+			infobutton.innerText = "i";
+			infobutton.appendChild(infospan);
+
+			target.appendChild(infobutton);
+		}
+
 		let menus = setting.menu.childNodes;
 		while (menus.length !== 0) menus[0].remove();
 
@@ -103,55 +126,72 @@ function setting_menu(optioninfo) {
 			label.innerText = funcinfo.name;
 			label.setAttribute("for", menuid);
 
-			let title = element("div");
-			title.classList.add("-tfgs-setting-title");
+			let title = element("div", "-tfgs-setting-title");
 			title.appendChild(enable);
 			title.appendChild(label);
 
-			function addinfo(target, info) {
-				if(typeof info !== "string" || info === "")return;
-				let infospan = element("span");
-				infospan.classList.add("-tfgs-setting-info");
-				infospan.innerText = info;
-
-				let infobutton = element("span");
-				infobutton.classList.add("-tfgs-setting-infobutton");
-				infobutton.innerText = "i";
-				infobutton.appendChild(infospan);
-
-				target.appendChild(infobutton);
-			}
-
-				addinfo(title, info);
+			addinfo(title, info);
 
 			let optiondiv = element("div");
 
 			for (let name in funcinfo.options) {
 				let option = funcinfo.options[name];
 
-				let toption = element("span");
-				toption.classList.add("-tfgs-setting-option");
+				let toption = element("span", "-tfgs-setting-option");
 
 				let tlabel = element("label");
 				tlabel.innerText = option.name;
 
 				addinfo(tlabel, option.info);
 
-				let optioninput = null;
+				let tinput = null;
 				switch (option.type) {
 					case "text":
-						optioninput = element("input");
-						optioninput.type = "text";
+						tinput = element("input", null, "text");
+						matchInputLabel(tinput, tlabel, "-tfgs-setting-option-" + funcname + "-" + name);
+						tinput.setAttribute("data-funcname", funcname);
+						tinput.setAttribute("data-infoname", name);
 						toption.appendChild(tlabel);
-						toption.appendChild(optioninput);
+						toption.appendChild(tinput);
 						break;
+					case "check":
+						tinput = element("input", null, "check");
+						matchInputLabel(tinput, tlabel, "-tfgs-setting-option-" + funcname + "-" + name);
+						tinput.setAttribute("data-funcname", funcname);
+						tinput.setAttribute("data-infoname", name);
+						toption.appendChild(tinput);
+						toption.appendChild(tlabel);
+						break;
+					case "button":
+						tinput = element("input", null, "button");
+						matchInputLabel(tinput, tlabel, "-tfgs-setting-option-" + funcname + "-" + name);
+						tinput.value = option.name;
+						if ("onclick" in option)
+							tinput.addEventListener("click", option.onclick);
+						tlabel.innerText = "";
+						toption.appendChild(tinput);
+						toption.appendChild(tlabel);
+						break;
+					case "tips":
+						tlabel.className = "-tfgs-setting-tips";
+						toption.appendChild(tlabel);
+						break;
+						/*
+					case "select":
+						tinput = element("input", null,"radio");
+						matchInputLabel(tinput, tlabel, "-tfgs-setting-option-" + funcname + "-" + name+"-"+);
+						tinput.setAttribute("data-funcname",funcname);
+						tinput.setAttribute("data-infoname",name);
+						toption.appendChild(tinput);
+						toption.appendChild(tlabel);
+						break;
+						*/
 
 				}
 				optiondiv.appendChild(toption);
 			}
 
-			let block = element("div");
-			block.classList.add("-tfgs-setting-block");
+			let block = element("div", "-tfgs-setting-block");
 			block.appendChild(title);
 			block.appendChild(optiondiv);
 
@@ -161,7 +201,6 @@ function setting_menu(optioninfo) {
 		alert(e.message);
 	}
 }
-
 
 /** @member {function} - 隐藏选项按钮
  * @function */
