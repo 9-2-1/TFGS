@@ -155,6 +155,7 @@ function setting_menu(optioninfo) {
 
 				let tinput = null;
 				switch (option.type) {
+
 					case "text":
 						tinput = element("input", null, "text");
 						matchInputLabel(tinput, tlabel, "-tfgs-setting-option-" + funcname + "-" + name);
@@ -163,14 +164,16 @@ function setting_menu(optioninfo) {
 						toption.appendChild(tlabel);
 						toption.appendChild(tinput);
 						break;
+
 					case "check":
-						tinput = element("input", null, "check");
+						tinput = element("input", null, "checkbox");
 						matchInputLabel(tinput, tlabel, "-tfgs-setting-option-" + funcname + "-" + name);
 						tinput.setAttribute("data-funcname", funcname);
 						tinput.setAttribute("data-infoname", name);
 						toption.appendChild(tinput);
 						toption.appendChild(tlabel);
 						break;
+
 					case "button":
 						tinput = element("input", null, "button");
 						matchInputLabel(tinput, tlabel, "-tfgs-setting-option-" + funcname + "-" + name);
@@ -181,20 +184,35 @@ function setting_menu(optioninfo) {
 						toption.appendChild(tinput);
 						toption.appendChild(tlabel);
 						break;
+
 					case "tips":
-						tlabel.className = "-tfgs-setting-tips";
+						toption.className = "-tfgs-setting-tips";
 						toption.appendChild(tlabel);
 						break;
-						/*
+
 					case "select":
-						tinput = element("input", null,"radio");
-						matchInputLabel(tinput, tlabel, "-tfgs-setting-option-" + funcname + "-" + name+"-"+);
-						tinput.setAttribute("data-funcname",funcname);
-						tinput.setAttribute("data-infoname",name);
-						toption.appendChild(tinput);
 						toption.appendChild(tlabel);
+						for (let opid in option.options) {
+							let selectinfo = option.options[opid];
+							let tselect = element("span", "-tfgs-setting-option-select");
+
+							let tsinput = element("input", null, "radio");
+							tsinput.name = "-tfgs-setting-option-" + funcname + "-" + name;
+							let tslabel = element("label");
+							matchInputLabel(tsinput, tslabel, "-tfgs-setting-option-" + funcname + "-" + name + "-" + opid);
+							tslabel.innerText = selectinfo.name;
+
+							tsinput.setAttribute("data-funcname", funcname);
+							tsinput.setAttribute("data-infoname", name);
+							tsinput.setAttribute("data-value", selectinfo.value);
+
+							tselect.appendChild(tsinput);
+							tselect.appendChild(tslabel);
+							addinfo(tselect, selectinfo.info);
+
+							toption.appendChild(tselect);
+						}
 						break;
-						*/
 
 				}
 

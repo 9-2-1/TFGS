@@ -158,3 +158,16 @@
 	border-radius: 2px;
 	background: lightyellow;
 }
+
+.-tfgs-setting-option-select {
+	border: 1px solid black;
+	border-radius: 2px;
+	background: pink;
+}
+
+.-tfgs-setting-tips {
+	display:block;
+	border: 1px solid black;
+	border-radius: 2px;
+	background: lightyellow;
+}
