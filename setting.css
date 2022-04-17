@@ -69,12 +69,10 @@
 .-tfgs-setting-block {
 	border-radius: 2px;
 	border: 1px solid black;
-	padding: 2px;
 	/*background: lightblue;*/
 }
 
 .-tfgs-setting-title {
-	padding: 2px;
 	border-radius: 2px;
 	background: lightblue;
 }
@@ -89,13 +87,14 @@
 	border-radius: 2px;
 	border: 1px solid black;
 	margin: 2px;
-	padding: 2px;
 }
 
 .-tfgs-setting-infobutton {
 	display: inline-block;
-	width: 20px;
-	height: 20px;
+	width: 15px;
+	height: 15px;
+	font-size: 15px;
+	line-height: 15px;
 	padding: 0px;
 	border-radius: 50%;
 	border: 1px solid black;
@@ -117,14 +116,14 @@
 	height: 0px;
 	z-index: 1;
 	border-bottom: 10px solid black;
-	border-left: 10px solid rgba(0, 0, 0, 0);
-	border-right: 10px solid rgba(0, 0, 0, 0);
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
 }
 
 .-tfgs-setting-info:after {
 	content: " ";
 	position: absolute;
-	top: -9.6px;
+	top: -8.5px;
 	left: 63px;
 	width: 0px;
 	height: 0px;
@@ -151,6 +150,7 @@
 	border: 1px solid black;
 	border-radius: 2px;
 	background: pink;
+	padding: 3px;
 }
 
 .-tfgs-setting-tips {
@@ -171,15 +171,19 @@
 
 .-tfgs-setting-menu input[type=checkbox] {
 	position: relative;
-	height: 20px;
-	width: 20px;
+	height: 0px;
+	width: 0px;
+	top: -15px;
+	margin: 0px 20px 0px 0px;
 }
 
 .-tfgs-setting-menu input[type=checkbox]:before {
 	content: " ";
 	position: absolute;
-	height: 100%;
-	width: 100%;
+	height: 20px;
+	width: 20px;
+	top: 0px;
+	bottom: 0px;
 	background: white;
 	border-radius: 3px;
 	border: 1px solid black;
@@ -196,15 +200,19 @@
 
 .-tfgs-setting-menu input[type=radio] {
 	position: relative;
-	height: 20px;
-	width: 20px;
+	height: 0px;
+	width: 0px;
+	top: -15px;
+	margin: 0px 20px 0px 0px;
 }
 
 .-tfgs-setting-menu input[type=radio]:before {
 	content: " ";
 	position: absolute;
-	height: 100%;
-	width: 100%;
+	height: 20px;
+	width: 20px;
+	top: 0px;
+	bottom: 0px;
 	background: white;
 	border-radius: 50%;
 	border: 1px solid black;
