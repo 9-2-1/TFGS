@@ -246,6 +246,7 @@
 .-tfgs-setting-menu input.-tfgs-warning:before {
 	border: 2px solid olive;
 	background: lightyellow;
+	color: olive;
 }
 
 .-tfgs-setting-menu input.-tfgs-warning:checked:before {
@@ -253,12 +254,70 @@
 }
 
 
-/* .-tfgs-setting-menu input.-tfgs-error:before */
+.-tfgs-setting-menu input.-tfgs-error:before,
 .-tfgs-setting-menu input.-tfgs-error {
 	border: 2px solid red;
 	background: pink;
+	color: red;
 }
 
-/* .-tfgs-setting-menu input.-tfgs-error:checked:before {
+.-tfgs-setting-menu input.-tfgs-error:checked:before {
 	background: red;
-} */
+}
+
+.-tfgs-setting-menu input.-tfgs-warning:hover+*>.-tfgs-setting-tips,
+.-tfgs-setting-menu input.-tfgs-warning:focus+*>.-tfgs-setting-tips {
+	display: block;
+	background: lightyellow;
+}
+
+.-tfgs-setting-menu input.-tfgs-warning:hover+*>.-tfgs-setting-tips:after {
+	border-bottom: 10px solid lightyellow;
+}
+
+.-tfgs-setting-menu input.-tfgs-error:hover+*>.-tfgs-setting-tips,
+.-tfgs-setting-menu input.-tfgs-error:focus+*>.-tfgs-setting-tips {
+	display: block;
+	background: pink;
+}
+
+.-tfgs-setting-menu input.-tfgs-error:hover+*>.-tfgs-setting-tips:after {
+	border-bottom: 10px solid pink;
+}
+
+.-tfgs-setting-tips:before {
+	content: " ";
+	position: absolute;
+	top: -10px;
+	left: 10px;
+	width: 0px;
+	height: 0px;
+	z-index: 1;
+	border-bottom: 10px solid black;
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+}
+
+.-tfgs-setting-tips:after {
+	content: " ";
+	position: absolute;
+	top: -8.5px;
+	left: 10px;
+	width: 0px;
+	height: 0px;
+	z-index: 1;
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+}
+
+.-tfgs-setting-tips {
+	display: none;
+	position: absolute;
+	white-space: pre-wrap;
+	top: 30px;
+	left: -25px;
+	width: 150px;
+	z-index: 1;
+	border: 1px solid black;
+	border-radius: 2px;
+}

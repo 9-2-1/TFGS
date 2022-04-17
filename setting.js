@@ -88,6 +88,18 @@ setting._menu = setting_menu;
 
 function setting_menu(optioninfo) {
 	try {
+		function addtips(target, info) {
+			if (typeof info !== "string" || info === "") return;
+			let headspan = element("span");
+			headspan.style.position = "relative";
+
+			let infospan = element("span", "-tfgs-setting-tips");
+			infospan.innerText = info;
+
+			headspan.appendChild(infospan);
+			target.appendChild(headspan);
+		}
+
 		function addinfo(target, info) {
 			if (typeof info !== "string" || info === "") return;
 			let infospan = element("span", "-tfgs-setting-info");
@@ -163,6 +175,7 @@ function setting_menu(optioninfo) {
 						tinput.setAttribute("data-infoname", name);
 						toption.appendChild(tlabel);
 						toption.appendChild(tinput);
+						addtips(toption, "sjdmdjemffkxod");
 						break;
 
 					case "check":
@@ -171,6 +184,7 @@ function setting_menu(optioninfo) {
 						tinput.setAttribute("data-funcname", funcname);
 						tinput.setAttribute("data-infoname", name);
 						toption.appendChild(tinput);
+						addtips(toption, "sjdmdjemffkxod");
 						toption.appendChild(tlabel);
 						break;
 
@@ -182,6 +196,7 @@ function setting_menu(optioninfo) {
 							tinput.addEventListener("click", option.onclick);
 						tlabel.innerText = "";
 						toption.appendChild(tinput);
+						addtips(toption, "sjdmdjemffkxod");
 						toption.appendChild(tlabel);
 						break;
 
@@ -208,11 +223,13 @@ function setting_menu(optioninfo) {
 
 							if (tsinput !== null) {
 								let classname = ["", "-tfgs-warning", "-tfgs-error"][Math.floor(Math.random() * 3)];
-								if (classname !== "")
+								if (classname !== "") {
 									tsinput.classList.add(classname);
+								}
 							}
 
 							tselect.appendChild(tsinput);
+							addtips(tselect, "sjdmdjemffkxod");
 							tselect.appendChild(tslabel);
 							addinfo(tselect, selectinfo.info);
 
@@ -223,8 +240,9 @@ function setting_menu(optioninfo) {
 				}
 				if (tinput !== null) {
 					let classname = ["", "-tfgs-warning", "-tfgs-error"][Math.floor(Math.random() * 3)];
-					if (classname !== "")
+					if (classname !== "") {
 						tinput.classList.add(classname);
+					}
 				}
 
 				addinfo(toption, option.info);
