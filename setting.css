@@ -54,6 +54,12 @@
 .-tfgs-setting-menu {
 	overflow-y: scroll;
 	background: white;
+	font-family: Fantasque, fira, monofur, monospace;
+}
+
+.-tfgs-setting-menu * {
+	margin: 2px;
+	padding: 2px;
 }
 
 .-tfgs-setting-block {
@@ -73,23 +79,6 @@
 	position: relative;
 }
 
-/*
-.-tfgs-setting-title input:before {
-	content: " ";
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	right: 0px;
-	bottom: 0px;
-	border-radius: 2px;
-	background: blue;
-}
-
-.-tfgs-setting-title input:checked:before {
-	background: red;
-}
-*/
-
 .-tfgs-setting-option {
 	display: inline-block;
 	background: lightgreen;
@@ -99,20 +88,11 @@
 	padding: 2px;
 }
 
-.-tfgs-setting-option input[type=text] {
-	width: 50px;
-}
-
-/*
-.-tfgs-setting-option input[type=radio] {}
-
-.-tfgs-setting-option input[type=checkbox] {}
-*/
-
 .-tfgs-setting-infobutton {
 	display: inline-block;
 	width: 20px;
 	height: 20px;
+	padding: 0px;
 	border-radius: 50%;
 	border: 1px solid black;
 	background: lightyellow;
@@ -142,8 +122,8 @@
 	height: 0px;
 	z-index: 1;
 	border-bottom: 10px solid lightyellow;
-	border-left: 10px solid rgba(0, 0, 0, 0);
-	border-right: 10px solid rgba(0, 0, 0, 0);
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
 }
 
 .-tfgs-setting-info {
@@ -166,8 +146,80 @@
 }
 
 .-tfgs-setting-tips {
-	display:block;
+	display: block;
 	border: 1px solid black;
 	border-radius: 2px;
 	background: lightyellow;
+	cursor: help;
+}
+
+.-tfgs-setting-menu input[type=text] {
+	border-radius: 1px;
+	height: 20px;
+	width: 80px;
+	font-family: Fantasque, fira, monofur, monospace;
+	background: white;
+	border: 1px solid black;
+}
+
+.-tfgs-setting-menu input[type=checkbox] {
+	position: relative;
+	height: 20px;
+	width: 20px;
+}
+
+.-tfgs-setting-menu input[type=checkbox]:before {
+	content: " ";
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	background: white;
+	border-radius: 3px;
+	border: 1px solid black;
+}
+
+.-tfgs-setting-menu input[type=checkbox]:checked:before {
+	content: "\2713";
+	text-align: center;
+	font-size: 18px;
+	line-height: 20px;
+	color: white;
+	background: blue;
+}
+
+.-tfgs-setting-menu input[type=radio] {
+	position: relative;
+	height: 20px;
+	width: 20px;
+}
+
+.-tfgs-setting-menu input[type=radio]:before {
+	content: " ";
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	background: white;
+	border-radius: 50%;
+	border: 1px solid black;
+}
+
+.-tfgs-setting-menu input[type=radio]:checked:before {
+	content: "●";
+	text-align: center;
+	font-size: 12px;
+	line-height: 20px;
+	color: white;
+	background: blue;
+}
+
+.-tfgs-setting-menu input[type=button] {
+	position: relative;
+	background: lightyellow;
+	border-radius: 2px;
+	border: 1px solid black;
+	font-family: Fantasque, fira, monofur, monospace;
+}
+
+.-tfgs-setting-menu input[type=button]:active {
+	background: olive;
 }
