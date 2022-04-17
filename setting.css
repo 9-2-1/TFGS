@@ -108,3 +108,53 @@
 
 .-tfgs-setting-option input[type=checkbox] {}
 */
+
+.-tfgs-setting-infobutton {
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	border: 1px solid black;
+	background: lightyellow;
+	text-align: center;
+	position: relative;
+}
+
+.-tfgs-setting-info:before {
+	content: " ";
+	position: absolute;
+	top: -10px;
+	left: 63px;
+	width: 0px;
+	height: 0px;
+	z-index: 1;
+	border-bottom: 10px solid black;
+	border-left: 10px solid rgba(0, 0, 0, 0);
+	border-right: 10px solid rgba(0, 0, 0, 0);
+}
+
+.-tfgs-setting-info:after {
+	content: " ";
+	position: absolute;
+	top: -9.6px;
+	left: 63px;
+	width: 0px;
+	height: 0px;
+	z-index: 1;
+	border-bottom: 10px solid lightyellow;
+	border-left: 10px solid rgba(0, 0, 0, 0);
+	border-right: 10px solid rgba(0, 0, 0, 0);
+}
+
+.-tfgs-setting-info {
+	display: none;
+	position: absolute;
+	white-space: pre-wrap;
+	top: 30px;
+	left: -65px;
+	width: 150px;
+	z-index: 1;
+	border: 1px solid black;
+	border-radius: 2px;
+	background: lightyellow;
+}

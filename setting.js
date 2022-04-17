@@ -97,6 +97,17 @@ function setting_menu(optioninfo) {
 			infobutton.innerText = "i";
 			infobutton.appendChild(infospan);
 
+			function showinfo() {
+				infospan.style.display = "block";
+			}
+
+			function hideinfo() {
+				infospan.style.display = "none";
+			}
+			infobutton.addEventListener("mouseover", showinfo);
+			infobutton.addEventListener("mousedown", showinfo);
+			infobutton.addEventListener("mouseleave", hideinfo);
+
 			target.appendChild(infobutton);
 		}
 
@@ -142,8 +153,6 @@ function setting_menu(optioninfo) {
 				let tlabel = element("label");
 				tlabel.innerText = option.name;
 
-				addinfo(tlabel, option.info);
-
 				let tinput = null;
 				switch (option.type) {
 					case "text":
@@ -188,6 +197,9 @@ function setting_menu(optioninfo) {
 						*/
 
 				}
+
+				addinfo(toption, option.info);
+
 				optiondiv.appendChild(toption);
 			}
 
@@ -199,6 +211,7 @@ function setting_menu(optioninfo) {
 		}
 	} catch (e) {
 		alert(e.message);
+		console.log(e);
 	}
 }
 
