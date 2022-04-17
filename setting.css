@@ -123,7 +123,7 @@
 .-tfgs-setting-info:after {
 	content: " ";
 	position: absolute;
-	top: -8.5px;
+	top: -8.6px;
 	left: 63px;
 	width: 0px;
 	height: 0px;
@@ -301,7 +301,7 @@
 .-tfgs-setting-wrong-tips:after {
 	content: " ";
 	position: absolute;
-	top: -8.5px;
+	top: -8.6px;
 	left: 10px;
 	width: 0px;
 	height: 0px;

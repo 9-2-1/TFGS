@@ -41,25 +41,25 @@ try {
 					"name": "select items",
 					"info": "This is a list of options",
 					"options": [{
-							"value": 1,
+							"value": "1",
 							"name": "large",
 							"info": "50x50"
 						},
 						{
-							"value": 2,
+							"value": "2",
 							"name": "medium",
 							"info": "30x30"
 						},
 						{
-							"value": 3,
+							"value": "3",
 							"name": "small",
 							"info": "10x10"
 						}
 					],
-					"default": 1,
+					"default": "1",
 					"check": function(value) {
 						switch (value) {
-							case 1:
+							case "1":
 								return "Maybe too large."; // ##
 							default:
 								return null;
