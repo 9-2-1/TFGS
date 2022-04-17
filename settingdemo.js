@@ -13,7 +13,7 @@ try {
 					"name": "text field",
 					"info": "This is a text field",
 					"default": "hello, world!",
-					"onchange": function(value) {
+					"check": function(value) {
 						if (value.length > 8) {
 							throw "value is too long"; // ##
 						} else if (value.length === 0) {
@@ -28,7 +28,7 @@ try {
 					"name": "checkbox",
 					"info": "This is a checkbox",
 					"default": true,
-					"onchange": function(value) {
+					"check": function(value) {
 						if (value) {
 							return "Attention: if you enable it, it will be enabled."; // ##
 						} else {
@@ -56,7 +56,15 @@ try {
 							"info": "10x10"
 						}
 					],
-					"default": 1
+					"default": 1,
+					"check": function(value) {
+						switch (value) {
+							case 1:
+								return "Maybe too large."; // ##
+							default:
+								return null;
+						}
+					},
 				},
 				"button": {
 					"type": "button",
