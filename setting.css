@@ -150,7 +150,6 @@
 	border: 1px solid black;
 	border-radius: 2px;
 	background: pink;
-	padding: 3px;
 }
 
 .-tfgs-setting-tips {
@@ -175,6 +174,7 @@
 	width: 0px;
 	top: -15px;
 	margin: 0px 20px 0px 0px;
+	box-sizing: border-box;
 }
 
 .-tfgs-setting-menu input[type=checkbox]:before {
@@ -187,6 +187,7 @@
 	background: white;
 	border-radius: 3px;
 	border: 1px solid black;
+	box-sizing: border-box;
 }
 
 .-tfgs-setting-menu input[type=checkbox]:checked:before {
@@ -204,6 +205,7 @@
 	width: 0px;
 	top: -15px;
 	margin: 0px 20px 0px 0px;
+	box-sizing: border-box;
 }
 
 .-tfgs-setting-menu input[type=radio]:before {
@@ -216,6 +218,7 @@
 	background: white;
 	border-radius: 50%;
 	border: 1px solid black;
+	box-sizing: border-box;
 }
 
 .-tfgs-setting-menu input[type=radio]:checked:before {
@@ -238,3 +241,24 @@
 .-tfgs-setting-menu input[type=button]:active {
 	background: olive;
 }
+
+.-tfgs-setting-menu input.-tfgs-warning,
+.-tfgs-setting-menu input.-tfgs-warning:before {
+	border: 2px solid olive;
+	background: lightyellow;
+}
+
+.-tfgs-setting-menu input.-tfgs-warning:checked:before {
+	background: olive;
+}
+
+
+/* .-tfgs-setting-menu input.-tfgs-error:before */
+.-tfgs-setting-menu input.-tfgs-error {
+	border: 2px solid red;
+	background: pink;
+}
+
+/* .-tfgs-setting-menu input.-tfgs-error:checked:before {
+	background: red;
+} */

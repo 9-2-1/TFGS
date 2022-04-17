@@ -206,6 +206,12 @@ function setting_menu(optioninfo) {
 							tsinput.setAttribute("data-infoname", name);
 							tsinput.setAttribute("data-value", selectinfo.value);
 
+							if (tsinput !== null) {
+								let classname = ["", "-tfgs-warning", "-tfgs-error"][Math.floor(Math.random() * 3)];
+								if (classname !== "")
+									tsinput.classList.add(classname);
+							}
+
 							tselect.appendChild(tsinput);
 							tselect.appendChild(tslabel);
 							addinfo(tselect, selectinfo.info);
@@ -214,6 +220,11 @@ function setting_menu(optioninfo) {
 						}
 						break;
 
+				}
+				if (tinput !== null) {
+					let classname = ["", "-tfgs-warning", "-tfgs-error"][Math.floor(Math.random() * 3)];
+					if (classname !== "")
+						tinput.classList.add(classname);
 				}
 
 				addinfo(toption, option.info);
