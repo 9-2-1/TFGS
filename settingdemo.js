@@ -80,6 +80,10 @@ try {
 	eleid("hide").addEventListener("click", function() {
 		tfgs.setting.hidebutton();
 	})
+
+	tfgs.setting.showbutton();
+	tfgs.setting.button.click();
 } catch (e) {
 	alert(e.message);
+	console.log(e);
 }
