@@ -49,6 +49,10 @@
 	color: white;
 	font: 20px monospace;
 	text-align: center;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	cursor: pointer;
 }
 
 .-tfgs-setting-menu {
@@ -97,6 +101,10 @@
 	border: 1px solid black;
 	background: lightyellow;
 	text-align: center;
+	cursor: help;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 	position: relative;
 }
 
@@ -150,7 +158,6 @@
 	border: 1px solid black;
 	border-radius: 2px;
 	background: lightyellow;
-	cursor: help;
 }
 
 .-tfgs-setting-menu input[type=text] {
