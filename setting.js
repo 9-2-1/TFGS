@@ -93,7 +93,7 @@ function setting_menu(optioninfo) {
 			let headspan = element("span");
 			headspan.style.position = "relative";
 
-			let infospan = element("span", "-tfgs-setting-tips");
+			let infospan = element("span", "-tfgs-setting-wrong-tips");
 			infospan.innerText = info;
 
 			headspan.appendChild(infospan);

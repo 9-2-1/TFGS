@@ -265,27 +265,27 @@
 	background: red;
 }
 
-.-tfgs-setting-menu input.-tfgs-warning:hover+*>.-tfgs-setting-tips,
-.-tfgs-setting-menu input.-tfgs-warning:focus+*>.-tfgs-setting-tips {
+.-tfgs-setting-menu input.-tfgs-warning:hover+*>.-tfgs-setting-wrong-tips,
+.-tfgs-setting-menu input.-tfgs-warning:focus+*>.-tfgs-setting-wrong-tips {
 	display: block;
 	background: lightyellow;
 }
 
-.-tfgs-setting-menu input.-tfgs-warning:hover+*>.-tfgs-setting-tips:after {
+.-tfgs-setting-menu input.-tfgs-warning:hover+*>.-tfgs-setting-wrong-tips:after {
 	border-bottom: 10px solid lightyellow;
 }
 
-.-tfgs-setting-menu input.-tfgs-error:hover+*>.-tfgs-setting-tips,
-.-tfgs-setting-menu input.-tfgs-error:focus+*>.-tfgs-setting-tips {
+.-tfgs-setting-menu input.-tfgs-error:hover+*>.-tfgs-setting-wrong-tips,
+.-tfgs-setting-menu input.-tfgs-error:focus+*>.-tfgs-setting-wrong-tips {
 	display: block;
 	background: pink;
 }
 
-.-tfgs-setting-menu input.-tfgs-error:hover+*>.-tfgs-setting-tips:after {
+.-tfgs-setting-menu input.-tfgs-error:hover+*>.-tfgs-setting-wrong-tips:after {
 	border-bottom: 10px solid pink;
 }
 
-.-tfgs-setting-tips:before {
+.-tfgs-setting-wrong-tips:before {
 	content: " ";
 	position: absolute;
 	top: -10px;
@@ -298,7 +298,7 @@
 	border-right: 10px solid transparent;
 }
 
-.-tfgs-setting-tips:after {
+.-tfgs-setting-wrong-tips:after {
 	content: " ";
 	position: absolute;
 	top: -8.5px;
@@ -310,7 +310,7 @@
 	border-right: 10px solid transparent;
 }
 
-.-tfgs-setting-tips {
+.-tfgs-setting-wrong-tips {
 	display: none;
 	position: absolute;
 	white-space: pre-wrap;
