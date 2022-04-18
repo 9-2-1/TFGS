@@ -82,6 +82,8 @@ try {
 		}
 	};
 
+	tfgs.optionconf = {};
+
 	eleid("show").addEventListener("click", function() {
 		tfgs.setting.showbutton();
 	})

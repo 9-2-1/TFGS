@@ -11,6 +11,13 @@ setting.window = null;
 /** @member {Element} - 选项菜单，选项直接在这里添加 */
 setting.menu = null;
 
+/** id ##
+ * @param {string} id - id
+ * @return {Element} */
+function fromid(id) {
+	return document.getElementById(id);
+}
+
 /** ## createelement
  * @param {string} tag - tagName
  * @param {?string} className - className
@@ -75,6 +82,7 @@ function setting_show() {
 			setting.button.style.display = "none";
 			setting.window.style.display = "block";
 			setting_menu(tfgs.optioninfo);
+			setting_set(tfgs.optioninfo, tfgs.optionconf);
 		});
 		setting.button = document.body.appendChild(button);
 	}
@@ -279,7 +287,7 @@ function setting_menu(optioninfo) {
 							tsinput.addEventListener("change", checkFunc(option.check));
 
 							let tslabel = element("label");
-							matchInputLabel(tsinput, tslabel, "-tfgs-setting-option-" + funcname + "-" + name + "-" + opid);
+							matchInputLabel(tsinput, tslabel, "-tfgs-setting-option-" + funcname + "-" + name + "-" + selectinfo.value);
 							tslabel.innerText = selectinfo.name;
 
 							tsinput.setAttribute("data-funcname", funcname);
@@ -310,6 +318,36 @@ function setting_menu(optioninfo) {
 		alert(e.message);
 		console.log(e);
 	}
+}
+
+function setting_set(optioninfo, optionconf) {
+	for (let funcname in optioninfo) {
+		let funcconf = funcname in optionconf ? optionconf[funcname] : {};
+		let funcinfo = optioninfo[funcname].options;
+		for (let name in funcinfo) {
+			let value = name in funcconf ? funcconf[name] : funcinfo[name].default;
+
+			switch (funcinfo[name].type) {
+
+				case "text":
+					fromid("-tfgs-setting-option-" + funcname + "-" + name).value = value;
+					break;
+
+				case "check":
+					fromid("-tfgs-setting-option-" + funcname + "-" + name).checked = value;
+					break;
+
+				case "select":
+					fromid("-tfgs-setting-option-" + funcname + "-" + name + "-" + value).checked = true;
+					break;
+
+			}
+		}
+	}
+}
+
+function setting_get() {
+
 }
 
 /** @member {function} - 隐藏选项按钮
