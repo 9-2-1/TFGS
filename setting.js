@@ -94,105 +94,115 @@ function setting_show() {
  * @param {function} callback - callback() ## */
 setting._menu = setting_menu;
 
+function addtips(target, info) {
+	if (typeof info !== "string" || info === "") return;
+	let headspan = element("span");
+	headspan.style.position = "relative";
+	headspan.style.margin = "0px";
+
+	let infospan = element("span", "-tfgs-setting-wrong-tips");
+	infospan.innerText = info;
+
+	headspan.appendChild(infospan);
+	if (target.nextSibling === null)
+		target.parentElement.appendChild(headspan);
+	else target.parentElement.insertBefore(headspan, target.nextSibling);
+}
+
+function deltips(target) {
+	let maybe = target.nextSibling;
+	if (maybe !== null)
+		if (maybe.childNodes.length === 1)
+			if (maybe.childNodes[0].className === "-tfgs-setting-wrong-tips")
+				maybe.parentElement.removeChild(maybe);
+}
+
+function addinfo(target, info) {
+	if (typeof info !== "string" || info === "") return;
+	let infospan = element("span", "-tfgs-setting-info");
+	infospan.innerText = info;
+
+	let infobutton = element("span", "-tfgs-setting-infobutton");
+	infobutton.innerText = "i";
+	infobutton.appendChild(infospan);
+
+	function showinfo() {
+		infospan.style.display = "block";
+	}
+
+	function hideinfo() {
+		infospan.style.display = "none";
+	}
+	infobutton.addEventListener("mouseover", showinfo);
+	infobutton.addEventListener("mousedown", showinfo);
+	infobutton.addEventListener("mouseleave", hideinfo);
+
+	target.appendChild(infobutton);
+}
+
+function checkFunc(check) {
+	return function(event) {
+		try {
+			checkInput(event.target, check);
+		} catch (e) {
+			alert(e.message);
+		}
+	}
+}
+
+function checkFuncW(check) {
+	return function(event) {
+		setTimeout(function() {
+			checkFunc(check)(event)
+		}, 0);
+	}
+}
+
+function checkInput(tinput, check) {
+	try {
+		deltips(tinput);
+		tinput.classList.remove("-tfgs-warning");
+		tinput.classList.remove("-tfgs-error");
+		let ch = null;
+		if (typeof check === "function") {
+			switch (tinput.type) {
+				case "text":
+					ch = check(tinput.value);
+					break;
+				case "radio":
+					if (tinput.checked)
+						ch = check(tinput.value);
+					break;
+				case "checkbox":
+					ch = check(tinput.checked);
+					break;
+			}
+		}
+		if (ch !== null) {
+			addtips(tinput, ch);
+			tinput.classList.add("-tfgs-warning");
+		}
+	} catch (e) {
+		if (typeof e === "string") {
+			addtips(tinput, e);
+			tinput.classList.add("-tfgs-error");
+		} else {
+			throw e;
+		}
+	}
+}
+
 function setting_menu(optioninfo) {
 	try {
-		function addtips(target, info) {
-			if (typeof info !== "string" || info === "") return;
-			let headspan = element("span");
-			headspan.style.position = "relative";
-			headspan.style.margin = "0px";
-
-			let infospan = element("span", "-tfgs-setting-wrong-tips");
-			infospan.innerText = info;
-
-			headspan.appendChild(infospan);
-			if (target.nextSibling === null)
-				target.parentElement.appendChild(headspan);
-			else target.parentElement.insertBefore(headspan, target.nextSibling);
-		}
-
-		function deltips(target) {
-			let maybe = target.nextSibling;
-			if (maybe !== null)
-				if (maybe.childNodes.length === 1)
-					if (maybe.childNodes[0].className === "-tfgs-setting-wrong-tips")
-						maybe.parentElement.removeChild(maybe);
-		}
-
-		function addinfo(target, info) {
-			if (typeof info !== "string" || info === "") return;
-			let infospan = element("span", "-tfgs-setting-info");
-			infospan.innerText = info;
-
-			let infobutton = element("span", "-tfgs-setting-infobutton");
-			infobutton.innerText = "i";
-			infobutton.appendChild(infospan);
-
-			function showinfo() {
-				infospan.style.display = "block";
-			}
-
-			function hideinfo() {
-				infospan.style.display = "none";
-			}
-			infobutton.addEventListener("mouseover", showinfo);
-			infobutton.addEventListener("mousedown", showinfo);
-			infobutton.addEventListener("mouseleave", hideinfo);
-
-			target.appendChild(infobutton);
-		}
-
-		function checkFunc(check) {
-			return function(event) {
-				try {
-					let tinput = event.target;
-					deltips(tinput);
-					try {
-						tinput.classList.remove("-tfgs-warning");
-						tinput.classList.remove("-tfgs-error");
-						let ch = null;
-						if (typeof check === "function") {
-							switch (tinput.type) {
-								case "text":
-									ch = check(tinput.value);
-									break;
-								case "radio":
-									if (tinput.checked)
-										ch = check(tinput.value);
-									break;
-								case "checkbox":
-									ch = check(tinput.checked);
-									break;
-							}
-						}
-						if (ch !== null) {
-							addtips(tinput, ch);
-							tinput.classList.add("-tfgs-warning");
-						}
-					} catch (e) {
-						addtips(tinput, e);
-						tinput.classList.add("-tfgs-error");
-					}
-				} catch (e) {
-					alert(e.message);
-				}
-			}
-		}
-
-		function checkFuncW(check) {
-			return function(event) {
-				setTimeout(function() {
-					checkFunc(check)(event)
-				}, 0);
-			}
-		}
-
 		let menus = setting.menu.childNodes;
 		while (menus.length !== 0) setting.menu.removeChild(menus[0]);
+
+		let optioninput = {};
 
 		for (let funcname in optioninfo) {
 			let menuid = "-tfgs-setting-" + funcname;
 			let funcinfo = optioninfo[funcname];
+			let funcinput = {};
 
 			let info = "";
 			if ("author" in funcinfo) {
@@ -230,13 +240,12 @@ function setting_menu(optioninfo) {
 				tlabel.innerText = option.name;
 
 				let tinput = null;
+				let finput = null;
 				switch (option.type) {
 
 					case "text":
 						tinput = element("input", null, "text");
 						matchInputLabel(tinput, tlabel, "-tfgs-setting-option-" + funcname + "-" + name);
-						tinput.setAttribute("data-funcname", funcname);
-						tinput.setAttribute("data-infoname", name);
 
 						tinput.addEventListener("change", checkFunc(option.check));
 						tinput.addEventListener("keydown", checkFuncW(option.check));
@@ -244,18 +253,18 @@ function setting_menu(optioninfo) {
 
 						toption.appendChild(tlabel);
 						toption.appendChild(tinput);
+						finput = tinput;
 						break;
 
 					case "check":
 						tinput = element("input", null, "checkbox");
 						matchInputLabel(tinput, tlabel, "-tfgs-setting-option-" + funcname + "-" + name);
-						tinput.setAttribute("data-funcname", funcname);
-						tinput.setAttribute("data-infoname", name);
 
 						tinput.addEventListener("change", checkFunc(option.check));
 
 						toption.appendChild(tinput);
 						toption.appendChild(tlabel);
+						finput = tinput;
 						break;
 
 					case "button":
@@ -276,6 +285,7 @@ function setting_menu(optioninfo) {
 
 					case "select":
 						toption.appendChild(tlabel);
+						finput = {};
 						for (let opid in option.options) {
 							let selectinfo = option.options[opid];
 							let tselect = element("span", "-tfgs-setting-option-select");
@@ -284,14 +294,13 @@ function setting_menu(optioninfo) {
 							tsinput.name = "-tfgs-setting-option-" + funcname + "-" + name;
 							tsinput.value = selectinfo.value;
 
+							finput[selectinfo.value] = tsinput;
+
 							tsinput.addEventListener("change", checkFunc(option.check));
 
 							let tslabel = element("label");
 							matchInputLabel(tsinput, tslabel, "-tfgs-setting-option-" + funcname + "-" + name + "-" + selectinfo.value);
 							tslabel.innerText = selectinfo.name;
-
-							tsinput.setAttribute("data-funcname", funcname);
-							tsinput.setAttribute("data-infoname", name);
 
 							tselect.appendChild(tsinput);
 							tselect.appendChild(tslabel);
@@ -305,6 +314,8 @@ function setting_menu(optioninfo) {
 
 				addinfo(toption, option.info);
 
+				if (finput !== null)
+					funcinput[name] = finput;
 				optiondiv.appendChild(toption);
 			}
 
@@ -313,7 +324,11 @@ function setting_menu(optioninfo) {
 			block.appendChild(optiondiv);
 
 			setting.menu.appendChild(block);
+
+			optioninput[funcname] = funcinput;
 		}
+
+		tfgs.optioninput = optioninput;
 	} catch (e) {
 		alert(e.message);
 		console.log(e);
@@ -321,28 +336,37 @@ function setting_menu(optioninfo) {
 }
 
 function setting_set(optioninfo, optionconf) {
-	for (let funcname in optioninfo) {
-		let funcconf = funcname in optionconf ? optionconf[funcname] : {};
-		let funcinfo = optioninfo[funcname].options;
-		for (let name in funcinfo) {
-			let value = name in funcconf ? funcconf[name] : funcinfo[name].default;
+	try {
+		for (let funcname in optioninfo) {
+			let funcconf = funcname in optionconf ? optionconf[funcname] : {};
+			let funcinfo = optioninfo[funcname].options;
+			for (let name in funcinfo) {
+				let value = name in funcconf ? funcconf[name] : funcinfo[name].default;
+				let check = funcinfo[name].check;
 
-			switch (funcinfo[name].type) {
+				switch (funcinfo[name].type) {
 
-				case "text":
-					fromid("-tfgs-setting-option-" + funcname + "-" + name).value = value;
-					break;
+					case "text":
+						tfgs.optioninput[funcname][name].value = value;
+						checkInput(tfgs.optioninput[funcname][name], check);
+						break;
 
-				case "check":
-					fromid("-tfgs-setting-option-" + funcname + "-" + name).checked = value;
-					break;
+					case "check":
+						tfgs.optioninput[funcname][name].checked = value;
+						checkInput(tfgs.optioninput[funcname][name], check);
+						break;
 
-				case "select":
-					fromid("-tfgs-setting-option-" + funcname + "-" + name + "-" + value).checked = true;
-					break;
+					case "select":
+						tfgs.optioninput[funcname][name][value].checked = true;
+						checkInput(tfgs.optioninput[funcname][name][value], check);
+						break;
 
+				}
 			}
 		}
+	} catch (e) {
+		alert(e.message);
+		console.log(e);
 	}
 }
 
