@@ -4,9 +4,10 @@ function eleid(id) {
 try {
 	tfgs.optioninfo = {
 		"-tfgs-": {
-			"name": "TFGS ##", // ##
-			"author": "TFGS ##", // ##
-			"version": "TFGS ##", // ##
+			"name": "TFGS TFGS", // ##
+			"author": "TFGS ABC", // ##
+			"version": "TFGS 123", // ##
+			"enabledefault": true,
 			"options": { // ##
 				"text": {
 					"type": "text",
@@ -14,7 +15,7 @@ try {
 					"info": "This is a text field",
 					"default": "hello, world!",
 					"check": function(value) {
-						if (value.length > 8) {
+						if (value.length > 16) {
 							throw "value is too long"; // ##
 						} else if (value.length === 0) {
 							return "##"; // ##

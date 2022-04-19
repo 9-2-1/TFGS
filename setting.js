@@ -81,8 +81,8 @@ function setting_show() {
 		button.addEventListener("click", function(event) {
 			setting.button.style.display = "none";
 			setting.window.style.display = "block";
-			setting_menu(tfgs.optioninfo);
-			setting_set(tfgs.optioninfo, tfgs.optionconf);
+			setting_menu();
+			setting_set();
 		});
 		setting.button = document.body.appendChild(button);
 	}
@@ -144,6 +144,7 @@ function checkFunc(check) {
 	return function(event) {
 		try {
 			checkInput(event.target, check);
+			setting_get();
 		} catch (e) {
 			alert(e.message);
 		}
@@ -182,25 +183,27 @@ function checkInput(tinput, check) {
 			addtips(tinput, ch);
 			tinput.classList.add("-tfgs-warning");
 		}
+		return true;
 	} catch (e) {
 		if (typeof e === "string") {
 			addtips(tinput, e);
 			tinput.classList.add("-tfgs-error");
+			return false;
 		} else {
 			throw e;
 		}
 	}
 }
 
-function setting_menu(optioninfo) {
+function setting_menu() {
 	try {
+		let optioninfo = tfgs.optioninfo;
 		let menus = setting.menu.childNodes;
 		while (menus.length !== 0) setting.menu.removeChild(menus[0]);
 
 		let optioninput = {};
 
 		for (let funcname in optioninfo) {
-			let menuid = "-tfgs-setting-" + funcname;
 			let funcinfo = optioninfo[funcname];
 			let funcinput = {};
 
@@ -217,11 +220,18 @@ function setting_menu(optioninfo) {
 
 			let enable = element("input");
 			enable.type = "checkbox";
-			enable.id = menuid;
+			enable.addEventListener("change", function() {
+				setTimeout(function() {
+					setting_get();
+				}, 0);
+			});
+
+			funcinput._enabled = enable;
 
 			let label = element("label");
 			label.innerText = funcinfo.name;
-			label.setAttribute("for", menuid);
+
+			matchInputLabel(enable, label, "-tfgs-setting-" + funcname);
 
 			let title = element("div", "-tfgs-setting-title");
 			title.appendChild(enable);
@@ -335,11 +345,19 @@ function setting_menu(optioninfo) {
 	}
 }
 
-function setting_set(optioninfo, optionconf) {
+setting.setoption = setting_set;
+
+function setting_set() {
 	try {
+		let optioninfo = tfgs.optioninfo;
+		let optionconf = tfgs.optionconf;
 		for (let funcname in optioninfo) {
 			let funcconf = funcname in optionconf ? optionconf[funcname] : {};
 			let funcinfo = optioninfo[funcname].options;
+
+			if (!("_enabled" in funcconf)) funcconf._enabled = optioninfo[funcname].enabledefault;
+			tfgs.optioninput[funcname]._enabled.checked = funcconf._enabled;
+
 			for (let name in funcinfo) {
 				let value = name in funcconf ? funcconf[name] : funcinfo[name].default;
 				let check = funcinfo[name].check;
@@ -370,8 +388,52 @@ function setting_set(optioninfo, optionconf) {
 	}
 }
 
-function setting_get() {
+setting.getoption = setting_get;
 
+function setting_get() {
+	try {
+		let optioninfo = tfgs.optioninfo;
+		if (!("optionconf" in tfgs)) tfgs.optionconf = {};
+		let optionconf = tfgs.optionconf;
+		for (let funcname in optioninfo) {
+			if (!(funcname in optionconf)) optionconf[funcname] = {};
+			let funcconf = optionconf[funcname];
+			let funcinfo = optioninfo[funcname].options;
+
+			funcconf._enabled = tfgs.optioninput[funcname]._enabled.checked;
+
+			for (let name in funcinfo) {
+				let check = funcinfo[name].check;
+
+				switch (funcinfo[name].type) {
+
+					case "text":
+						if (checkInput(tfgs.optioninput[funcname][name], check)) {
+							funcconf[name] = tfgs.optioninput[funcname][name].value;
+						}
+						break;
+
+					case "check":
+						funcconf[name] = tfgs.optioninput[funcname][name].checked;
+						break;
+
+					case "select":
+						for (let value in tfgs.optioninput[funcname][name]) {
+							if (tfgs.optioninput[funcname][name][value].checked) {
+								funcconf[name] = value;
+							}
+						}
+						break;
+
+				}
+			}
+		}
+		return tfgs.optionconf;
+
+	} catch (e) {
+		alert(e.message);
+		console.log(e);
+	}
 }
 
 /** @member {function} - 隐藏选项按钮
