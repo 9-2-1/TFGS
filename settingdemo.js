@@ -8,6 +8,9 @@ try {
 			"author": "TFGS ABC", // ##
 			"version": "TFGS 123", // ##
 			"enabledefault": true,
+			"optionchange": function(newoption) {
+				eleid("test").value = inspect(newoption);
+			},
 			"options": { // ##
 				"text": {
 					"type": "text",
@@ -84,6 +87,10 @@ try {
 	};
 
 	tfgs.optionconf = {};
+
+	tfgs.functions = {};
+
+	tfgs.functions.enablefunction = function() {};
 
 	eleid("show").addEventListener("click", function() {
 		tfgs.setting.showbutton();
