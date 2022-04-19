@@ -106,13 +106,11 @@ function setting_menu(optioninfo) {
 			infospan.innerText = info;
 
 			headspan.appendChild(infospan);
-			if (target.nextSibling === null)
-				target.parentElement.appendChild(headspan);
-			else target.parentElement.insertBefore(headspan, target.nextSibling);
+			target.parentElement.insertBefore(headspan, target);
 		}
 
 		function deltips(target) {
-			let maybe = target.nextSibling;
+			let maybe = target.previousSibling;
 			if (maybe !== null)
 				if (maybe.childNodes.length === 1)
 					if (maybe.childNodes[0].className === "-tfgs-setting-wrong-tips")
