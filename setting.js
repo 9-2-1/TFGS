@@ -262,6 +262,7 @@ function setting_menu() {
 
 						tinput.addEventListener("change", checkFunc(option.check, funcinfo.optionchange, funcname));
 						tinput.addEventListener("keydown", checkFuncW(option.check, funcinfo.optionchange, funcname));
+						tinput.addEventListener("input", checkFuncW(option.check, funcinfo.optionchange, funcname));
 						tinput.addEventListener("paste", checkFuncW(option.check, funcinfo.optionchange, funcname));
 
 						toption.appendChild(tlabel);
