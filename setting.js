@@ -99,6 +99,7 @@ function addtips(target, info) {
 	let headspan = element("span");
 	headspan.style.position = "relative";
 	headspan.style.margin = "0px";
+	headspan.style.padding = "0px";
 
 	let infospan = element("span", "-tfgs-setting-wrong-tips");
 	infospan.innerText = info;
