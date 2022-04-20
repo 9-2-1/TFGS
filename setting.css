@@ -173,6 +173,15 @@
 	border: 1px solid black;
 }
 
+.-tfgs-setting-menu input[type=number] {
+	border-radius: 1px;
+	height: 25px;
+	width: 75px;
+	font-family: Fantasque, fira, monofur, monospace;
+	background: white;
+	border: 1px solid black;
+}
+
 .-tfgs-setting-menu input[type=checkbox] {
 	display: none;
 }

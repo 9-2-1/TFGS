@@ -16,6 +16,7 @@ try {
 					"type": "text",
 					"name": "text field",
 					"info": "This is a text field",
+					"number": false,
 					"default": "hello, world!",
 					"check": function(value) {
 						if (value.length > 16) {
@@ -26,6 +27,51 @@ try {
 							return null;
 						}
 					}
+				},
+				"text2": {
+					"type": "text",
+					"name": "text field",
+					"info": "This is a 8 text field",
+					"number": false,
+					"default": "abcdefgh",
+					"check": function(value) {
+						if (value.length > 8) {
+							throw "value is too long"; // ##
+						} else if (value.length === 0) {
+							return "##"; // ##
+						} else {
+							return null;
+						}
+					}
+				},
+				"textnumapt": {
+					"type": "text",
+					"name": "number field",
+					"info": "This is a number field",
+					"number": true,
+					"default": 50,
+					"check": function(value) {
+						if (isNaN(value)) {
+							throw "value is not a number"; // ##
+						} else if (value < 0) {
+							return "less than 0"; // ##
+						} else {
+							return null;
+						}
+					}
+				},
+				"checkerr": {
+					"type": "check",
+					"name": "checkbox",
+					"info": "This is a checkbox",
+					"default": true,
+					"check": function(value) {
+						if (!value) {
+							return "Attention: if you enable it, it will be enabled."; // ##
+						} else {
+							return null;
+						}
+					},
 				},
 				"check": {
 					"type": "check",

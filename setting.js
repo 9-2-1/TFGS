@@ -172,6 +172,10 @@ function checkInput(tinput, check) {
 				case "text":
 					ch = check(tinput.value);
 					break;
+				case "number":
+					if (isNaN(Number(tinput.value))) throw "Not a number";
+					ch = check(Number(tinput.value));
+					break;
 				case "radio":
 					if (tinput.checked)
 						ch = check(tinput.value);
@@ -257,7 +261,11 @@ function setting_menu() {
 				switch (option.type) {
 
 					case "text":
-						tinput = element("input", null, "text");
+						if (option.number) {
+							tinput = element("input", null, "number");
+						} else {
+							tinput = element("input", null, "text");
+						}
 						matchInputLabel(tinput, tlabel, "-tfgs-setting-option-" + funcname + "-" + name);
 
 						tinput.addEventListener("change", checkFunc(option.check, funcinfo.optionchange, funcname));
@@ -412,8 +420,10 @@ function setting_get() {
 				switch (funcinfo[name].type) {
 
 					case "text":
-						if (checkInput(tfgs.optioninput[funcname][name], check)) {
-							funcconf[name] = tfgs.optioninput[funcname][name].value;
+						if (checkInput(tfgs.optioninput[funcname][name], check, funcinfo[name].number)) {
+							let value = tfgs.optioninput[funcname][name].value;
+							if (funcinfo[name].number) value = Number(value);
+							funcconf[name] = value;
 						}
 						break;
 
