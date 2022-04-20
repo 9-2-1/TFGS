@@ -90,7 +90,9 @@ try {
 
 	tfgs.functions = {};
 
-	tfgs.functions.enablefunction = function() {};
+	tfgs.functions.enablefunction = function(funcname) {
+		eleid("test").value = inspect(tfgs.optionconf[funcname]);
+	};
 
 	eleid("show").addEventListener("click", function() {
 		tfgs.setting.showbutton();
