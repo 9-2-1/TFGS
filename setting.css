@@ -111,7 +111,7 @@
 	content: " ";
 	position: absolute;
 	top: -10px;
-	left: 63px;
+	left: 62px;
 	width: 0px;
 	height: 0px;
 	z-index: 1;
@@ -124,7 +124,7 @@
 	content: " ";
 	position: absolute;
 	top: -8.6px;
-	left: 63px;
+	left: 62px;
 	width: 0px;
 	height: 0px;
 	z-index: 1;
@@ -137,8 +137,8 @@
 	display: none;
 	position: absolute;
 	white-space: pre-wrap;
-	top: 30px;
-	left: -65px;
+	top: 20px;
+	left: -68px;
 	width: 150px;
 	z-index: 1;
 	border: 1px solid black;
@@ -170,28 +170,23 @@
 }
 
 .-tfgs-setting-menu input[type=checkbox] {
-	position: relative;
-	height: 0px;
-	width: 0px;
-	top: -15px;
-	margin: 0px 20px 0px 0px;
-	box-sizing: border-box;
+	display: none;
 }
 
-.-tfgs-setting-menu input[type=checkbox]:before {
+.-tfgs-setting-menu input[type=checkbox]~label:before {
 	content: " ";
-	position: absolute;
+	display: inline-block;
+	font-size: 0px;
 	height: 20px;
 	width: 20px;
-	top: 0px;
-	bottom: 0px;
 	background: white;
 	border-radius: 3px;
 	border: 1px solid black;
 	box-sizing: border-box;
+	overflow: hidden;
 }
 
-.-tfgs-setting-menu input[type=checkbox]:checked:before {
+.-tfgs-setting-menu input[type=checkbox]:checked~label:before {
 	content: "\2713";
 	text-align: center;
 	font-size: 18px;
@@ -201,28 +196,28 @@
 }
 
 .-tfgs-setting-menu input[type=radio] {
-	position: relative;
-	height: 0px;
-	width: 0px;
-	top: -15px;
-	margin: 0px 20px 0px 0px;
-	box-sizing: border-box;
+	display: none;
 }
 
-.-tfgs-setting-menu input[type=radio]:before {
+.-tfgs-setting-menu input[type=radio]~label {
+	display: inline-block;
+}
+
+.-tfgs-setting-menu input[type=radio]~label:before {
 	content: " ";
-	position: absolute;
+	/* position: absolute; */
+	display: inline-block;
+	font-size: 0px;
 	height: 20px;
 	width: 20px;
-	top: 0px;
-	bottom: 0px;
 	background: white;
 	border-radius: 50%;
 	border: 1px solid black;
 	box-sizing: border-box;
+	overflow: hidden;
 }
 
-.-tfgs-setting-menu input[type=radio]:checked:before {
+.-tfgs-setting-menu input[type=radio]:checked~label:before {
 	content: "●";
 	text-align: center;
 	font-size: 12px;
@@ -244,47 +239,51 @@
 }
 
 .-tfgs-setting-menu input.-tfgs-warning,
-.-tfgs-setting-menu input.-tfgs-warning:before {
+.-tfgs-setting-menu input.-tfgs-warning~label:before {
 	border: 2px solid olive;
 	background: lightyellow;
 	color: olive;
 }
 
-.-tfgs-setting-menu input.-tfgs-warning:checked:before {
+.-tfgs-setting-menu input.-tfgs-warning:checked~label:before {
 	background: olive;
 }
 
 
 .-tfgs-setting-menu input.-tfgs-error,
-.-tfgs-setting-menu input.-tfgs-error:before {
+.-tfgs-setting-menu input.-tfgs-error~label:before {
 	border: 2px solid red;
 	background: pink;
 	color: red;
 }
 
-.-tfgs-setting-menu input.-tfgs-error:checked:before {
+.-tfgs-setting-menu input.-tfgs-error:checked~label:before {
 	background: red;
 }
 
 .-tfgs-setting-menu input.-tfgs-warning:hover+*>.-tfgs-setting-wrong-tips,
 .-tfgs-setting-menu input.-tfgs-warning:focus+*>.-tfgs-setting-wrong-tips {
 	display: block;
+}
+
+.-tfgs-setting-menu input.-tfgs-warning+*>.-tfgs-setting-wrong-tips {
 	background: lightyellow;
 }
 
-.-tfgs-setting-menu input.-tfgs-warning:hover+*>.-tfgs-setting-wrong-tips:after,
-.-tfgs-setting-menu input.-tfgs-warning:focus+*>.-tfgs-setting-wrong-tips:after {
+.-tfgs-setting-menu input.-tfgs-warning+*>.-tfgs-setting-wrong-tips:after {
 	border-bottom: 10px solid lightyellow;
 }
 
 .-tfgs-setting-menu input.-tfgs-error:hover+*>.-tfgs-setting-wrong-tips,
 .-tfgs-setting-menu input.-tfgs-error:focus+*>.-tfgs-setting-wrong-tips {
 	display: block;
+}
+
+.-tfgs-setting-menu input.-tfgs-error+*>.-tfgs-setting-wrong-tips {
 	background: pink;
 }
 
-.-tfgs-setting-menu input.-tfgs-error:hover+*>.-tfgs-setting-wrong-tips:after,
-.-tfgs-setting-menu input.-tfgs-error:focus+*>.-tfgs-setting-wrong-tips:after {
+.-tfgs-setting-menu input.-tfgs-error+*>.-tfgs-setting-wrong-tips:after {
 	border-bottom: 10px solid pink;
 }
 
@@ -317,12 +316,16 @@
 	display: none;
 	position: absolute;
 	white-space: pre-wrap;
-	top: 30px;
-	left: -25px;
+	top: 5px;
+	left: -20px;
 	width: 150px;
 	z-index: 1;
 	border: 1px solid black;
 	border-radius: 2px;
+}
+
+.-tfgs-setting-wrong-tips:hover {
+	display: block;
 }
 
 #test {
