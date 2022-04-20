@@ -287,7 +287,7 @@ function setting_menu() {
 							tinput.addEventListener("click", option.onclick);
 						tlabel.innerText = "";
 						toption.appendChild(tinput);
-						toption.appendChild(tlabel);
+						// toption.appendChild(tlabel);
 						break;
 
 					case "tips":
