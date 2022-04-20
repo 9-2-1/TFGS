@@ -265,26 +265,6 @@
 	background: red;
 }
 
-.-tfgs-setting-menu input.-tfgs-warning:hover+*>.-tfgs-setting-wrong-tips,
-.-tfgs-setting-menu input.-tfgs-warning:focus+*>.-tfgs-setting-wrong-tips {
-	display: block;
-	background: lightyellow;
-}
-
-.-tfgs-setting-menu input.-tfgs-warning:hover+*>.-tfgs-setting-wrong-tips:after {
-	border-bottom: 10px solid lightyellow;
-}
-
-.-tfgs-setting-menu input.-tfgs-error:hover+*>.-tfgs-setting-wrong-tips,
-.-tfgs-setting-menu input.-tfgs-error:focus+*>.-tfgs-setting-wrong-tips {
-	display: block;
-	background: pink;
-}
-
-.-tfgs-setting-menu input.-tfgs-error:hover+*>.-tfgs-setting-wrong-tips:after {
-	border-bottom: 10px solid pink;
-}
-
 .-tfgs-setting-wrong-tips:before {
 	content: " ";
 	position: absolute;
@@ -321,3 +301,11 @@
 	border: 1px solid black;
 	border-radius: 2px;
 }
+
+.-tfgs-setting-wrong-tips.tfgs-warning,
+.-tfgs-setting-wrong-tips.tfgs-warning:after
+{background:lightyellow;}
+
+.-tfgs-setting-wrong-tips.tfgs-error,
+.-tfgs-setting-wrong-tips.tfgs-error:after
+{background:pink;}
