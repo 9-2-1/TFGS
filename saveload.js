@@ -4,22 +4,6 @@ if (!("tfgs" in this)) tfgs = {};
 //自己视为特殊拓展“-tfgs-”，设定数据为“config”，其他数据为“data”
 
 let saveload = {};
-// let data = {
-// 	"extensionname": {
-// 		"config": {
-// 			"size": 67,
-// 			"abc": true,
-// 			"eee": {
-// 				"number": 3,
-// 				"length": 7
-// 			}
-// 		}
-// 		"data":{
-// 			"time": 123,
-// 			"huge": [1,2,3,4,5,6,7,8]
-// 		}
-// 	}
-// }
 
 saveload.load = saveload_load;
 

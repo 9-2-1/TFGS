@@ -405,7 +405,7 @@ setting.getoption = setting_get;
 function setting_get() {
 	try {
 		let optioninfo = tfgs.optioninfo;
-		if (!("optionconf" in tfgs)) tfgs.optionconf = {};
+		if (!("optionconf" in tfgs) || typeof tfgs.optionconf !== "object" || tfgs.optionconf === null) tfgs.optionconf = {};
 		let optionconf = tfgs.optionconf;
 		for (let funcname in optioninfo) {
 			if (!(funcname in optionconf)) optionconf[funcname] = {};
@@ -442,6 +442,10 @@ function setting_get() {
 				}
 			}
 		}
+		tfgs.saveload.data = JSON.stringify({
+			config: tfgs.optionconf
+		});
+		tfgs.saveload.save(function() {});
 		return tfgs.optionconf;
 
 	} catch (e) {

@@ -132,23 +132,36 @@ try {
 		}
 	};
 
-	tfgs.optionconf = {};
+	tfgs.optionconf = tfgs.saveload.load(step2);
 
-	tfgs.functions = {};
+	function step2(tfgsdata) {
+		try {
+			tfgsdata = JSON.parse(tfgsdata);
+		} catch (e) {
+			tfgsdata = null;
+		}
+		if (tfgsdata === null) tfgsdata = {};
+		if (!("config" in tfgsdata)) tfgsdata.config = {};
+		tfgs.optionconf = tfgsdata.config;
 
-	tfgs.functions.enablefunction = function(funcname) {
-		eleid("test").value = inspect(tfgs.optionconf[funcname]);
-	};
+		tfgs.functions = {};
 
-	eleid("show").addEventListener("click", function() {
+		tfgs.functions.enablefunction = function(funcname) {
+			eleid("test").value = inspect(tfgs.optionconf[funcname]);
+		};
+
+		eleid("show").addEventListener("click", function() {
+			tfgs.setting.showbutton();
+		})
+		eleid("hide").addEventListener("click", function() {
+			tfgs.setting.hidebutton();
+		})
+
 		tfgs.setting.showbutton();
-	})
-	eleid("hide").addEventListener("click", function() {
-		tfgs.setting.hidebutton();
-	})
+		tfgs.setting.button.click();
 
-	tfgs.setting.showbutton();
-	tfgs.setting.button.click();
+	}
+
 } catch (e) {
 	alert(e.message);
 	console.log(e);
