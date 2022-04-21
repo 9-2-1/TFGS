@@ -97,27 +97,58 @@ function setting_show() {
 				button.style.top = y2 + "px";
 		}
 
-		button.addEventListener("click", function(event) {
-			setting.button.style.display = "none";
-			setting.window.style.display = "block";
-			setting_menu();
-			setting_set();
-		});
 		button.style.left = "20px";
 		button.style.top = "20px";
+		button.addEventListener("mousedown", function(event) {
+			let button = event.target;
+			button.setAttribute("data-m", "yes");
+			button.setAttribute("data-mc", "yes");
+			button.setAttribute("data-mx", numpx(button.style.left) - event.clientX);
+			button.setAttribute("data-my", numpx(button.style.top) - event.clientY);
+			// event.preventDefault();
+		});
+		window.addEventListener("mousemove", function(event) {
+			if (button.getAttribute("data-m") === "yes") {
+				button.setAttribute("data-mc", "no");
+				button.style.left = Number(button.getAttribute("data-mx")) + event.clientX + "px";
+				button.style.top = Number(button.getAttribute("data-my")) + event.clientY + "px";
+				buttoninwin();
+				event.preventDefault();
+			}
+		});
+		document.body.addEventListener("mouseleave", function(event) {
+			button.setAttribute("data-m", "no");
+		});
+		button.addEventListener("mouseup", function(event) {
+			button.setAttribute("data-m", "no");
+			if (button.getAttribute("data-mc") === "yes") {
+				setting.button.style.display = "none";
+				setting.window.style.display = "block";
+				setting_menu();
+				setting_set();
+			}
+		});
+
 		button.addEventListener("touchstart", function(event) {
 			let button = event.target;
+			button.setAttribute("data-m", "yes");
 			button.setAttribute("data-mx", numpx(button.style.left) - event.targetTouches[0].clientX);
 			button.setAttribute("data-my", numpx(button.style.top) - event.targetTouches[0].clientY);
 			// event.preventDefault();
 		});
 		button.addEventListener("touchmove", function(event) {
 			let button = event.target;
-			button.style.left = Number(button.getAttribute("data-mx")) + event.targetTouches[0].clientX + "px";
-			button.style.top = Number(button.getAttribute("data-my")) + event.targetTouches[0].clientY + "px";
-			buttoninwin();
-			event.preventDefault();
+			if (button.getAttribute("data-m") === "yes") {
+				button.style.left = Number(button.getAttribute("data-mx")) + event.targetTouches[0].clientX + "px";
+				button.style.top = Number(button.getAttribute("data-my")) + event.targetTouches[0].clientY + "px";
+				buttoninwin();
+				event.preventDefault();
+			}
 		});
+		button.addEventListener("touchend", function(event) {
+			button.setAttribute("data-m", "no");
+		});
+
 		window.addEventListener("resize", function(event) {
 			buttoninwin();
 		});
