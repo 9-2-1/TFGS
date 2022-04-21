@@ -7,12 +7,10 @@
 	height: 40px;
 	top: 100px;
 	left: 100px;
-	background: grey;
-	color: white;
+	background: lightgreen;
 	word-wrap: break-word;
-	font: 15px monospace;
-	border: 1px solid black;
-	border-radius: 5px;
+	border-radius: 50%;
+	box-shadow: 0px 0px 2px black;
 }
 
 .-tfgs-setting-windowbg {

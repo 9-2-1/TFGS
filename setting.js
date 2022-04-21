@@ -77,7 +77,6 @@ function setting_show() {
 
 	if (setting.button === null) {
 		let button = element("span", "-tfgs-setting-button");
-		button.innerText = "选项";
 		button.addEventListener("click", function(event) {
 			setting.button.style.display = "none";
 			setting.window.style.display = "block";
