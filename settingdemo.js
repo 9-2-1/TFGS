@@ -132,7 +132,7 @@ try {
 		}
 	};
 
-	tfgs.optionconf = tfgs.saveload.load(step2);
+	tfgs.saveload.load(step2);
 
 	function step2(tfgsdata) {
 		try {
