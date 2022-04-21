@@ -30,6 +30,10 @@ function element(tag, className, type) {
 	return ele;
 }
 
+function numpx(x) {
+	return Number(x.slice(0, -2));
+}
+
 /** ##
  * @param {Element} input
  * @param {Element} label */
@@ -77,11 +81,45 @@ function setting_show() {
 
 	if (setting.button === null) {
 		let button = element("span", "-tfgs-setting-button");
+
+		function buttoninwin() {
+			let x1 = 10;
+			let y1 = 10;
+			let x2 = window.innerWidth - 10 - button.clientWidth;
+			let y2 = window.innerHeight - 10 - button.clientHeight;
+			if (numpx(button.style.left) < x1)
+				button.style.left = x1 + "px";
+			if (numpx(button.style.left) > x2)
+				button.style.left = x2 + "px";
+			if (numpx(button.style.top) < y1)
+				button.style.top = y1 + "px";
+			if (numpx(button.style.top) > y2)
+				button.style.top = y2 + "px";
+		}
+
 		button.addEventListener("click", function(event) {
 			setting.button.style.display = "none";
 			setting.window.style.display = "block";
 			setting_menu();
 			setting_set();
+		});
+		button.style.left = "20px";
+		button.style.top = "20px";
+		button.addEventListener("touchstart", function(event) {
+			let button = event.target;
+			button.setAttribute("data-mx", numpx(button.style.left) - event.targetTouches[0].clientX);
+			button.setAttribute("data-my", numpx(button.style.top) - event.targetTouches[0].clientY);
+			// event.preventDefault();
+		});
+		button.addEventListener("touchmove", function(event) {
+			let button = event.target;
+			button.style.left = Number(button.getAttribute("data-mx")) + event.targetTouches[0].clientX + "px";
+			button.style.top = Number(button.getAttribute("data-my")) + event.targetTouches[0].clientY + "px";
+			buttoninwin();
+			event.preventDefault();
+		});
+		window.addEventListener("resize", function(event) {
+			buttoninwin();
 		});
 		setting.button = document.body.appendChild(button);
 	}
