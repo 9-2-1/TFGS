@@ -1,29 +1,29 @@
 let fs = require("fs");
 let flist = lsSync("functions");
 let allinone = "let tfgs = {};\n" +
-	"tfgs.functions = {\n";
+	"tfgs._functions = {\n";
 for (let i in flist) {
 	let fname = flist[i];
 	let ext = /(?:\.(.*))?$/.exec(fname)[1];
 	switch (ext) {
 		case "js":
 			allinone += '\t"' + fname + '": function (tfgsinfo) {\n' + fs.readFileSync("functions/" + fname).toString() + "\n\t},\n";
+			break;
 		case "css":
 			allinone += "/* " + fname + " */\n";
 			allinone += '{\n\tlet css = document.createElement("style");\n\tcss.innerHTML = ';
-			allinone += JSON.stringify(fs.readFileSync(fname).toString());
+			allinone += JSON.stringify(fs.readFileSync("functions/" + fname).toString());
 			allinone += ';\n\tdocument.head.appendChild(css);\n}\n\n';
 			break;
 	}
 }
 allinone += "};\n\n";
 flist = [
-	"main.js",
 	"inspect.js",
 	"saveload.js",
 	"setting.js",
 	"setting.css",
-	"inject_settingdemo.js"
+	"main.js"
 ];
 for (let i in flist) {
 	let fname = flist[i];

@@ -295,7 +295,7 @@ function setting_menu() {
 			enable.addEventListener("change", function() {
 				setTimeout(function() {
 					setting_get();
-					tfgs.functions.enablefunction(funcname, enable.checked);
+					tfgs.setting._enablefunction(funcname, enable.checked);
 				}, 0);
 			});
 
