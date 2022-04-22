@@ -1,6 +1,5 @@
 try {
 
-
 	tfgs.saveload.load(step2);
 
 	function step2(tfgsdata) {
@@ -16,6 +15,9 @@ try {
 		tfgs.optioninfo = {};
 		for (let name in tfgs._functions) {
 			let tfgsinfo = {};
+			tfgsinfo.getoption = function() {
+				return tfgs.optionconf[name];
+			};
 			tfgs._functions[name](tfgsinfo);
 			tfgs.optioninfo[name] = tfgsinfo;
 			if (name in tfgs.optionconf && tfgs.optionconf[name]._enabled)

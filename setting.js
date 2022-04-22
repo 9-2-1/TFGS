@@ -212,7 +212,8 @@ function checkFunc(check, change, funcname) {
 		try {
 			checkInput(event.target, check);
 			setting_get();
-			change(tfgs.optionconf[funcname]);
+			if (typeof change === "function")
+				change(tfgs.optionconf[funcname]);
 		} catch (e) {
 			alert(e.message);
 		}
@@ -334,10 +335,10 @@ function setting_menu() {
 						}
 						matchInputLabel(tinput, tlabel, "-tfgs-setting-option-" + funcname + "-" + name);
 
-						tinput.addEventListener("change", checkFunc(option.check, funcinfo.optionchange, funcname));
-						tinput.addEventListener("keydown", checkFuncW(option.check, funcinfo.optionchange, funcname));
-						tinput.addEventListener("input", checkFuncW(option.check, funcinfo.optionchange, funcname));
-						tinput.addEventListener("paste", checkFuncW(option.check, funcinfo.optionchange, funcname));
+						tinput.addEventListener("change", checkFunc(option.check, funcinfo.onoption, funcname));
+						tinput.addEventListener("keydown", checkFuncW(option.check, funcinfo.onoption, funcname));
+						tinput.addEventListener("input", checkFuncW(option.check, funcinfo.onoption, funcname));
+						tinput.addEventListener("paste", checkFuncW(option.check, funcinfo.onoption, funcname));
 
 						toption.appendChild(tlabel);
 						toption.appendChild(tinput);
@@ -348,7 +349,7 @@ function setting_menu() {
 						tinput = element("input", null, "checkbox");
 						matchInputLabel(tinput, tlabel, "-tfgs-setting-option-" + funcname + "-" + name);
 
-						tinput.addEventListener("change", checkFunc(option.check, funcinfo.optionchange, funcname));
+						tinput.addEventListener("change", checkFunc(option.check, funcinfo.onoption, funcname));
 
 						toption.appendChild(tinput);
 						toption.appendChild(tlabel);
@@ -384,7 +385,7 @@ function setting_menu() {
 
 							finput[selectinfo.value] = tsinput;
 
-							tsinput.addEventListener("change", checkFunc(option.check, funcinfo.optionchange, funcname));
+							tsinput.addEventListener("change", checkFunc(option.check, funcinfo.onoption, funcname));
 
 							let tslabel = element("label");
 							matchInputLabel(tsinput, tslabel, "-tfgs-setting-option-" + funcname + "-" + name + "-" + selectinfo.value);
