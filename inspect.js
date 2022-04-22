@@ -1,5 +1,3 @@
-console.log("injected");
-
 (function() {
 	let origbind = Function.prototype.bind;
 	Function.prototype.bind = fakebind;

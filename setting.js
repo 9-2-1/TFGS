@@ -1,5 +1,3 @@
-if (!("tfgs" in this)) tfgs = {};
-
 /** @class - 控制选项按钮，显示选项菜单
  * 注意: 这个object没有构造函数，请直接使用<code style="text-decoration:underline;">tfgs.setting</code>。 */
 let setting = {};
