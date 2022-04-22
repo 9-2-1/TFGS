@@ -282,10 +282,10 @@ function setting_menu() {
 
 			let info = "";
 			if ("author" in funcinfo) {
-				info += "Author: " + funcinfo.author + "\n";
+				info += "作者: " + funcinfo.author + "\n";
 			}
 			if ("version" in funcinfo) {
-				info += "Version: " + funcinfo.version + "\n";
+				info += "版本: " + funcinfo.version + "\n";
 			}
 			if ("info" in funcinfo) {
 				info += "\n" + funcinfo.info;

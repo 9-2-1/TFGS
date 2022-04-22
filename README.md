@@ -15,6 +15,7 @@
 ``` javascript
 tfgsinfo.name = "自定义窗口标题"; // 设定功能名字
 tfgsinfo.author = "作者名字"; // 设定作者(可选)
+tfgsinfo.version = "v0.1.0"; // 设定版本(可选)
 tfgsinfo.info = "让你能够修改窗口的标题"; // 设定说明(可选)
 tfgsinfo.enabledefault = false, // 是否默认启用
 tfgsinfo.options = { // 设定选项列表
