@@ -4,129 +4,81 @@ function eleid(id) {
 try {
 	tfgs.optioninfo = {
 		"-tfgs-": {
-			"name": "TFGS TFGS", // ##
-			"author": "TFGS ABC", // ##
-			"version": "TFGS 123", // ##
+			"name": "TFGS 配置", // ##
+			"author": "TFGS", // ##
+			"version": "v0.1.0", // ##
+			"info": "点击左上角的对勾打开或者关闭整个插件",
 			"enabledefault": true,
 			"optionchange": function(newoption) {
 				eleid("test").value = inspect(newoption);
 			},
 			"options": { // ##
-				"text": {
+				"website": {
 					"type": "text",
-					"name": "text field",
-					"info": "This is a text field",
+					"name": "在这些网站自动启用",
+					"info": "只需要输入域名，例如scratch.abc.xyz\n多个域名请用分号隔开",
 					"number": false,
-					"default": "hello, world!",
+					"default": "scratch.mit.edu;kada.163.com;aerfaying.com;gitblock.cn;ccw.site;codingclip.com;world.xiaomawang.com;",
 					"check": function(value) {
-						if (value.length > 16) {
-							throw "value is too long"; // ##
-						} else if (value.length === 0) {
-							return "##"; // ##
+						if (value.length === 0) {
+							return "如果不提供启动列表，将尝试在任何页面启用。"; // ##
+						} else if (value.includes('*') || value.includes('?')) {
+							return "注意：目前不支持通配符";
 						} else {
 							return null;
 						}
 					}
 				},
-				"text2": {
-					"type": "text",
-					"name": "text field",
-					"info": "This is a 8 text field",
-					"number": false,
-					"default": "abcdefgh",
-					"check": function(value) {
-						if (value.length > 8) {
-							throw "value is too long"; // ##
-						} else if (value.length === 0) {
-							return "##"; // ##
-						} else {
-							return null;
-						}
-					}
-				},
-				"textnumapt": {
-					"type": "text",
-					"name": "number field",
-					"info": "This is a number field",
-					"number": true,
-					"default": 50,
-					"check": function(value) {
-						if (isNaN(value)) {
-							throw "value is not a number"; // ##
-						} else if (value < 0) {
-							return "less than 0"; // ##
-						} else {
-							return null;
-						}
-					}
-				},
-				"checkerr": {
-					"type": "check",
-					"name": "checkbox",
-					"info": "This is a checkbox",
-					"default": true,
-					"check": function(value) {
-						if (!value) {
-							return "Attention: if you enable it, it will be enabled."; // ##
-						} else {
-							return null;
-						}
-					},
-				},
-				"check": {
-					"type": "check",
-					"name": "checkbox",
-					"info": "This is a checkbox",
-					"default": true,
-					"check": function(value) {
-						if (value) {
-							return "Attention: if you enable it, it will be enabled."; // ##
-						} else {
-							return null;
-						}
-					},
-				},
-				"select": {
-					"type": "select",
-					"name": "select items",
-					"info": "This is a list of options",
-					"options": [{
-							"value": "1",
-							"name": "large",
-							"info": "50x50"
-						},
-						{
-							"value": "2",
-							"name": "medium",
-							"info": "30x30"
-						},
-						{
-							"value": "3",
-							"name": "small",
-							"info": "10x10"
-						}
-					],
-					"default": "1",
-					"check": function(value) {
-						switch (value) {
-							case "1":
-								return "Maybe too large."; // ##
-							default:
-								return null;
-						}
-					},
-				},
-				"button": {
+				"export": {
 					"type": "button",
-					"name": "This is a button",
-					"info": "info...",
+					"name": "导出设置",
 					"onclick": function() {
-						alert("clicked");
+						let a = document.createElement("a");
+						a.href = "data:text/plain;charset:utf-8," + JSON.stringify(tfgs.optionconf);
+						a.download = "tfgs-config.json";
+						a.click();
 					}
 				},
-				"tips": {
-					"type": "tips",
-					"name": "This is a tip"
+				"import": {
+					"type": "button",
+					"name": "导入设置",
+					"onclick": function() {
+						let a = document.createElement("input");
+						a.type = "file";
+						a.addEventListener("change", function(event) {
+							if (a.files.length > 0) {
+								let f = new FileReader();
+								f.addEventListener("load", function(event) {
+									try {
+										let newconf = JSON.parse(f.result.toString());
+										tfgs.optionconf = newconf;
+										tfgs.setting.setoption();
+										alert("设置导入成功");
+									} catch (e) {
+										alert("设定错误：" + e.message);
+									}
+								});
+								f.readAsBinaryString(a.files[0]);
+							}
+						});
+						a.click();
+					}
+				},
+				"editjson": {
+					"type": "button",
+					"name": "编辑设置文本",
+					"onclick": function() {
+						let newconf = prompt("复制这里的文字导出配置，或者在这里粘贴导入", JSON.stringify(tfgs.optionconf));
+						if (newconf !== null && newconf !== "") {
+							try {
+								newconf = JSON.parse(newconf);
+								tfgs.optionconf = newconf;
+								tfgs.setting.setoption();
+							} catch (e) {
+								alert("设定错误：" + e.message);
+							}
+						}
+					}
 				}
 			}
 		}
