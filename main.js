@@ -20,9 +20,6 @@ try {
 			"version": "v0.1.0", // ##
 			"info": "点击左上角的对勾打开或者关闭整个插件",
 			"enabledefault": true,
-			"optionchange": function(newoption) {
-				eleid("test").value = inspect(newoption);
-			},
 			"options": { // ##
 				"website": {
 					"type": "text",
