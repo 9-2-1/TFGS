@@ -20,6 +20,7 @@ for (let i in flist) {
 allinone += "};\n\n";
 flist = [
 	"inspect.js",
+	"functions.js",
 	"saveload.js",
 	"setting.js",
 	"setting.css",
