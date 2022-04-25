@@ -53,28 +53,115 @@ tfgs.func.init = function() {
 		"ondisable": function() {}, // TODO
 		"onoption": function() {}
 	};
+
+	for (let name in tfgs._func) {
+		let tfgsinfo = {};
+		tfgsinfo.getoption = function() {
+			return tfgs.func.option[name];
+		};
+		tfgs._func[name](tfgsinfo);
+		list[name] = {
+			name: tfgsinfo.name,
+			author: tfgsinfo.author,
+			info: tfgsinfo.info,
+			version: tfgsinfo.version,
+			default: tfgsinfo.default,
+			options: tfgsinfo.options,
+			onenable: tfgsinfo.onenable,
+			ondisable: tfgsinfo.ondisable,
+			onoption: tfgsinfo.onoption
+		};
+		let defl = {};
+		for (let optname in tfgsinfo.options) {
+			defl[optname] = tfgsinfo.options[optname].default;
+		}
+		option[name] = defl;
+	}
 };
 
-for (let name in tfgs._func) {
-	let tfgsinfo = {};
-	tfgsinfo.getoption = function() {
-		return tfgs.func.option[name];
-	};
-	tfgs._func[name](tfgsinfo);
-	list[name] = {
-		name: tfgsinfo.name,
-		author: tfgsinfo.author,
-		info: tfgsinfo.info,
-		version: tfgsinfo.version,
-		default: tfgsinfo.default,
-		options: tfgsinfo.options,
-		onenable: tfgsinfo.onenable,
-		ondisable: tfgsinfo.ondisable,
-		onoption: tfgsinfo.onoption
-	};
-	let defl = {};
-	for (let optname in tfgsinfo.options) {
-		defl[optname] = tfgsinfo.options[optname].default;
+tfgs.func.setoption = function(option) {
+	let oldOption = tfgs.func.option;
+	let newOption = {};
+	let list = tfgs.func.list;
+	let changelist = [];
+	let enablelist = [];
+	for (let name in list) {
+		let change = false;
+		let oldFuncO = name in oldOption ? oldOption[name] : {};
+		let newFuncO = {};
+		let funcO = name in option ? option[name] : {};
+		let optl = list[name].option;
+		for (let optn in optl) {
+			newFuncO[optn] = optn in funcO ? funcO[optn] : oldFuncO[optn];
+			if (oldFuncO[optn] !== newFuncO[optn]) change = true;
+		}
+		if (change) changelist.push(name);
+		let optn = "_enabled";
+		newFuncO[optn] = optn in funcO ? funcO[optn] : oldFuncO[optn];
+		if (oldFuncO[optn] !== newFuncO[optn]) enablelist.push(name);
+		newOption[name] = newFuncO;
 	}
-	option[name] = defl;
+	for (let i in changelist) {
+		let f = tfgs.func.list[changelist[i]].onoption;
+		if (typeof f === "function")
+			f(tfgs.func.option[changelist[i]]);
+	}
+	for (let i in enablelist) {
+		if (tfgs.func.option[enablelist[i]]._enabled)
+			f = tfgs.func.list[enablelist[i]].onenable;
+		else
+			f = tfgs.func.list[enablelist[i]].ondisable;
+		if (typeof f === "function") f();
+	}
+	tfgs.func.option = newOption;
+};
+
+tfgs.func.setdata = function(data) {
+	let newData = {};
+	for (let name in tfgs.func.list) {
+		if (name in data) {
+			newData[name] = data[name];
+		}
+	}
+	tfgs.func.data = data;
+};
+
+tfgs.func.getoption = function() {
+	return tfgs.func.option;
+};
+
+tfgs.func.getdata = function() {
+	return tfgs.func.data;
+};
+
+tfgs.func.startup = function() {
+	let list = tfgs.func.list;
+	for (let name in list) {
+		if (tfgs.func.option[name]._enabled) {
+			let f = list[name].onenable;
+			if (typeof f === "function") f();
+		}
+	}
+};
+
+tfgs.func.enable = function(name) {
+	if (tfgs.func.option[name]._enable === false) {
+		try {
+			tfgs.func.list[name].onenable();
+			tfgs.func.list[name].enable = true;
+		} catch (e) {
+			tfgs.func.error("Enable " + name + ": " + e.message);
+		}
+	}
+};
+
+tfgs.func.disable = function(name) {
+	if (tfgs.func.option[name]._enable === true) {
+		try {
+			tfgs.func.list[name].ondisable();
+			tfgs.func.list[name].enable = false;
+		} catch (e) {
+			tfgs.func.error("Enable " + name + ": " + e.message);
+		}
+	}
 };

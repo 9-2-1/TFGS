@@ -99,7 +99,6 @@ try {
 		tfgs.functions.enablefunction = function(funcname) {};
 
 		tfgs.setting.showbutton();
-
 	}
 
 } catch (e) {
