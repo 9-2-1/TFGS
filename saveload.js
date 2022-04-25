@@ -1,67 +1,143 @@
 //要保存的内容有：自己的设定，自己的数据，拓展的设定和拓展的数据。
 //自己视为特殊拓展“-tfgs-”，设定数据为“config”，其他数据为“data”
 
-let saveload = {};
+/** saveload */
+tfgs.saveload = {};
 
-saveload.load = saveload_load;
+tfgs.saveload.loadfromtext = function(data) {
+	if (data === undefined || data === null) data = {};
+	if (typeof data === "string") data = JSON.parse(data);
+	if (typeof data !== "object") data = {};
+	tfgs.saveload.loadfromjson(data);
+};
 
-function saveload_load(callback) {
-	let tfgsdata = null;
-	let extStorage = null;
-	if ("chrome" in window && "storage" in chrome) {
-		extStorage = chrome.storage;
-	} else if ("browser" in window && "storage" in browser) {
-		extStorage = browser.storage;
-	}
-	if (extStorage !== null) {
-		extStorage.sync.getItem("-tfgs-", function(ret) {
-			tfgsdata = ret["-tfgs-"];
-			saveload_load2(callback);
+tfgs.saveload.loadfromjson = function(json) {
+	tfgs.func.setconfig(json.config);
+	tfgs.func.setdata(json.data);
+};
+
+tfgs.saveload.savetotext = function() {
+	return JSON.stringify(tfgs.saveload.savetojson(data));
+};
+
+tfgs.saveload.savetojson = function() {
+	return {
+		config: tfgs.func.getconfig(),
+		data: tfgs.func.getdata()
+	};
+};
+
+tfgs.saveload.edit = function() {
+	let newdata = prompt("编辑配置文本", tfgs.saveload.savetotext());
+	if (newData !== null)
+		tfgs.saveload.loadfromtext(newdata);
+};
+
+/** file */
+tfgs.saveload.file = {};
+
+tfgs.saveload.file.load = function() {
+	return tfgs.saveload.file._load().then(tfgs.saveload.loadfromtext);
+};
+tfgs.saveload.file.save = function() {
+	return tfgs.saveload.file._save(tfgs.saveload.savetotext());
+};
+
+tfgs.saveload.file._load = function() {
+	return new Promise(function(resolve, reject) {
+		let a = document.createElement("input");
+		a.type = "file";
+		a.addEventListener("change", function(event) {
+			if (a.files.length > 0) {
+				let f = new FileReader();
+				f.addEventListener("load", function(event) {
+					resolve(f.result.toString());
+				});
+				f.readAsBinaryString(a.files[0]);
+			}
 		});
-	} else {
-		saveload_load2(callback);
-	}
-
-	function saveload_load2(callback) {
-		// if (tfgsdata === null&&"indexedDB"in window) {
-
-		// }
-		if (tfgsdata === null && "localStorage" in window) {
-			tfgsdata = localStorage.getItem("-tfgs-");
-		}
-		saveload.data = tfgsdata;
-		callback(tfgsdata);
-	}
+		a.click();
+	});
 }
 
-saveload.save = saveload_save;
+tfgs.saveload.file._save = function(data) {
+	return new Promise(function(resolve, reject) {
+		let a = document.createElement("a");
+		a.href = "data:text/plain;charset:utf-8," + data;
+		a.download = "tfgs-config.json";
+		a.click();
+	});
+}
 
-function saveload_save(callback) {
-	let extStorage = null;
-	if ("chrome" in window && "storage" in chrome) {
-		extStorage = chrome.storage;
-	} else if ("browser" in window && "storage" in browser) {
-		extStorage = browser.storage;
-	}
-	if (extStorage !== null) {
-		extStorage.sync.setItem({
-			"-tfgs-": saveload.data
-		}, function(ret) {
-			saveload_save2(callback);
-		});
-	} else {
-		saveload_save2(callback);
-	}
+/** storage */
+tfgs.saveload.storage = {};
 
-	function saveload_save2(callback) {
-		// if ("indexedDB"in window) {
+tfgs.saveload.storage.load = function() {
+	return tfgs.saveload.storage._load().then(tfgs.saveload.loadfromtext);
+};
+tfgs.saveload.storage.save = function() {
+	return tfgs.saveload.saveto().then(tfgs.saveload.storage._save);
+};
 
-		// }
-		if ("localStorage" in window) {
-			localStorage.setItem("-tfgs-", saveload.data);
+tfgs.saveload.storage._load = function() {
+	return new Promise(function(resolve, reject) {
+		let data = null;
+		let extStorage = null;
+		if ("chrome" in window && "storage" in chrome) {
+			extStorage = chrome.storage;
+		} else if ("browser" in window && "storage" in browser) {
+			extStorage = browser.storage;
 		}
-		callback();
-	}
+		if (extStorage !== null) {
+			extStorage.sync.getItem("-tfgs-", function(ret) {
+				data = ret["-tfgs-"];
+				saveload_load2();
+			});
+		} else {
+			load2(callback);
+		}
+
+		function load2() {
+			// if (data === null&&"indexedDB"in window) {
+
+			// }
+			if (data === null && "localStorage" in window) {
+				data = localStorage.getItem("-tfgs-");
+			}
+			saveload.data = data;
+			resolve(data);
+		}
+	});
+}
+
+tfgs.saveload.storage._save = function(data) {
+	return new Promise(function(resolve, reject) {
+		let extStorage = null;
+		if ("chrome" in window && "storage" in chrome) {
+			extStorage = chrome.storage;
+		} else if ("browser" in window && "storage" in browser) {
+			extStorage = browser.storage;
+		}
+		if (extStorage !== null) {
+			extStorage.sync.setItem({
+				"-tfgs-": saveload.data
+			}, function(ret) {
+				saveload_save2();
+			});
+		} else {
+			saveload_save2();
+		}
+
+		function saveload_save2() {
+			// if ("indexedDB"in window) {
+
+			// }
+			if ("localStorage" in window) {
+				localStorage.setItem("-tfgs-", data);
+			}
+			resolve();
+		}
+	});
 }
 
 // window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
@@ -78,5 +154,3 @@ function saveload_save(callback) {
 // 		});
 // 	});
 // }
-
-tfgs.saveload = saveload;

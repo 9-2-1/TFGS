@@ -1,8 +1,7 @@
 try {
+	tfgs.saveload.browser.load(step2);
 
-	tfgs.saveload.load(step2);
-
-	function step2(tfgsdata) {
+	function step2() {
 		try {
 			tfgsdata = JSON.parse(tfgsdata);
 		} catch (e) {
