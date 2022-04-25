@@ -1,7 +1,7 @@
 let fs = require("fs");
 let flist = lsSync("functions");
 let allinone = "let tfgs = {};\n" +
-	"tfgs._functions = {\n";
+	"tfgs._func = {\n";
 for (let i in flist) {
 	let fname = flist[i];
 	let ext = /(?:\.(.*))?$/.exec(fname)[1];

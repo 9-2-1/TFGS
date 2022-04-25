@@ -1,20 +1,9 @@
 try {
-	tfgs.saveload.browser.load(step2);
-
-	function step2() {
-		try {
-			tfgsdata = JSON.parse(tfgsdata);
-		} catch (e) {
-			tfgsdata = null;
-		}
-		if (tfgsdata === null) tfgsdata = {};
-		if (!("config" in tfgsdata)) tfgsdata.config = {};
-		tfgs.optionconf = tfgsdata.config;
-
-		tfgs.functionsload();
-
+	tfgs.func.init();
+	tfgs.saveload.storage.load().then(function() {
+		tfgs.func.startup();
 		tfgs.setting.showbutton();
-	}
+	});
 } catch (e) {
 	alert(e.message);
 	throw e;
