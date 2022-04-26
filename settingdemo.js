@@ -2,7 +2,7 @@ function eleid(id) {
 	return document.getElementById(id);
 }
 try {
-	tfgs.optioninfo = {
+	tfgs.func.list = {
 		"-tfgs-": {
 			"name": "TFGS 配置", // ##
 			"author": "TFGS", // ##
@@ -84,14 +84,7 @@ try {
 		}
 	};
 
-	tfgs.saveload.load(step2);
-
-	function step2(tfgsdata) {
-		try {
-			tfgsdata = JSON.parse(tfgsdata);
-		} catch (e) {
-			tfgsdata = null;
-		}
+	tfgs.saveload.storage.load().then(function(tfgsdata) {
 		if (tfgsdata === null) tfgsdata = {};
 		if (!("config" in tfgsdata)) tfgsdata.config = {};
 		tfgs.optionconf = tfgsdata.config;
@@ -111,8 +104,7 @@ try {
 
 		tfgs.setting.showbutton();
 		tfgs.setting.button.click();
-
-	}
+	});
 
 } catch (e) {
 	alert(e.message);

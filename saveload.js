@@ -1,5 +1,5 @@
 //要保存的内容有：自己的设定，自己的数据，拓展的设定和拓展的数据。
-//自己视为特殊拓展“-tfgs-”，设定数据为“option”，其他数据为“data”
+//自己视为特殊拓展“-tfgs-”，设定数据为“options”，其他数据为“data”
 
 /** saveload */
 tfgs.saveload = {};
@@ -12,7 +12,7 @@ tfgs.saveload.loadfromtext = function(data) {
 };
 
 tfgs.saveload.loadfromjson = function(json) {
-	tfgs.func.setoption(json.option);
+	tfgs.func.setoptions(json.options);
 	tfgs.func.setdata(json.data);
 };
 
@@ -22,7 +22,7 @@ tfgs.saveload.savetotext = function() {
 
 tfgs.saveload.savetojson = function() {
 	return {
-		option: tfgs.func.getoption(),
+		options: tfgs.func.getoptions(),
 		data: tfgs.func.getdata()
 	};
 };
@@ -64,7 +64,7 @@ tfgs.saveload.file._save = function(data) {
 	return new Promise(function(resolve, reject) {
 		let a = document.createElement("a");
 		a.href = "data:text/plain;charset:utf-8," + data;
-		a.download = "tfgs-option.json";
+		a.download = "tfgs-options.json";
 		a.click();
 	});
 }
