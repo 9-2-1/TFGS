@@ -19,12 +19,7 @@ for (let i in flist) {
 }
 allinone += "};\n\n";
 flist = [
-	"inspect.js",
-	"func.js",
-	"saveload.js",
-	"settings.js",
-	"settings.css",
-	"main.js"
+	"inspect.js"
 ];
 for (let i in flist) {
 	let fname = flist[i];
