@@ -8,8 +8,8 @@ try {
 			"author": "TFGS", // ##
 			"version": "v0.1.0", // ##
 			"info": "点击左上角的对勾打开或者关闭整个插件",
-			"enabledefault": true,
-			"optionchange": function(newoption) {
+			"enable": true,
+			"onoption": function(newoption) {
 				eleid("test").value = inspect(newoption);
 			},
 			"options": { // ##
@@ -84,29 +84,20 @@ try {
 		}
 	};
 
+	tfgs.func.default();
+
 	tfgs.saveload.storage.load().then(function(tfgsdata) {
-		if (tfgsdata === null) tfgsdata = {};
-		if (!("config" in tfgsdata)) tfgsdata.config = {};
-		tfgs.optionconf = tfgsdata.config;
-
-		tfgs.functions = {};
-
-		tfgs.functions.enablefunction = function(funcname) {
-			eleid("test").value = inspect(tfgs.optionconf[funcname]);
-		};
-
 		eleid("show").addEventListener("click", function() {
-			tfgs.setting.showbutton();
+			tfgs.settings.showbutton();
 		})
 		eleid("hide").addEventListener("click", function() {
-			tfgs.setting.hidebutton();
+			tfgs.settings.hidebutton();
 		})
 
-		tfgs.setting.showbutton();
-		tfgs.setting.button.click();
-	});
+		tfgs.settings.showbutton();
+		tfgs.settings.button.click();
+	}).catch(tfgs.error);
 
 } catch (e) {
-	alert(e.message);
-	console.log(e);
+	tfgs.error(e);
 }

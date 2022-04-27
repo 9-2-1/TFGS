@@ -94,7 +94,7 @@ tfgs.saveload.storage._load = function() {
 				saveload_load2();
 			});
 		} else {
-			load2(callback);
+			load2();
 		}
 
 		function load2() {
@@ -104,7 +104,7 @@ tfgs.saveload.storage._load = function() {
 			if (data === null && "localStorage" in window) {
 				data = localStorage.getItem("-tfgs-");
 			}
-			saveload.data = data;
+			tfgs.saveload.data = data;
 			resolve(data);
 		}
 	});
@@ -120,7 +120,7 @@ tfgs.saveload.storage._save = function(data) {
 		}
 		if (extStorage !== null) {
 			extStorage.sync.setItem({
-				"-tfgs-": saveload.data
+				"-tfgs-": tfgs.saveload.data
 			}, function(ret) {
 				saveload_save2();
 			});

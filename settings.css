@@ -1,6 +1,6 @@
 /** ## */
 
-.-tfgs-setting-button {
+.-tfgs-settings-button {
 	position: fixed;
 	display: block;
 	width: 40px;
@@ -12,7 +12,7 @@
 	z-index: 11112222;
 }
 
-.-tfgs-setting-windowbg {
+.-tfgs-settings-windowbg {
 	position: fixed;
 	display: none;
 	top: 0px;
@@ -23,7 +23,7 @@
 	z-index: 11112222;
 }
 
-.-tfgs-setting-window {
+.-tfgs-settings-window {
 	position: absolute;
 	top: 20px;
 	left: 20px;
@@ -35,7 +35,7 @@
 	border: 1px solid black;
 }
 
-.-tfgs-setting-okbutton {
+.-tfgs-settings-okbutton {
 	position: absolute;
 	height: 30px;
 	width: 30px;
@@ -53,7 +53,7 @@
 	cursor: pointer;
 }
 
-.-tfgs-setting-menu {
+.-tfgs-settings-menu {
 	display: block;
 	height: 100%;
 	overflow-y: scroll;
@@ -61,27 +61,27 @@
 	font-family: Fantasque, fira, monofur, monospace;
 }
 
-.-tfgs-setting-menu * {
+.-tfgs-settings-menu * {
 	margin: 2px;
 	padding: 2px;
 }
 
-.-tfgs-setting-block {
+.-tfgs-settings-block {
 	border-radius: 2px;
 	border: 1px solid black;
 	/*background: lightblue;*/
 }
 
-.-tfgs-setting-title {
+.-tfgs-settings-title {
 	border-radius: 2px;
 	background: lightblue;
 }
 
-.-tfgs-setting-title input {
+.-tfgs-settings-title input {
 	position: relative;
 }
 
-.-tfgs-setting-option {
+.-tfgs-settings-option {
 	display: inline-block;
 	background: lightgreen;
 	border-radius: 2px;
@@ -89,7 +89,7 @@
 	margin: 2px;
 }
 
-.-tfgs-setting-infobutton {
+.-tfgs-settings-infobutton {
 	display: inline-block;
 	width: 15px;
 	height: 15px;
@@ -106,7 +106,7 @@
 	position: relative;
 }
 
-.-tfgs-setting-info:before {
+.-tfgs-settings-info:before {
 	content: " ";
 	position: absolute;
 	top: -10px;
@@ -119,7 +119,7 @@
 	border-right: 10px solid transparent;
 }
 
-.-tfgs-setting-info:after {
+.-tfgs-settings-info:after {
 	content: " ";
 	position: absolute;
 	top: -8.6px;
@@ -132,7 +132,7 @@
 	border-right: 10px solid transparent;
 }
 
-.-tfgs-setting-info {
+.-tfgs-settings-info {
 	display: none;
 	position: absolute;
 	white-space: pre-wrap;
@@ -148,21 +148,21 @@
 	user-select: text;
 }
 
-.-tfgs-setting-option-select {
+.-tfgs-settings-option-select {
 	display: inline-block;
 	border: 1px solid black;
 	border-radius: 2px;
 	background: pink;
 }
 
-.-tfgs-setting-tips {
+.-tfgs-settings-tips {
 	display: block;
 	border: 1px solid black;
 	border-radius: 2px;
 	background: lightyellow;
 }
 
-.-tfgs-setting-menu input[type=text] {
+.-tfgs-settings-menu input[type=text] {
 	border-radius: 1px;
 	height: 25px;
 	width: 150px;
@@ -171,7 +171,7 @@
 	border: 1px solid black;
 }
 
-.-tfgs-setting-menu input[type=number] {
+.-tfgs-settings-menu input[type=number] {
 	border-radius: 1px;
 	height: 25px;
 	width: 75px;
@@ -180,11 +180,11 @@
 	border: 1px solid black;
 }
 
-.-tfgs-setting-menu input[type=checkbox] {
+.-tfgs-settings-menu input[type=checkbox] {
 	display: none;
 }
 
-.-tfgs-setting-menu input[type=checkbox]~label:before {
+.-tfgs-settings-menu input[type=checkbox]~label:before {
 	content: " ";
 	display: inline-block;
 	font-size: 0px;
@@ -197,7 +197,7 @@
 	overflow: hidden;
 }
 
-.-tfgs-setting-menu input[type=checkbox]:checked~label:before {
+.-tfgs-settings-menu input[type=checkbox]:checked~label:before {
 	content: "\2713";
 	text-align: center;
 	font-size: 18px;
@@ -206,15 +206,15 @@
 	background: blue;
 }
 
-.-tfgs-setting-menu input[type=radio] {
+.-tfgs-settings-menu input[type=radio] {
 	display: none;
 }
 
-.-tfgs-setting-menu input[type=radio]~label {
+.-tfgs-settings-menu input[type=radio]~label {
 	display: inline-block;
 }
 
-.-tfgs-setting-menu input[type=radio]~label:before {
+.-tfgs-settings-menu input[type=radio]~label:before {
 	content: " ";
 	/* position: absolute; */
 	display: inline-block;
@@ -228,7 +228,7 @@
 	overflow: hidden;
 }
 
-.-tfgs-setting-menu input[type=radio]:checked~label:before {
+.-tfgs-settings-menu input[type=radio]:checked~label:before {
 	content: "●";
 	text-align: center;
 	font-size: 12px;
@@ -237,7 +237,7 @@
 	background: blue;
 }
 
-.-tfgs-setting-menu input[type=button] {
+.-tfgs-settings-menu input[type=button] {
 	position: relative;
 	background: lightyellow;
 	border-radius: 2px;
@@ -245,60 +245,60 @@
 	font-family: Fantasque, fira, monofur, monospace;
 }
 
-.-tfgs-setting-menu input[type=button]:active {
+.-tfgs-settings-menu input[type=button]:active {
 	background: olive;
 }
 
-.-tfgs-setting-menu input.-tfgs-warning,
-.-tfgs-setting-menu input.-tfgs-warning~label:before {
+.-tfgs-settings-menu input.-tfgs-warning,
+.-tfgs-settings-menu input.-tfgs-warning~label:before {
 	border: 2px solid olive;
 	background: lightyellow;
 	color: olive;
 }
 
-.-tfgs-setting-menu input.-tfgs-warning:checked~label:before {
+.-tfgs-settings-menu input.-tfgs-warning:checked~label:before {
 	background: olive;
 }
 
 
-.-tfgs-setting-menu input.-tfgs-error,
-.-tfgs-setting-menu input.-tfgs-error~label:before {
+.-tfgs-settings-menu input.-tfgs-error,
+.-tfgs-settings-menu input.-tfgs-error~label:before {
 	border: 2px solid red;
 	background: pink;
 	color: red;
 }
 
-.-tfgs-setting-menu input.-tfgs-error:checked~label:before {
+.-tfgs-settings-menu input.-tfgs-error:checked~label:before {
 	background: red;
 }
 
-.-tfgs-setting-menu input.-tfgs-warning:hover+*>.-tfgs-setting-wrong-tips,
-.-tfgs-setting-menu input.-tfgs-warning:focus+*>.-tfgs-setting-wrong-tips {
+.-tfgs-settings-menu input.-tfgs-warning:hover+*>.-tfgs-setting-wrong-tips,
+.-tfgs-settings-menu input.-tfgs-warning:focus+*>.-tfgs-setting-wrong-tips {
 	display: block;
 }
 
-.-tfgs-setting-menu input.-tfgs-warning+*>.-tfgs-setting-wrong-tips {
+.-tfgs-settings-menu input.-tfgs-warning+*>.-tfgs-setting-wrong-tips {
 	background: lightyellow;
 }
 
-.-tfgs-setting-menu input.-tfgs-warning+*>.-tfgs-setting-wrong-tips:after {
+.-tfgs-settings-menu input.-tfgs-warning+*>.-tfgs-setting-wrong-tips:after {
 	border-bottom: 10px solid lightyellow;
 }
 
-.-tfgs-setting-menu input.-tfgs-error:hover+*>.-tfgs-setting-wrong-tips,
-.-tfgs-setting-menu input.-tfgs-error:focus+*>.-tfgs-setting-wrong-tips {
+.-tfgs-settings-menu input.-tfgs-error:hover+*>.-tfgs-setting-wrong-tips,
+.-tfgs-settings-menu input.-tfgs-error:focus+*>.-tfgs-setting-wrong-tips {
 	display: block;
 }
 
-.-tfgs-setting-menu input.-tfgs-error+*>.-tfgs-setting-wrong-tips {
+.-tfgs-settings-menu input.-tfgs-error+*>.-tfgs-setting-wrong-tips {
 	background: pink;
 }
 
-.-tfgs-setting-menu input.-tfgs-error+*>.-tfgs-setting-wrong-tips:after {
+.-tfgs-settings-menu input.-tfgs-error+*>.-tfgs-setting-wrong-tips:after {
 	border-bottom: 10px solid pink;
 }
 
-.-tfgs-setting-wrong-tips:before {
+.-tfgs-settings-wrong-tips:before {
 	content: " ";
 	position: absolute;
 	top: -10px;
@@ -311,7 +311,7 @@
 	border-right: 10px solid transparent;
 }
 
-.-tfgs-setting-wrong-tips:after {
+.-tfgs-settings-wrong-tips:after {
 	content: " ";
 	position: absolute;
 	top: -8.6px;
@@ -323,7 +323,7 @@
 	border-right: 10px solid transparent;
 }
 
-.-tfgs-setting-wrong-tips {
+.-tfgs-settings-wrong-tips {
 	display: none;
 	position: absolute;
 	white-space: pre-wrap;
@@ -335,7 +335,7 @@
 	border-radius: 2px;
 }
 
-.-tfgs-setting-wrong-tips:hover {
+.-tfgs-settings-wrong-tips:hover {
 	display: block;
 }
 

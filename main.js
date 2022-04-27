@@ -5,6 +5,5 @@ try {
 		tfgs.setting.showbutton();
 	});
 } catch (e) {
-	alert(e.message);
-	throw e;
+	tfgs.error(e);
 }

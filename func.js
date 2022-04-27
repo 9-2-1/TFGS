@@ -13,8 +13,7 @@ tfgs.func.init = function() {
 		"author": "TFGS",
 		"version": "v0.1.0",
 		"info": "点击左上角的对勾打开或者关闭整个插件",
-		"enabled": true, // TODO check ##
-		// ERROR TODO
+		"enable": true, // TODO check ##
 		"default": true,
 		"options": {
 			"website": {
@@ -51,12 +50,12 @@ tfgs.func.init = function() {
 		},
 		"onenable": function() {}, // TODO
 		"ondisable": function() {}, // TODO
-		"onoption": function() {}
+		"onoptions": function() {}
 	};
 
 	for (let name in tfgs._func) {
 		let tfgsinfo = {};
-		tfgsinfo.getoption = function() {
+		tfgsinfo.getoptions = function() {
 			return tfgs.func.options[name];
 		};
 		tfgs._func[name](tfgsinfo);
@@ -69,7 +68,7 @@ tfgs.func.init = function() {
 			options: tfgsinfo.options,
 			onenable: tfgsinfo.onenable,
 			ondisable: tfgsinfo.ondisable,
-			onoption: tfgsinfo.onoption
+			onoptions: tfgsinfo.onoptions
 		};
 	}
 
@@ -90,18 +89,21 @@ tfgs.func.default = function() {
 };
 
 tfgs.func.setoptions = function(options) {
+	if (typeof options !== "object") return;
 	let oldOption = tfgs.func.options;
 	let newOption = {};
 	let list = tfgs.func.list;
 	let changelist = [];
 	let enablelist = [];
 	for (let name in list) {
+		alert('name:'+name);
 		let change = false;
 		let oldFuncO = name in oldOption ? oldOption[name] : {};
 		let newFuncO = {};
 		let funcO = name in options ? options[name] : {};
 		let optl = list[name].options;
 		for (let optn in optl) {
+		alert('optn:'+optn);
 			newFuncO[optn] = optn in funcO ? funcO[optn] : oldFuncO[optn];
 			if (oldFuncO[optn] !== newFuncO[optn]) change = true;
 		}
@@ -112,7 +114,7 @@ tfgs.func.setoptions = function(options) {
 		newOption[name] = newFuncO;
 	}
 	for (let i in changelist) {
-		let f = tfgs.func.list[changelist[i]].onoption;
+		let f = tfgs.func.list[changelist[i]].onoptions;
 		if (typeof f === "function")
 			f(tfgs.func.options[changelist[i]]);
 	}
@@ -127,6 +129,7 @@ tfgs.func.setoptions = function(options) {
 };
 
 tfgs.func.setdata = function(data) {
+	if (typeof data !== "object") return;
 	let newData = {};
 	for (let name in tfgs.func.list) {
 		if (name in data) {

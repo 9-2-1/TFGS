@@ -102,6 +102,5 @@ try {
 	}
 
 } catch (e) {
-	alert(e.message);
-	console.log(e);
+	tfgs.error(e);
 }

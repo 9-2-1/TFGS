@@ -22,8 +22,8 @@ flist = [
 	"inspect.js",
 	"func.js",
 	"saveload.js",
-	"setting.js",
-	"setting.css",
+	"settings.js",
+	"settings.css",
 	"main.js"
 ];
 for (let i in flist) {
