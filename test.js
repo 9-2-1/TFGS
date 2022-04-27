@@ -30,11 +30,14 @@ try {
 			};
 		}
 	}
+	// init, default
 	tfgs.func.init();
+	// getoption
 	let options = tfgs.func.getoptions();
 	//result += inspect(options);
 	test(options.abc._enable, false, 1);
 	test(options.abc.aaa, "abc", 2);
+	// setoption
 	tfgs.func.setoptions({
 		"abc": {
 			"aaa": "ddd"
