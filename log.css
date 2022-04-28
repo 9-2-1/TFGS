@@ -1,0 +1,11 @@
+.-tfgs-log {
+	white-space: pre;
+	font-family: monospace;
+	font-size: 15;
+	padding: 0;
+	margin: 0;
+	display: block;
+	right: 0;
+	height: 70%;
+	overflow: scroll;
+}

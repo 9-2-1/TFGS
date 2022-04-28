@@ -1,10 +1,17 @@
+let tfgs = {};
+
+tfgs.error = function(e) {
+	alert(e.message);
+	throw e;
+};
+
 // tfgs
-// |-funcs
+// |-func
 // | |-list
 // | | |-(id)
-// | | |-name
-// | | |-info
-// | | |-option
+// | | |-name*
+// | | |-info*
+// | | |-option*
 // | | | |-(id)
 // | | | |-name
 // | | | |-info
@@ -15,18 +22,43 @@
 // | | | |-maxlength(text)
 // | | | |-menu(menu)
 // | | | \-default
-// | | |-onenable
-// | | |-ondisable
-// | | \-onoption
-// | \-add
+// | | |-onenable*
+// | | |-ondisable*
+// | | \-onoption*
+// | |-default
+// | |-getoption
+// | |-checkoption
+// | \-add*
+// |-funcapi
+// | |-getdata*
+// | |-setdata*
+// | |-getoption*
+// | |-log*
+// | |-warn*
+// | |-error*
+// | |-info*
+// | |-alert*
+// | |-confirm*
+// | |-prompt*
+// | \-_getapi*
+// |-log
+// | |-add*
+// | |-clear*
+// | \-display*
 // |-data
 // | |-list
 // | | |-(id)
 // | | | |-enable
 // | | | |-data
 // | | | \-option
-// | | |-load
-// | | \-save
+// | |-getjson
+// | \-setjson
+// |-store
+// | |-load
+// | |-save
+// | |-import
+// | |-export
+// | \-edit
 // |-menu
 // | |-create
 // | |-save
