@@ -26,8 +26,14 @@ function element(tagname, classname, type) {
 
 try {
 	tfgs.log.add("test", "#0202ff", "i  have been <b>fjej</b>,once.");
+	tfgs.log.add("test", "#000000", "i  have been <b>fjej</b>,once.");
+	tfgs.log.add("data", "#ff0000", "caps");
+	tfgs.log.add("data", "#000000", "lock");
 	let elog = element("div");
-	tfgs.log.display(elog);
+	tfgs.log.display(elog, {
+		"name": null,
+		"color": null
+	});
 	document.body.appendChild(elog);
 	fin();
 } catch (e) {

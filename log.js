@@ -25,13 +25,16 @@ tfgs.log.clear = function() {
 	tfgs.log.list = [];
 };
 
-tfgs.log.display = function(div) {
+tfgs.log.display = function(div, fliter) {
 	div.classList.add("-tfgs-log");
 	for (let i in tfgs.log.list) {
-		let eline = element("div");
 		let log1 = tfgs.log.list[i];
-		eline.style.color = log1.color;
-		eline.innerText = log1.name + "\t" + log1.log;
-		div.appendChild(eline);
+		if (fliter.name === null || fliter.name.includes(log1.name))
+			if (fliter.color === null || fliter.color.includes(log1.color)) {
+				let eline = element("div");
+				eline.style.color = log1.color;
+				eline.innerText = log1.name + "\t" + log1.log;
+				div.appendChild(eline);
+			}
 	}
 };
