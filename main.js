@@ -15,19 +15,19 @@ tfgs.error = function(e) {
 // | | | |-(id)
 // | | | |-name
 // | | | |-info
-// | | | |-type
+// | | | |-type*
 // | | | |-min(number)
 // | | | |-max(number)
 // | | | |-step(number)
 // | | | |-maxlength(text)
 // | | | |-menu(menu)
-// | | | \-default
+// | | | |-value(menu)
+// | | | \-default*
 // | | |-onenable*
 // | | |-ondisable*
 // | | \-onoption*
-// | |-default
-// | |-getoption
-// | |-checkoption
+// | |-default*
+// | |-fixoption*
 // | \-add*
 // |-funcapi
 // | |-getdata*
@@ -52,8 +52,7 @@ tfgs.error = function(e) {
 // | | | |-data
 // | | | \-option
 // | |-getjson
-// | \-setjson
-// |-store
+// | |-setjson
 // | |-load
 // | |-save
 // | |-import
