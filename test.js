@@ -7,7 +7,7 @@ function test(n, a, b) {
 }
 
 function err(e) {
-	result += e.message;
+	result += "Error: " + e.message;
 	document.getElementById('test').value = result;
 	throw e;
 }
@@ -53,13 +53,33 @@ try {
 			f: "string!"
 		}
 	})), "{\"a\":\"\",\"b\":2,\"c\":{\"e\":false,\"f\":\"\"}}");
-	let elog = element("div");
-	tfgs.log.display(elog, {
-		"name": null,
-		"color": null
+	// func
+	tfgs.func.add({
+		"id": "kkk",
+		"name": "abc",
+		"option": {},
+		"default": true,
+		"onenable": function(api) {
+			api.log(123);
+			api.error(456);
+			api.info(789);
+			api.warn(0);
+		},
+		"ondisable": function(api) {api.log("disa");},
+		"onoption": function(api) {api.log("option");}
 	});
-	document.body.appendChild(elog);
-	fin();
+	tfgs.func.default();
+	tfgs.data.setjson("{}");
+	tfgs.data.edit().then(function() {
+		// log
+		let elog = element("div");
+		tfgs.log.display(elog, {
+			"name": null,
+			"color": null
+		});
+		document.body.appendChild(elog);
+		fin();
+	}).catch(err);
 } catch (e) {
-	err(e.message);
+	err(e);
 }

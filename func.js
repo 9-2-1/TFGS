@@ -25,10 +25,12 @@ tfgs.func.add = function(funcinfo) {
 	tfgs.func.list[funcinfo.id] = {
 		name: funcinfo.name,
 		info: funcinfo.info,
+		default: funcinfo.default,
 		option: funcinfo.option,
 		onenable: funcinfo.onenable,
 		ondisable: funcinfo.ondisable,
-		onoption: funcinfo.onoption
+		onoption: funcinfo.onoption,
+		enable: false
 	};
 };
 
@@ -44,15 +46,31 @@ tfgs.func.default = function(cleardata) {
 		defldata[fname] = {
 			"enable": flist[fname].default,
 			"option": odefl,
-			"data": cleardata ? null : tfgs.data.list[fname].data
-		}
+			"data": cleardata ? undefined : fname in tfgs.data.list ? tfgs.data.list[fname].data : undefined
+		};
 	}
-	tfgs.data.setjson(defldata);
+	tfgs.data._default(defldata);
+};
+
+tfgs.func.datachange = function() {
+	tfgs.func.fixoption();
+	let flist = tfgs.func.list;
+	for (let fname in flist) {
+		let e = tfgs.func.list[fname];
+		let E = tfgs.data.list[fname].enable;
+		if (e.enable !== E) {
+			e[E ? "onenable" : "ondisable"](tfgs.funcapi._getapi(fname));
+			e.enable = E;
+		}
+		e.onoption(tfgs.funcapi._getapi(fname));
+	}
 };
 
 tfgs.func.fixoption = function() {
 	let flist = tfgs.func.list;
 	for (let fname in flist) {
+		if (typeof tfgs.data.list[fname].enable !== "boolean")
+			tfgs.data.list[fname].enable = flist[fname].default;
 		let olist = flist[fname].option;
 		for (let oname in olist) {
 			let o = olist[oname];

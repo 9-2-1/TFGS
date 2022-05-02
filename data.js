@@ -14,14 +14,19 @@ tfgs.data.setjson = function(json) {
 		for (let oname in tfgs.func.list[fname].option)
 			olist[oname] = "any";
 		format[fname] = {
-			enable: "boolean",
+			enable: "boolean?",
 			data: "any",
 			option: olist
 		}
-		tfgs.data.list = tfgs.object_format(data, format);
+		tfgs.data.list = object_format(data, format);
 	}
-	// ae check
+	tfgs.func.datachange();
 };
+
+tfgs.data._default = function(data) {
+	tfgs.data.list = data;
+};
+
 tfgs.data.load = function() {
 	return new Promise(function(resolve, reject) {
 		let data = null;
@@ -112,7 +117,9 @@ tfgs.data.export = function() {
 };
 
 tfgs.data.edit = function() {
-	let newdata = prompt("编辑配置文本", tfgs.data.getjson());
-	if (newData !== null)
-		tfgs.data.setjson(newdata);
+	return tfgs.funcapi.prompt("-tfgs-", "编辑配置文本", tfgs.data.getjson())
+		.then(function(newdata) {
+			if (newdata !== null)
+				tfgs.data.setjson(newdata);
+		});
 };

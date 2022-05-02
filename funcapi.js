@@ -56,7 +56,12 @@ tfgs.funcapi._getapi = function(name) {
 	let objapi = {};
 	for (let i in tfgs.funcapi) {
 		objapi[i] = function() {
-			tfgs.funcapi.apply(tfgs.funcapi, [name].concat(arguments));
+			let arg = [name];
+			for (let i = 0; i < arguments.length; i++)
+				arg.push(arguments[i]);
+			tfgs.funcapi[i].apply(tfgs.funcapi, arg);
 		}
 	}
+	//tfgs.funcapi.log("x",inspect(objapi));
+	return objapi;
 };
