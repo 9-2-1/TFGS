@@ -1,0 +1,89 @@
+.tfgsMenuBackgr {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: rgba(0, 0, 0, 0.5);
+	border: none;
+}
+
+.tfgsMenuBackgr * {
+	box-sizing: border-box;
+}
+
+.tfgsMenuWindow {
+	position: absolute;
+	top: 20px;
+	bottom: 20px;
+	left: 20px;
+	right: 20px;
+	background: white;
+	border: 1px solid black;
+}
+
+
+.tfgsMenuContent {
+	position: absolute;
+	top: 0;
+	bottom: 40px;
+	left: 0;
+	right: 0;
+	background: white;
+	border: 1px solid black;
+}
+
+.tfgsMenuButtons {
+	position: absolute;
+	height: 40px;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: lightblue;
+	border: 1px solid black;
+}
+
+.tfgsButton {
+	display: inline-block;
+	width: 70px;
+	text-align: center;
+	font-size: 16px;
+	height: 30px;
+	margin: 5px 2px;
+	background: white;
+	line-height: 30px;
+	border: 1px solid black;
+}
+
+.tfgsDisable {
+	display: none;
+	background: lightgrey;
+	color: grey;
+}
+
+.tfgsRight {
+	float: right;
+}
+
+.tfgsMenuFunc {
+	background: lightyellow;
+	border: 1px solid black;
+}
+
+.tfgsMenuFuncOption {
+	background: lightgreen;
+	border: 1px solid black;
+}
+
+.tfgsMenuFuncTitle {
+	background: pink;
+	border: 1px solid black;
+}
+
+.tfgsMenuFuncInfo {
+	font-size: 15px;
+}
+
+.tfgsMenuFuncName {
+	font-size: 20px;
+}

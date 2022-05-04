@@ -2,6 +2,7 @@ let tfgs = {};
 
 tfgs.error = function(e) {
 	alert(e.message);
+	console.error(e);
 	throw e;
 };
 
@@ -18,12 +19,12 @@ tfgs.error = function(e) {
 // | | | |-name
 // | | | |-info
 // | | | |-type*
-// | | | |-min(number)
-// | | | |-max(number)
+// | | | |-min(number)*
+// | | | |-max(number)*
 // | | | |-step(number)
-// | | | |-maxlength(text)
+// | | | |-maxlength(text)*
 // | | | |-menu(menu)
-// | | | |-value(menu)
+// | | | |-value(menu)*
 // | | | \-default*
 // | | |-onenable*
 // | | |-ondisable*
@@ -62,9 +63,10 @@ tfgs.error = function(e) {
 // | |-export*
 // | \-edit*
 // |-menu
-// | |-create
-// | |-save
-// | \-delete
+// | |-create*
+// | |-save*
+// | |-load*
+// | \-delete*
 // \-button
 //   |-create
 //   |-show

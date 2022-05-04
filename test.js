@@ -65,8 +65,12 @@ try {
 			api.info(789);
 			api.warn(0);
 		},
-		"ondisable": function(api) {api.log("disa");},
-		"onoption": function(api) {api.log("option");}
+		"ondisable": function(api) {
+			api.log("disa");
+		},
+		"onoption": function(api) {
+			api.log("option");
+		}
 	});
 	tfgs.func.default();
 	tfgs.data.setjson("{}");

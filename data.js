@@ -52,7 +52,6 @@ tfgs.data.load = function() {
 			if (data === null && "localStorage" in window) {
 				data = localStorage.getItem("-tfgs-");
 			}
-			tfgs.saveload.data = data;
 			resolve(data);
 		}
 	}).then(tfgs.data.setjson);
@@ -81,7 +80,7 @@ tfgs.data.save = function() {
 
 			// }
 			if ("localStorage" in window) {
-				localStorage.setItem("-tfgs-", data);
+				localStorage.setItem("-tfgs-", tfgs.data.getjson());
 			}
 			resolve();
 		}
@@ -102,7 +101,7 @@ tfgs.data.import = function() {
 			}
 		});
 		a.click();
-	}).then(tfgs.data.setjson);
+	}).then(tfgs.data.setjson).then(tfgs.data.save).then(tfgs.menu.load);
 };
 
 tfgs.data.export = function() {

@@ -59,10 +59,21 @@ tfgs.func.datachange = function() {
 		let e = tfgs.func.list[fname];
 		let E = tfgs.data.list[fname].enable;
 		if (e.enable !== E) {
-			e[E ? "onenable" : "ondisable"](tfgs.funcapi._getapi(fname));
+			try {
+				e[E ? "onenable" : "ondisable"](tfgs.funcapi._getapi(fname));
+			} catch (e) {
+				tfgs.funcapi.error(fname, "Error: " + e.message);
+				console.error(e);
+			}
 			e.enable = E;
+		} else if (E) {
+			try {
+				e.onoption(tfgs.funcapi._getapi(fname));
+			} catch (e) {
+				tfgs.funcapi.error(fname, "Error: " + e.message);
+				console.error(e);
+			}
 		}
-		e.onoption(tfgs.funcapi._getapi(fname));
 	}
 };
 
@@ -77,6 +88,7 @@ tfgs.func.fixoption = function() {
 			let O = tfgs.data.list[fname].option;
 			switch (o.type) {
 				case "text":
+					if (O[oname] === null || O[oname] === undefined) O[oname] = o.default;
 					if (typeof O[oname] !== "string") O[oname] = String(O[oname]);
 					if ("maxlength" in o && O[oname].length > o.maxlength) O[oname] = O[oname].slice(0, o.maxlength);
 					break;
@@ -89,7 +101,7 @@ tfgs.func.fixoption = function() {
 				case "check":
 					if (typeof O[oname] !== "boolean") O[oname] = o.default;
 					break;
-				case "select":
+				case "menu":
 					if (!o.value.includes(O[oname])) O[oname] = o.default;
 					break;
 			}

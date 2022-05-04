@@ -25,8 +25,20 @@ tfgs.log.clear = function() {
 	tfgs.log.list = [];
 };
 
+tfgs.log.displayInterval = function(div, fliter) {
+	return setInterval(function() {
+		let x = div.scrollX,
+			y = div.scrollY;
+		div.innerHTML = "";
+		tfgs.log.display(div, fliter);
+		div.scrollX = x;
+		dov.scrollY = y;
+	}, 100);
+};
+
 tfgs.log.display = function(div, fliter) {
 	div.classList.add("-tfgs-log");
+	div.style.overflow = "scroll";
 	for (let i in tfgs.log.list) {
 		let log1 = tfgs.log.list[i];
 		if (fliter.name === null || fliter.name.includes(log1.name))

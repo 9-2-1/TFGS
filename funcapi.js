@@ -16,21 +16,21 @@ tfgs.funcapi.info = function(name, log) {
 	tfgs.log.add(name, "#2020F0", log);
 };
 
+tfgs.funcapi.load = function(name) {
+	return tfgs.data.load();
+};
+
 tfgs.funcapi.getoption = function(name) {
-	return tfgs.data.storage.load().then(function() {
-		return tfgs.data.getoption()[name]
-	});
+	return tfgs.data.list[name].option;
 };
 
 tfgs.funcapi.getdata = function(name) {
-	return tfgs.data.storage.load().then(function() {
-		return tfgs.data.getdata()[name]
-	});
+	return tfgs.data.list[name].data;
 };
 
 tfgs.funcapi.setdata = function(name, data) {
-	tfgs.data.setdata(name, data);
-	return tfgs.data.storage.save();
+	tfgs.data.list[name].data = data;
+	return tfgs.data.save();
 };
 
 tfgs.funcapi.alert = function(name, text) {
@@ -59,7 +59,7 @@ tfgs.funcapi._getapi = function(name) {
 			let arg = [name];
 			for (let i = 0; i < arguments.length; i++)
 				arg.push(arguments[i]);
-			tfgs.funcapi[i].apply(tfgs.funcapi, arg);
+			return tfgs.funcapi[i].apply(tfgs.funcapi, arg);
 		}
 	}
 	//tfgs.funcapi.log("x",inspect(objapi));
