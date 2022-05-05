@@ -14,11 +14,11 @@ tfgs.button.create = function() {
 			return ele;
 		};
 		let button = tfgs.button.button = element("div", "tfgsButton");
-		button.innerText = "menu";
+		button.innerText = "插件选项";
 		button.style.position = "fixed";
 		button.style.left = "20px";
 		button.style.top = "20px";
-		button.style.zIndex = "20";
+		button.style.zIndex = "100000000";
 		let dx, dy, dm = false;
 		let _px = function(x) {
 			return Number(x.slice(0, -2));

@@ -16,7 +16,7 @@
 	width: 300px;
 	background: pink;
 	border: 1px solid black;
-	z-index: 2;
+	z-index: 100000001;
 }
 
 .tfgsLogContent {

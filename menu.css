@@ -6,6 +6,7 @@
 	right: 0;
 	background: rgba(0, 0, 0, 0.5);
 	border: none;
+	z-index: 100000000;
 }
 
 .tfgsMenuBackgr * {
@@ -21,7 +22,6 @@
 	background: white;
 	border: 1px solid black;
 }
-
 
 .tfgsMenuContent {
 	position: absolute;

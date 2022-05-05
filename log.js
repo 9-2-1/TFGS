@@ -71,7 +71,7 @@ tfgs.log.create = function() {
 		logdiv.innerHTML = `
 <div class="tfgsLogContent"></div>
 <div class="tfgsLogButtons">
-	<span class="tfgsButton">Move</span>
+	<span class="tfgsButton">拖动</span>
 	<span class="tfgsButton tfgsRight">关闭</span>
 </div>
 `;

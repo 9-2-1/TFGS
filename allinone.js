@@ -1,40 +1,19 @@
 let fs = require("fs");
-let flist = lsSync("functions");
-let allinone = "" +
-	"let tfgs = {};\n" +
-	"tfgs._func = {\n";
+let allinone = "";
 
-for (let i in flist) {
-	let fname = flist[i];
-	let ext = /(?:\.(.*))?$/.exec(fname)[1];
-	switch (ext) {
-		case "js":
-			allinone += "" +
-				'\t"' + fname + '": function (tfgsinfo) {\n' +
-				fs.readFileSync("functions/" + fname).toString() +
-				"\n\t},\n";
-			break;
-		case "css":
-			allinone += "/* " + fname + " */\n";
-			allinone += "" +
-				'{\n' +
-				'\tlet css = document.createElement("style");\n' +
-				'\tcss.innerHTML = ';
-			allinone += JSON.stringify(fs.readFileSync("functions/" + fname).toString());
-			allinone += "" +
-				';\n' +
-				'\tdocument.head.appendChild(css);\n' +
-				'}\n\n';
-			break;
-	}
-}
-allinone += "};\n\n";
-
-flist = [
+let flist = [
+	"inspect.js",
+	"object_format.js",
+	"main.js",
+	"data.js",
 	"func.js",
 	"funcapi.js",
 	"log.js",
-	"inspect.js"
+	"log.css",
+	"button.js",
+	"menu.js",
+	"menu.css",
+	"allinone_.js"
 ];
 
 for (let i in flist) {
@@ -64,6 +43,36 @@ for (let i in flist) {
 			break;
 	}
 }
+
+flist = lsSync("functions");
+
+for (let i in flist) {
+	let fname = flist[i];
+	let ext = /(?:\.(.*))?$/.exec(fname)[1];
+	switch (ext) {
+		case "js":
+			allinone += "/* " + fname + " */\n";
+			allinone += fs.readFileSync("functions/" + fname);
+			allinone += "\n\n";
+			break;
+		case "css":
+			allinone += "/* " + fname + " */\n";
+			allinone += "" +
+				'{\n' +
+				'\tlet css = document.createElement("style");\n' +
+				'\tcss.innerHTML = ';
+			allinone += JSON.stringify(fs.readFileSync("functions/" + fname).toString()).replace(/\\./g, function(str) {
+				return str === '\\n' ? '\\n" +\n' +
+					'\t\t"' : str;
+			});
+			allinone += "" +
+				';\n' +
+				'\tdocument.head.appendChild(css);\n' +
+				'}\n\n';
+			break;
+	}
+}
+
 if (!fs.existsSync("allinone")) fs.mkdirSync("allinone");
 fs.writeFileSync("allinone/TFGS.js", allinone);
 
