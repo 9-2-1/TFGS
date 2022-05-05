@@ -13,6 +13,8 @@ tfgs.log = {};
 
 tfgs.log.list = [];
 
+tfgs.log.dispIntv = null;
+
 tfgs.log.add = function(name, color, log) {
 	tfgs.log.list.push({
 		name: name,
@@ -37,7 +39,7 @@ tfgs.log.displayInterval = function(div, fliter) {
 };
 
 tfgs.log.display = function(div, fliter) {
-	div.classList.add("-tfgs-log");
+	div.classList.add("tfgsLogFormat");
 	div.style.overflow = "scroll";
 	for (let i in tfgs.log.list) {
 		let log1 = tfgs.log.list[i];
@@ -48,5 +50,87 @@ tfgs.log.display = function(div, fliter) {
 				eline.innerText = log1.name + "\t" + log1.log;
 				div.appendChild(eline);
 			}
+	}
+};
+
+tfgs.log.create = function() {
+	try {
+		if (tfgs.log.dispIntv !== null)
+			return;
+		let element = function(tagName, className, type) {
+			let ele = document.createElement(tagName);
+			if (className !== undefined) ele.className = className;
+			ele.className = className;
+			if (type !== undefined) ele.type = type;
+			return ele;
+		};
+		let logdiv = element("div", "tfgsLog");
+		logdiv.innerHTML = `
+<div class="tfgsLogContent"></div>
+<div class="tfgsLogButtons">
+	<span class="tfgsButton">Move</span>
+	<span class="tfgsButton tfgsRight">关闭</span>
+</div>
+`;
+		let contentdiv = logdiv.children[0];
+		let buttondiv = logdiv.children[1];
+		let bmove = buttondiv.children[0];
+		let bclose = buttondiv.children[1];
+		tfgs.log.dispIntv = tfgs.log.displayInterval(contentdiv, {
+			"name": null,
+			"color": null
+		});
+		let dx, dy, dm = false;
+		let _px = function(x) {
+			return Number(x.slice(0, -2));
+		};
+		let dragstart = function(x, y) {
+			dx = x - _px(logdiv.style.left);
+			dy = y - _px(logdiv.style.top);
+			dm = true;
+		};
+		let dragmove = function(x, y) {
+			if (dm) {
+				logdiv.style.left = x - dx + "px";
+				logdiv.style.top = y - dy + "px";
+				return true;
+			}
+			return false;
+		};
+		let dragend = function() {
+			dm = false;
+		};
+		bmove.addEventListener("mousedown", function(event) {
+			dragstart(event.clientX, event.clientY);
+			event.preventDefault();
+		});
+		bmove.addEventListener("touchstart", function(event) {
+			dragstart(event.targetTouches[0].clientX, event.targetTouches[0].clientY);
+		});
+		window.addEventListener("mousemove", function(event) {
+			if(dragmove(event.clientX, event.clientY))
+				event.preventDefault();
+		});
+		bmove.addEventListener("touchmove", function(event) {
+			if (dragmove(event.targetTouches[0].clientX, event.targetTouches[0].clientY))
+				event.preventDefault();
+		});
+		bmove.addEventListener("touchend", function(event) {
+			dragend();
+		});
+		window.addEventListener("mouseup", function(event) {
+			dragend();
+		});
+		window.addEventListener("mouseleave", function(event) {
+			dragend();
+		});
+		bclose.addEventListener("click", function() {
+			clearInterval(tfgs.log.dispIntv);
+			logdiv.remove();
+			tfgs.log.dispIntv = null;
+		});
+		document.body.appendChild(logdiv);
+	} catch (e) {
+		tfgs.error(e);
 	}
 };

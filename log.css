@@ -1,11 +1,43 @@
-.-tfgs-log {
+.tfgsLogFormat {
+	display: block;
 	white-space: pre;
 	font-family: monospace;
 	font-size: 15;
 	padding: 0;
 	margin: 0;
-	display: block;
 	right: 0;
 	height: 70%;
 	overflow: scroll;
+}
+
+.tfgsLog {
+	position: fixed;
+	height: 400px;
+	width: 400px;
+	left: 20px;
+	top: 20px;
+	background: pink;
+	border: 1px solid black;
+	z-index: 2;
+}
+
+.tfgsLogContent {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 40px;
+	height: auto;
+	background: lightgrey;
+	border: 1px solid black;
+}
+
+.tfgsLogButtons {
+	position: absolute;
+	height: 40px;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: lightblue;
+	border: 1px solid black;
 }

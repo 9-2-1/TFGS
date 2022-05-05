@@ -48,7 +48,9 @@ tfgs.error = function(e) {
 // |-log
 // | |-add*
 // | |-clear*
-// | \-display*
+// | |-displayInterval*
+// | |-display*
+// | \-create*
 // |-data
 // | |-list
 // | | |-(id)
@@ -65,6 +67,7 @@ tfgs.error = function(e) {
 // |-menu
 // | |-create*
 // | |-save*
+// | |-_json*
 // | |-load*
 // | \-delete*
 // \-button

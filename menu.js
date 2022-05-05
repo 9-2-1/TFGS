@@ -44,6 +44,7 @@ tfgs.menu.create = function() {
 		<span class="tfgsButton">导出</span>
 		<span class="tfgsButton">导入</span>
 		<span class="tfgsButton">编辑文本</span>
+		<span class="tfgsButton">show log</span>
 		<span class="tfgsButton tfgsRight">关闭</span>
 		<span class="tfgsButton tfgsRight tfgsDisable">取消更改</span>
 		<span class="tfgsButton tfgsRight tfgsDisable">保存更改</span>
@@ -57,9 +58,10 @@ tfgs.menu.create = function() {
 	buttons.export = buttondiv.children[0];
 	buttons.import = buttondiv.children[1];
 	buttons.edit = buttondiv.children[2];
-	buttons.close = buttondiv.children[3];
-	buttons.cancel = buttondiv.children[4];
-	buttons.save = buttondiv.children[5];
+	buttons.log = buttondiv.children[3];
+	buttons.close = buttondiv.children[4];
+	buttons.cancel = buttondiv.children[5];
+	buttons.save = buttondiv.children[6];
 
 	buttons.export.addEventListener("click", function() {
 		if (!tfgs.menu.modi) tfgs.data.export();
@@ -70,6 +72,10 @@ tfgs.menu.create = function() {
 	buttons.edit.addEventListener("click", function() {
 		if (!tfgs.menu.modi)
 			tfgs.data.edit().then(tfgs.data.save).then(tfgs.menu.load).catch(tfgs.error);
+	});
+	buttons.log.addEventListener("click", function() {
+		if (!tfgs.menu.modi)
+			tfgs.log.create();
 	});
 	buttons.close.addEventListener("click", function() {
 		if (!tfgs.menu.modi) tfgs.menu.delete();
