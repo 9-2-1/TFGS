@@ -8,6 +8,10 @@ tfgs.funcapi.warn = function(name, log) {
 	tfgs.log.add(name, "#808000", log);
 };
 
+tfgs.funcapi.onerror = function(name, err) {
+	tfgs.log.add(name, "#E00000", err.message);
+};
+
 tfgs.funcapi.error = function(name, log) {
 	tfgs.log.add(name, "#E00000", log);
 };
