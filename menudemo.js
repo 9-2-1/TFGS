@@ -45,7 +45,7 @@ try {
 		}
 	});
 	tfgs.data.load().then(function() {
-		tfgs.menu.create();
+		tfgs.button.create();
 	}).catch(tfgs.error);
 } catch (e) {
 	tfgs.error(e);

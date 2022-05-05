@@ -29,6 +29,7 @@ tfgs.menu.setmodi = function(modi) {
 };
 
 tfgs.menu.create = function() {
+	if (tfgs.menu.menudiv !== null) return;
 	let element = function(tagName, className, type) {
 		let ele = document.createElement(tagName);
 		if (className !== undefined) ele.className = className;
