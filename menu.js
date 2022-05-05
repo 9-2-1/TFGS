@@ -18,6 +18,8 @@ tfgs.menu.setmodi = function(modi) {
 		for (let i in buttons) {
 			let flip = true;
 			switch (i) {
+				case "edit":
+					continue;
 				case "save":
 				case "cancel":
 					flip = false;

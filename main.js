@@ -15,8 +15,8 @@ tfgs.error = function(e) {
 // | | |-name*
 // | | |-info*
 // | | |-option*
-// | | | |-(id)
-// | | | |-name
+// | | | |-(id)*
+// | | | |-name*
 // | | | |-info
 // | | | |-type*
 // | | | |-min(number)*
