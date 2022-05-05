@@ -12,10 +12,8 @@
 
 .tfgsLog {
 	position: fixed;
-	height: 400px;
-	width: 400px;
-	left: 20px;
-	top: 20px;
+	height: 300px;
+	width: 300px;
 	background: pink;
 	border: 1px solid black;
 	z-index: 2;

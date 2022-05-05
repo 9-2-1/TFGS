@@ -71,6 +71,4 @@ tfgs.error = function(e) {
 // | |-load*
 // | \-delete*
 // \-button
-//   |-create
-//   |-show
-//   \-hide
+//   \-create

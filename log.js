@@ -55,8 +55,11 @@ tfgs.log.display = function(div, fliter) {
 
 tfgs.log.create = function() {
 	try {
-		if (tfgs.log.dispIntv !== null)
+		if (tfgs.log.dispIntv !== null) {
+			tfgs.log.logdiv.style.left = "20px";
+			tfgs.log.logdiv.style.top = "20px";
 			return;
+		}
 		let element = function(tagName, className, type) {
 			let ele = document.createElement(tagName);
 			if (className !== undefined) ele.className = className;
@@ -64,7 +67,7 @@ tfgs.log.create = function() {
 			if (type !== undefined) ele.type = type;
 			return ele;
 		};
-		let logdiv = element("div", "tfgsLog");
+		let logdiv = tfgs.log.logdiv = element("div", "tfgsLog");
 		logdiv.innerHTML = `
 <div class="tfgsLogContent"></div>
 <div class="tfgsLogButtons">
@@ -72,6 +75,8 @@ tfgs.log.create = function() {
 	<span class="tfgsButton tfgsRight">关闭</span>
 </div>
 `;
+		logdiv.style.left = "20px";
+		logdiv.style.top = "20px";
 		let contentdiv = logdiv.children[0];
 		let buttondiv = logdiv.children[1];
 		let bmove = buttondiv.children[0];
@@ -108,7 +113,7 @@ tfgs.log.create = function() {
 			dragstart(event.targetTouches[0].clientX, event.targetTouches[0].clientY);
 		});
 		window.addEventListener("mousemove", function(event) {
-			if(dragmove(event.clientX, event.clientY))
+			if (dragmove(event.clientX, event.clientY))
 				event.preventDefault();
 		});
 		bmove.addEventListener("touchmove", function(event) {
