@@ -40,6 +40,7 @@ tfgs.error = function(e) {
 // | |-log*
 // | |-warn*
 // | |-error*
+// | |-onerror*
 // | |-info*
 // | |-alert*
 // | |-confirm*
