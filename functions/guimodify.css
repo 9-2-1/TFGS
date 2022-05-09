@@ -1,19 +1,27 @@
-.gui_menu-bar-position_ {}
+.tfgsGuimodifyMenubar {
+	top: 0;
+	margin-bottom: 0;
+}
 
-.gui_menu-bar-position_3U1T0.menu-bar_menu-bar_JcuHF.box_box_2jjDp {
-	top: -40px;
+.tfgsGuimodifyMenubarFold {
+	top: -3rem;
+	margin-bottom: -3rem;
+}
+
+.tfgsGuimodifyButton {
 	position: absolute;
-	width: 100%;
-	transition: top linear 0.4s;
+	color: black;
+	font-size: 1rem;
+	line-height: 1rem;
+	text-align: center;
 }
 
-.gui_menu-bar-position_3U1T0.menu-bar_menu-bar_JcuHF.box_box_2jjDp:hover {
-	top: 0px;
+/*
+[class^=stage-wrapper_stage-canvas-wrapper_] {
+	display: none;
 }
 
-.stage-wrapper_stage-canvas-wrapper_ {}
-
-.sprite-info_sprite-info_3EyZh.box_box_2jjDp {
+[class^=sprite-info_sprite-info_] {
 	max-height: 10px;
 	padding-top: 0;
 	padding-bottom: 0;
@@ -22,23 +30,31 @@
 	transition: all linear 0.2s;
 }
 
-.sprite-info_sprite-info_3EyZh.box_box_2jjDp:hover {
+[class^=sprite-info_sprite-info_]:hover {
 	max-height: 100px;
 	padding: 0.75rem;
 }
 
 .blocklyScrollbarHorizontal,
-.blocklyMainWorkspaceScrollbar,
-.blocklyFlyout,
 .blocklyScrollbarVertical,
-.blocklyFlyoutScrollbar,
-.gui_watermark_ {}
+.blocklyMainWorkspaceScrollbar,
+.blocklyFlyoutScrollbar{}
 
-.selector_wrapper_8_BHs.box_box_2jjDp:hover {
-	width: 100%;
+.blocklyFlyoutScrollbar,
+.blocklyFlyout {
+	left: 100%;
 }
 
-.selector_wrapper_8_BHs.box_box_2jjDp {
+.blocklyFlyoutScrollbar:hover,
+.blocklyFlyout:hover {
+	left: 0px;
+}
+
+[class^=gui_watermark_] {
+	display: none;
+}
+
+[class^=selector_wrapper_] {
 	position: absolute;
 	height: 100%;
 	z-index: 2;
@@ -47,41 +63,27 @@
 	transition: all linear 0.2s;
 }
 
-.selector_list-area_1Xbj_.box_box_2jjDp {
+[class^=selector_wrapper_]:hover {
+	width: 100%;
+}
+
+[class^=selector_list-area_] {
 	flex-direction: row;
 	flex-wrap: wrap;
 	align-content: flex-start;
 }
 
-.react-contextmenu-wrapper.selector_list-item_3N_u7.sprite-selector-item_sprite-selector-item_kQm-i {
+[class^=sprite-selector-item_sprite-selector-item_] {
 	margin-left: 0.6rem;
 }
 
 
-.selector_wrapper_8_BHs.box_box_2jjDp:hover {
-	width: 100%;
-}
-
-.selector_wrapper_8_BHs.box_box_2jjDp {
-	position: absolute;
-	height: 100%;
-	z-index: 2;
-	border-right: 1px solid #d9d9d9;
-	width: 40px;
-	transition: all linear 0.2s;
-}
-
-.asset-panel_detail-area_2KQhH.box_box_2jjDp {
+[class^=asset-panel_detail-area_] {
 	padding-left: 40px;
 }
 
-.selector_list-area_1Xbj_.box_box_2jjDp {
-	flex-direction: row;
-	flex-wrap: wrap;
-	align-content: flex-start;
+html, body, .index_app_3Qs6X {
+  -- min-width: 1024px;
+  -- min-height: 640px;
 }
-
-.react-contextmenu-wrapper.selector_list-item_3N_u7.sprite-selector-item_sprite-selector-item_kQm-i {
-	margin: ;
-	margin-left: 0.6rem;
-}
+*/
