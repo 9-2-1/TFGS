@@ -1,19 +1,42 @@
-.tfgsGuimodifyMenubar {
-	top: 0;
-	margin-bottom: 0;
-}
+div.tfgsGuimodifyMenubar {}
 
-.tfgsGuimodifyMenubarFold {
+div.tfgsGuimodifyMenubarFold {
 	top: -3rem;
 	margin-bottom: -3rem;
 }
 
-.tfgsGuimodifyButton {
+div.tfgsGuimodifyStagetargetHide {
+	display: none;
+}
+
+div.tfgsGuimodifyMenubarBody {
+	height: 100%;
+}
+
+span.tfgsGuimodifyButton {
 	position: absolute;
-	color: black;
+	color: grey;
 	font-size: 1rem;
 	line-height: 1rem;
 	text-align: center;
+}
+
+div.tfgsGuimodifySpriteinfoFold {
+	max-height: 0px;
+	padding: 0px;
+	overflow: hidden;
+}
+
+div.tfgsGuimodifyStagebuttonFold {
+	max-width: 0px;
+	padding: 0px;
+	overflow: hidden;
+}
+
+div.tfgsGuimodifyStageFold {
+	max-height: 0px;
+	padding: 0px;
+	overflow: hidden;
 }
 
 /*
