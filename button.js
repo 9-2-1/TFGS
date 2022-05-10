@@ -19,17 +19,22 @@ tfgs.button.create = function() {
 		button.style.left = "20px";
 		button.style.top = "20px";
 		button.style.zIndex = "100000000";
-		let dx, dy, dm = false;
+		let ox, oy, od, dx, dy, dm = false;
 		let _px = function(x) {
 			return Number(x.slice(0, -2));
 		};
 		let dragstart = function(x, y) {
+			ox = x;
+			oy = y;
+			od = false;
 			dx = x - _px(button.style.left);
 			dy = y - _px(button.style.top);
 			dm = true;
 		};
 		let dragmove = function(x, y) {
 			if (dm) {
+				if (!od)
+					if (ox !== x || oy !== y) od = true;
 				button.style.left = x - dx + "px";
 				button.style.top = y - dy + "px";
 				return true;
@@ -37,9 +42,11 @@ tfgs.button.create = function() {
 			return false;
 		};
 		let dragend = function() {
-			dm = false;
+			if (dm) {
+				dm = false;
+				if (!od) tfgs.menu.create();
+			}
 		};
-		button.addEventListener("click", tfgs.menu.create);
 		button.addEventListener("mousedown", function(event) {
 			dragstart(event.clientX, event.clientY);
 			event.preventDefault();
