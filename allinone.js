@@ -1,5 +1,5 @@
 let fs = require("fs");
-let allinone = "try{";
+let allinone = "try{\n";
 
 let flist = [
 	"inspect.js",
@@ -74,7 +74,11 @@ for (let i in flist) {
 
 allinone += "" +
 	"tfgs.data.load().then(tfgs.button.create).catch(tfgs.error);\n" +
-	"}catch(e){alert(e.message);console.error(e);throw e;}"
+	"} catch(e) {\n" +
+	"\talert(e.message);\n" +
+	"\tconsole.error(e);\n" +
+	"\tthrow e;\n" +
+	"}";
 if (!fs.existsSync("allinone")) fs.mkdirSync("allinone");
 fs.writeFileSync("allinone/TFGS.js", allinone);
 
