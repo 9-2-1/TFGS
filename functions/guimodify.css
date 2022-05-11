@@ -1,14 +1,14 @@
 span.tfgsGuimodifyButton {
 	position: absolute;
 	color: grey;
-	font-size: 1rem;
-	line-height: 1rem;
+	font-size: 1em;
+	line-height: 1em;
 	text-align: center;
 }
 
 body.tfgsGuimodifyMenubarFold div[class^=gui_menu-bar-position_] {
-	top: -3rem;
-	margin-bottom: -3rem;
+	top: -3em;
+	margin-bottom: -3em;
 }
 
 body.tfgsGuimodifyMenubarFold div[class^=gui_body-wrapper_] {
@@ -81,7 +81,7 @@ body.tfgsGuimodifyExpand100 {
 }
 
 [class^=sprite-selector-item_sprite-selector-item_] {
-	margin-left: 0.6rem;
+	margin-left: 0.6em;
 }
 
 

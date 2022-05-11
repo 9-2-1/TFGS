@@ -6,35 +6,11 @@
 	let foption = {};
 	let Bfoldmenu = undefined;
 
-	function getRulesList() {
-		let sss = document.styleSheets;
-		let list = [];
-		for (let i in sss) {
-			let rus = sss[i].cssRules;
-			for (let j in rus) {
-				var stx = rus[j].selectorText;
-				if (!list.includes(stx))
-					list.push(stx);
-			}
-		}
-		return list;
-	}
-
-	function getClassList() {
-		let rus = getRulesList();
-		let list = [];
-		for (let i in rus) {
-			var rgx = /\.([a-zA-Z_-][a-zA-Z0-9_-]*)/g;
-			var ex;
-			while (ex = rgx.exec(rus[i]), ex !== null)
-				if (!list.includes(ex[1]))
-					list.push(ex[1]);
-		}
-		return list.sort();
-	}
-
 	function selectClass(namebegin) {
-		let csslist = getClassList();
+		let csslist = selectElement(namebegin);
+		if (csslist === null)
+			return null;
+		csslist = csslist.classList;
 		for (let i in csslist)
 			if (namebegin === csslist[i].slice(0, namebegin.length))
 				return csslist[i];
@@ -45,62 +21,61 @@
 		return document.querySelector(`[class^=${namebegin}],[class*= ${namebegin}]`);
 	}
 
-			function configButton(options) {
-				let buttonid = options.buttonid;
-				let enable = options.enable;
-				let addinner = options.addinner;
-				let removeinner = options.removeinner;
-				let styles = options.styles;
-				let targetcss = options.targetcss;
-				let cssname = options.cssname;
-				if (enable /*foption.foldmenu*/ ) {
-					/* ------ on ------ */
-					if (pbutton[buttonid] === undefined) {
-						let target = selectElement(targetcss /*"gui_menu-bar-position_"*/ );
-						if (target === null) {
-							api.warn(buttonid + ": target not found.");
-							return;
-						}
-						let button = document.createElement("span");
-						button.classList.add(selectClass("button_outlined-button_"));
-						button.classList.add(selectClass("stage-header_stage-button_"));
-						button.classList.add("tfgsGuimodifyButton");
-						for (let i in styles)
-							button.style[i] = styles[i];
-						button.innerText = addinner;
-						button.checked = false;
-						button.addEventListener("click", function() {
-							if (button.checked) {
-								document.body.classList.remove(cssname /*"tfgsGuimodifyMenubarFold"*/ );
-								button.innerText = addinner;
-							} else {
-								document.body.classList.add(cssname);
-								button.innerText = removeinner;
-							}
-							button.checked ^= true;
-							dispatchEvent(new Event("resize"));
-						});
-						target.appendChild(button);
-						if (options.clickaftercreate)
-							button.click();
-						pbutton[buttonid] = button;
-						api.info(buttonid + ": OK");
-					}
-				} else {
-					/* ------ off ------ */
-					if (pbutton[buttonid] !== undefined) {
-						pbutton[buttonid].remove();
-						pbutton[buttonid] = undefined;
-					}
-					document.body.classList.remove(cssname);
-					dispatchEvent(new Event("resize"));
-					api.info(buttonid + ": OFF");
+	function configButton(options) {
+		let buttonid = options.buttonid;
+		let enable = options.enable;
+		let addinner = options.addinner;
+		let removeinner = options.removeinner;
+		let styles = options.styles;
+		let targetcss = options.targetcss;
+		let cssname = options.cssname;
+		if (enable /*foption.foldmenu*/ ) {
+			/* ------ on ------ */
+			if (pbutton[buttonid] === undefined) {
+				let target = selectElement(targetcss /*"gui_menu-bar-position_"*/ );
+				if (target === null) {
+					api.warn(buttonid + ": target not found.");
+					return;
 				}
+				let button = document.createElement("span");
+				button.classList.add(selectClass("button_outlined-button_"));
+				button.classList.add(selectClass("stage-header_stage-button_"));
+				button.classList.add("tfgsGuimodifyButton");
+				for (let i in styles)
+					button.style[i] = styles[i];
+				button.innerText = addinner;
+				button.checked = false;
+				button.addEventListener("click", function() {
+					if (button.checked) {
+						document.body.classList.remove(cssname /*"tfgsGuimodifyMenubarFold"*/ );
+						button.innerText = addinner;
+					} else {
+						document.body.classList.add(cssname);
+						button.innerText = removeinner;
+					}
+					button.checked ^= true;
+					dispatchEvent(new Event("resize"));
+				});
+				target.appendChild(button);
+				if (options.clickaftercreate)
+					button.click();
+				pbutton[buttonid] = button;
+				api.info(buttonid + ": OK");
 			}
+		} else {
+			/* ------ off ------ */
+			if (pbutton[buttonid] !== undefined) {
+				pbutton[buttonid].remove();
+				pbutton[buttonid] = undefined;
+				document.body.classList.remove(cssname);
+				dispatchEvent(new Event("resize"));
+				api.info(buttonid + ": OFF");
+			}
+		}
+	}
 
 	function updateStatus() {
 		try {
-
 			let sel = selectElement("sprite-selector_scroll-wrapper_");
 			if (sel !== null)
 				if (foption.foldspriteinfo ||
@@ -142,7 +117,7 @@
 				enable: foption.foldstagetarget,
 				styles: {
 					right: 0,
-					top: "0.3rem"
+					top: "0.3em",
 					position: "absolute"
 				},
 				addinner: "▶",
@@ -170,7 +145,7 @@
 				enable: foption.foldstagebutton,
 				styles: {
 					right: 0,
-					top: "calc(2rem + 1px)",
+					top: "calc(2em + 1px)",
 					position: "absolute"
 				},
 				addinner: "▶",

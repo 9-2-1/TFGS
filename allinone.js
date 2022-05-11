@@ -78,6 +78,7 @@ allinone += `/* (allinone.js) */
 }`;
 if (!fs.existsSync("allinone")) fs.mkdirSync("allinone");
 fs.writeFileSync("allinone/TFGS.js", allinone);
+fs.writeFileSync("allinone/TFGS.txt", "avascript:eval(" + JSON.stringify(allinone) + ")");
 
 function lsSync(path) {
 	let flist = [];
