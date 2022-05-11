@@ -7,8 +7,8 @@ span.tfgsGuimodifyButton {
 }
 
 body.tfgsGuimodifyMenubarFold div[class^=gui_menu-bar-position_] {
-	top: -3rem;
-	margin-bottom: -3rem;
+	top: -3.5em;
+	margin-bottom: -3.5em;
 }
 
 body.tfgsGuimodifyMenubarFold div[class^=gui_body-wrapper_] {
