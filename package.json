@@ -1,0 +1,13 @@
+{
+  "name": "tfgs",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@gitee.com:six-6/tfgs",
+  "author": "six-6 <1195132772@qq.com>",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "clean-css": "^5.3.0",
+    "uglify-js": "^3.15.5"
+  }
+}
