@@ -4,7 +4,7 @@
 
 	let pbutton = {};
 	let foption = {};
-	let Bfoldmenu = undefined;
+	let _fullscreen = false;
 
 	function selectClass(namebegin) {
 		let csslist = selectElement(namebegin);
@@ -29,6 +29,8 @@
 		let styles = options.styles;
 		let targetcss = options.targetcss;
 		let cssname = options.cssname;
+		let onadd = options.onadd;
+		let onremove = options.onremove;
 		if (enable /*foption.foldmenu*/ ) {
 			/* ------ on ------ */
 			if (pbutton[buttonid] === undefined) {
@@ -47,10 +49,16 @@
 				button.checked = false;
 				button.addEventListener("click", function() {
 					if (button.checked) {
-						document.body.classList.remove(cssname /*"tfgsGuimodifyMenubarFold"*/ );
+						if (cssname !== undefined)
+							document.body.classList.remove(cssname /*"tfgsGuimodifyMenubarFold"*/ );
+						if (typeof onremove === "function")
+							onremove();
 						button.innerText = addinner;
 					} else {
-						document.body.classList.add(cssname);
+						if (cssname !== undefined)
+							document.body.classList.add(cssname);
+						if (typeof onadd === "function")
+							onadd();
 						button.innerText = removeinner;
 					}
 					button.checked ^= true;
@@ -67,7 +75,10 @@
 			if (pbutton[buttonid] !== undefined) {
 				pbutton[buttonid].remove();
 				pbutton[buttonid] = undefined;
-				document.body.classList.remove(cssname);
+				if (cssname !== undefined)
+					document.body.classList.remove(cssname);
+				if (typeof onremove === "function")
+					onremove();
 				dispatchEvent(new Event("resize"));
 				api.info(buttonid + ": OFF");
 			}
@@ -111,6 +122,43 @@
 				cssname: "tfgsGuimodifyMenubarFold",
 				clickaftercreate: true
 			});
+
+			configButton({
+				buttonid: "fullscreen",
+				enable: foption.fullscreen,
+				styles: {
+					right: "calc(2em + 1px)",
+					top: "0.3em",
+					position: "absolute"
+				},
+				addinner: "✠",
+				removeinner: "×",
+				targetcss: "gui_editor-wrapper_",
+				cssname: "tfgsGuimodifyFullscreen",
+				onadd: function(button) {
+					document.body.requestFullscreen()
+						.catch(api.onerror);
+				},
+				onremove: function(button) {
+					document.exitFullscreen()
+						.catch(api.onerror);
+				}
+			});
+
+			function _fullscreenchange() {
+				let button = pbutton["fullscreen"];
+				if ((document.fullscreenElement === null) !==
+					(button.innerText === "✠"))
+					button.click();
+			}
+
+			if (foption.fullscreen !== _fullscreen) {
+				if (foption.fullscreen)
+					document.addEventListener("fullscreenchange", _fullscreenchange);
+				else
+					document.removeEventListener("fullscreenchange", _fullscreenchange);
+				_fullscreen = foption.fullscreen;
+			}
 
 			configButton({
 				buttonid: "foldstagetarget",
@@ -180,6 +228,11 @@
 			foldmenu: {
 				type: "check",
 				name: "折叠菜单",
+				default: true
+			},
+			fullscreen: {
+				type: "check",
+				name: "全屏按钮",
 				default: true
 			},
 			foldstagetarget: {
