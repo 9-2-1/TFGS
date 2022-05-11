@@ -64,32 +64,25 @@ body.tfgsGuimodifyExpand100 {
 .blocklyFlyout:hover {
 	left: 0px;
 }
+*/
 
-[class^=selector_wrapper_] {
+body.tfgsGuimodifyAssetpanelFold [class^=selector_wrapper_] {
 	position: absolute;
 	height: 100%;
-	z-index: 2;
-	border-right: 1px solid #d9d9d9;
-	width: 40px;
-	transition: all linear 0.2s;
-}
-
-[class^=selector_wrapper_]:hover {
 	width: 100%;
+	z-index: 2;
 }
 
-[class^=selector_list-area_] {
+body.tfgsGuimodifyAssetpanelFold [class^=selector_list-area_] {
 	flex-direction: row;
 	flex-wrap: wrap;
 	align-content: flex-start;
 }
 
-[class^=sprite-selector-item_sprite-selector-item_] {
-	margin-left: 0.6em;
+body.tfgsGuimodifyAssetpanelFold [class^=sprite-selector-item_sprite-selector-item_] {
+	margin-left: 0.8em;
 }
 
-
-[class^=asset-panel_detail-area_] {
-	padding-left: 40px;
+body.tfgsGuimodifyAssetpanelFold [class^=asset-panel_detail-area_] {
+	padding-left: 45px;
 }
-*/

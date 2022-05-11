@@ -33,6 +33,19 @@
 		let onremove = options.onremove;
 		if (enable /*foption.foldmenu*/ ) {
 			/* ------ on ------ */
+			if (pbutton[buttonid] !== undefined) {
+				let target = selectElement(targetcss);
+				if (pbutton[buttonid].parentElement !== target) {
+					pbutton[buttonid].remove();
+					pbutton[buttonid] = undefined;
+					if (cssname !== undefined)
+						document.body.classList.remove(cssname);
+					if (typeof onremove === "function")
+						onremove();
+					api.info(buttonid + ": restart");
+				}
+
+			}
 			if (pbutton[buttonid] === undefined) {
 				let target = selectElement(targetcss /*"gui_menu-bar-position_"*/ );
 				if (target === null) {
@@ -215,6 +228,20 @@
 				targetcss: "sprite-selector_scroll-wrapper_",
 				cssname: "tfgsGuimodifyStageFold"
 			});
+
+			configButton({
+				buttonid: "foldassetpanel",
+				enable: foption.foldassetpanel,
+				styles: {
+					right: 0,
+					top: 0,
+					position: "absolute"
+				},
+				addinner: "▶",
+				removeinner: "◀",
+				targetcss: "selector_wrapper_",
+				cssname: "tfgsGuimodifyAssetpanelFold"
+			});
 		} catch (e) {
 			api.error(e);
 		}
@@ -253,6 +280,11 @@
 			foldthestage: {
 				type: "check",
 				name: "折叠舞台",
+				default: true
+			},
+			foldassetpanel: {
+				type: "check",
+				name: "折叠asset",
 				default: true
 			},
 			expand100: {
