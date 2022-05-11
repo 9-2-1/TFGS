@@ -290,7 +290,7 @@
 			expand100: {
 				type: "check",
 				name: "填满屏幕(实验)",
-				default: true
+				default: false
 			}
 		},
 		onenable: function(_api) {
