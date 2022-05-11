@@ -1,5 +1,12 @@
 let fs = require("fs");
-let allinone = "try{\n";
+let allinone = `/* (allinone.js) */
+try {
+	function _tfgsAddCSS(css) {
+		let style = document.createElement("style");
+		style.innerHTML = css;
+		document.head.appendChild(style);
+	}
+`;
 
 let flist = [
 	"inspect.js",
@@ -22,23 +29,18 @@ for (let i in flist) {
 	switch (ext) {
 		case "js":
 			allinone += "/* " + fname + " */\n";
-			allinone += fs.readFileSync(fname);
+			allinone += fs.readFileSync(fname).toString();
 			allinone += "\n\n";
 			break;
 		case "css":
-			allinone += "/* " + fname + " */\n";
-			allinone += "" +
-				'{\n' +
-				'\tlet css = document.createElement("style");\n' +
-				'\tcss.innerHTML = ';
-			allinone += JSON.stringify(fs.readFileSync(fname).toString()).replace(/\\./g, function(str) {
-				return str === '\\n' ? '\\n" +\n' +
-					'\t\t"' : str;
-			});
-			allinone += "" +
-				';\n' +
-				'\tdocument.head.appendChild(css);\n' +
-				'}\n\n';
+			let textld = fs.readFileSync(fname).toString();
+			textld = textld.replace(/\\/g, "\\\\")
+				.replace(/\$/g, "\\$$")
+				.replace(RegExp("`", "g"), "\\`")
+				.replace(/\\/g, "\\\\");
+			allinone += `/* ${fname} */
+_tfgsAddCSS(\`${textld}\`);
+`;
 			break;
 	}
 }
@@ -51,34 +53,29 @@ for (let i in flist) {
 	switch (ext) {
 		case "js":
 			allinone += "/* " + fname + " */\n";
-			allinone += fs.readFileSync("functions/" + fname);
+			allinone += fs.readFileSync("functions/" + fname).toString();
 			allinone += "\n\n";
 			break;
 		case "css":
-			allinone += "/* " + fname + " */\n";
-			allinone += "" +
-				'{\n' +
-				'\tlet css = document.createElement("style");\n' +
-				'\tcss.innerHTML = ';
-			allinone += JSON.stringify(fs.readFileSync("functions/" + fname).toString()).replace(/\\./g, function(str) {
-				return str === '\\n' ? '\\n" +\n' +
-					'\t\t"' : str;
-			});
-			allinone += "" +
-				';\n' +
-				'\tdocument.head.appendChild(css);\n' +
-				'}\n\n';
+			let textld = fs.readFileSync("functions/" + fname).toString();
+			textld = textld.replace(/\\/g, "\\\\")
+				.replace(/\$/g, "\\$$")
+				.replace(RegExp("`", "g"), "\\`")
+				.replace(/\\/g, "\\\\");
+			allinone += `/* ${fname} */
+_tfgsAddCSS(\`${textld}\`);
+`;
 			break;
 	}
 }
 
-allinone += "" +
-	"tfgs.data.load().then(tfgs.button.create).catch(tfgs.error);\n" +
-	"} catch(e) {\n" +
-	"\talert(e.message);\n" +
-	"\tconsole.error(e);\n" +
-	"\tthrow e;\n" +
-	"}";
+allinone += `/* (allinone.js) */
+	tfgs.data.load().then(tfgs.button.create).catch(tfgs.error);
+} catch(e) {
+	alert(e.message);
+	console.error(e);
+	throw e;
+}`;
 if (!fs.existsSync("allinone")) fs.mkdirSync("allinone");
 fs.writeFileSync("allinone/TFGS.js", allinone);
 
