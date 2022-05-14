@@ -7,14 +7,18 @@ span.tfgsGuimodifyButton {
 }
 
 body.tfgsGuimodifyMenubarFold div[class^=gui_menu-bar-position_] {
-	top: -3.5em;
-	margin-bottom: -3.5em;
+	top: calc(0px - var(--tfgsGuimodifyMenubarHeight));
+	margin-bottom: calc(0px - var(--tfgsGuimodifyMenubarHeight));
 }
 
 body.tfgsGuimodifyMenubarFold div[class^=gui_body-wrapper_] {
 	height: 100%;
 }
 
+body.tfgsGuimodifyBlocktoolFold .blocklyFlyoutScrollbar,
+body.tfgsGuimodifyBlocktoolFold .blocklyFlyout {
+	left: -250px;
+}
 
 body.tfgsGuimodifyStagetargetFold div[class^=gui_stage-and-target-wrapper_] {
 	display: none;
@@ -49,23 +53,6 @@ body.tfgsGuimodifyExpand100 {
 	bottom: 0;
 }
 
-/*
-.blocklyScrollbarHorizontal,
-.blocklyScrollbarVertical,
-.blocklyMainWorkspaceScrollbar,
-.blocklyFlyoutScrollbar{}
-
-.blocklyFlyoutScrollbar,
-.blocklyFlyout {
-	left: 100%;
-}
-
-.blocklyFlyoutScrollbar:hover,
-.blocklyFlyout:hover {
-	left: 0px;
-}
-*/
-
 body.tfgsGuimodifyAssetpanelFold [class^=selector_wrapper_] {
 	position: absolute;
 	height: 100%;
@@ -79,7 +66,7 @@ body.tfgsGuimodifyAssetpanelFold [class^=selector_list-area_] {
 	align-content: flex-start;
 }
 
-body.tfgsGuimodifyAssetpanelFold [class^=sprite-selector-item_sprite-selector-item_] {
+body.tfgsGuimodifyAssetpanelFold [class*=" sprite-selector-item_sprite-selector-item_"] {
 	margin-left: 0.8em;
 }
 

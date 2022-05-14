@@ -44,12 +44,11 @@
 						onremove();
 					api.info(buttonid + ": restart");
 				}
-
 			}
 			if (pbutton[buttonid] === undefined) {
 				let target = selectElement(targetcss /*"gui_menu-bar-position_"*/ );
 				if (target === null) {
-					api.warn(buttonid + ": target not found.");
+					// api.warn(buttonid + ": target not found.");
 					return;
 				}
 				let button = document.createElement("span");
@@ -121,6 +120,14 @@
 				}
 			}
 
+			if (foption.foldmenu) {
+				if (document.body.style.getPropertyValue("--tfgsGuimodifyMenubarHeight") === "")
+					document.body.style.setProperty("--tfgsGuimodifyMenubarHeight", window.getComputedStyle(selectElement("gui_menu-bar-position_")).height);
+			} else {
+				if (document.body.style.getPropertyValue("--tfgsGuimodifyMenubarHeight") !== "")
+					document.body.style.removeProperty("--tfgsGuimodifyMenubarHeight");
+			}
+
 			configButton({
 				buttonid: "foldmenubar",
 				enable: foption.foldmenu,
@@ -185,6 +192,21 @@
 				removeinner: "◀",
 				targetcss: "gui_editor-wrapper_",
 				cssname: "tfgsGuimodifyStagetargetFold"
+			});
+
+			configButton({
+				buttonid: "foldblocktool",
+				enable: foption.foldblocktool,
+				styles: {
+					left: "calc(60px + 0.5em)",
+					top: "0.5em",
+					position: "absolute",
+					zIndex: 2000
+				},
+				addinner: "◀",
+				removeinner: "▶",
+				targetcss: "injectionDiv",
+				cssname: "tfgsGuimodifyBlocktoolFold"
 			});
 
 			configButton({
@@ -260,6 +282,11 @@
 			fullscreen: {
 				type: "check",
 				name: "全屏按钮",
+				default: true
+			},
+			foldblocktool: {
+				type: "check",
+				name: "折叠jimuhe",
 				default: true
 			},
 			foldstagetarget: {
