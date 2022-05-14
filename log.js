@@ -36,7 +36,7 @@ tfgs.log.displayInterval = function(div, fliter) {
 		div.innerHTML = "";
 		tfgs.log.display(div, fliter);
 		div.scrollX = x;
-		dov.scrollY = y;
+		div.scrollY = y;
 	}, 100);
 };
 
