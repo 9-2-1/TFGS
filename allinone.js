@@ -105,6 +105,7 @@ if (res.error) console.error(res.error);
 allinonemin = res.code;
 
 fs.writeFileSync("allinone/TFGS.min.js", allinonemin);
+fs.writeFileSync("allinone/TFGS.txt", "avascript:" + allinonemin.replace(/\n/g, "\\n"));
 fs.writeFileSync("allinone/TFGS.htm", `<html>
 	<head>
 		<title>TFGS 拓展使用方法</title>
