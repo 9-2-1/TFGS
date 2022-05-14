@@ -21,6 +21,8 @@ tfgs.log.add = function(name, color, log) {
 		color: color,
 		log: log
 	});
+	while (tfgs.log.list.length > 500)
+		tfgs.log.list.splice(0, 1);
 };
 
 tfgs.log.clear = function() {
