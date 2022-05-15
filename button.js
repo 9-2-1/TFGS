@@ -30,6 +30,7 @@ tfgs.button.create = function() {
 			dx = x - _px(button.style.left);
 			dy = y - _px(button.style.top);
 			dm = true;
+			button.classList.add("tfgsDrag");
 		};
 		let dragmove = function(x, y) {
 			if (dm) {
@@ -46,6 +47,7 @@ tfgs.button.create = function() {
 				dm = false;
 				if (!od) tfgs.menu.create();
 			}
+			button.classList.remove("tfgsDrag");
 		};
 		button.addEventListener("mousedown", function(event) {
 			dragstart(event.clientX, event.clientY);

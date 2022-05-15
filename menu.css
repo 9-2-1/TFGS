@@ -20,65 +20,92 @@
 	left: 20px;
 	right: 20px;
 	background: white;
-	border: 1px solid black;
+	border-radius: 5px;
+	box-shadow: 1px 1px 2px black;
+	overflow: hidden;
 }
 
 .tfgsMenuContent {
-	position: absolute;
-	top: 0;
-	bottom: 40px;
-	left: 0;
-	right: 0;
-	background: white;
-	border: 1px solid black;
+	height: calc(100% - 50px);
+	background: #f0f8ff;
+	overflow: scroll;
+	text-align: center;
 }
 
 .tfgsMenuButtons {
-	position: absolute;
-	height: 40px;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	background: lightblue;
-	border: 1px solid black;
-}
-
-.tfgsButton {
-	display: inline-block;
-	width: 70px;
-	text-align: center;
-	font-size: 16px;
-	height: 30px;
-	margin: 5px 2px;
-	background: white;
-	line-height: 30px;
-	border: 1px solid black;
-	user-select: none;
-}
-
-.tfgsDisable {
-	display: none;
-	background: lightgrey;
-	color: grey;
-}
-
-.tfgsRight {
-	float: right;
+	height: 50px;
+	background: #bdf;
 }
 
 .tfgsMenuFunc {
-	background: lightyellow;
-	border: 1px solid black;
+	margin: 10px;
+	border-radius: 5px;
+	box-shadow: 1px 1px 2px black;
+	overflow: hidden;
+	text-align: left;
 }
 
 .tfgsMenuFuncOption {
-	background: lightgreen;
-	border: 1px solid black;
+	background: #def;
+	padding: 5px;
+}
+
+.tfgsMenuFuncOptionOne {
+	display: inline-block;
+	margin: 5px;
+	padding: 5px;
+	background: #bdf;
+	box-shadow: 1px 1px 2px black;
+	border-radius: 5px;
+	min-width: calc(33% - 10px);
+	max-width: calc(100% - 10px);
+}
+
+.tfgsMenuFuncOptionOne>input,
+.tfgsMenuFuncOptionOne>select,
+.tfgsMenuFuncTitle>input {
+	position: relative;
+	vertical-align: middle;
+	border: none;
+	background: white;
+	width: 100px;
+	height: 30px;
+	margin: 5px;
+	padding: 5px;
+	box-shadow: 1px 1px 2px black;
+	border-radius: 5px;
+}
+
+.tfgsMenuFuncOptionOne>input {
+	box-shadow: 1px 1px 2px black inset;
+}
+
+.tfgsMenuFuncOptionOne>input[type="checkbox"],
+.tfgsMenuFuncTitle>input {
+	width: 25px;
+	height: 25px;
+	box-shadow: 1px 1px 2px black;
+}
+
+.tfgsMenuFuncOptionOne>input:active,
+.tfgsMenuFuncOptionOne>select:active,
+.tfgsMenuFuncTitle>input:active {
+	background: #9cf;
+}
+
+.tfgsMenuFuncOptionOne>input:focus,
+.tfgsMenuFuncOptionOne>select:focus,
+.tfgsMenuFuncTitle>input:focus {
+	background: #def;
+	outline: none;
 }
 
 .tfgsMenuFuncTitle {
-	background: pink;
-	border: 1px solid black;
+	background: #07f;
+	color: white;
+	padding: 5px;
+	font-weight: bold;
+	font-family: monospace;
 }
 
 .tfgsMenuFuncInfo {
@@ -87,4 +114,15 @@
 
 .tfgsMenuFuncName {
 	font-size: 20px;
+}
+
+.tfgsMenuFuncSelect {
+	display: inline-block;
+	height: 100px;
+	width: 100px;
+	margin: 5px;
+	max-width: calc(100% - 5px);
+	box-shadow: 1px 1px 2px black;
+	border-radius: 5px;
+	background: #def;
 }

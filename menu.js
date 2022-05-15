@@ -42,7 +42,16 @@ tfgs.menu.create = function() {
 	let menudiv = element("div", "tfgsMenuBackgr");
 	menudiv.innerHTML = `
 <div class="tfgsMenuWindow">
-	<div class="tfgsMenuContent"></div>
+	<div class="tfgsMenuContent">
+		<!--<span class="tfgsMenuFuncSelect">Test</span>
+		<span class="tfgsMenuFuncSelect">Test</span>
+		<span class="tfgsMenuFuncSelect">Test</span>
+		<span class="tfgsMenuFuncSelect">Test</span>
+		<span class="tfgsMenuFuncSelect">Test</span>
+		<span class="tfgsMenuFuncSelect">Test</span>
+		<span class="tfgsMenuFuncSelect">Test</span>
+		<span class="tfgsMenuFuncSelect">Test</span>-->
+	</div>
 	<div class="tfgsMenuButtons">
 		<span class="tfgsButton">导出</span>
 		<span class="tfgsButton">导入</span>
@@ -163,8 +172,13 @@ tfgs.menu.create = function() {
 					throw new Error("Unsupport type: " + o.type);
 			}
 			fl.option[oname] = inp;
-			fopdiv.appendChild(lab);
-			fopdiv.appendChild(inp);
+
+			fopdiv1 = element("span", "tfgsMenuFuncOptionOne");
+
+			fopdiv1.appendChild(lab);
+			fopdiv1.appendChild(inp);
+
+			fopdiv.appendChild(fopdiv1);
 			inp.addEventListener("input", function() {
 				tfgs.menu.setmodi(true);
 			});

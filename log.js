@@ -42,7 +42,6 @@ tfgs.log.displayInterval = function(div, fliter) {
 
 tfgs.log.display = function(div, fliter) {
 	div.classList.add("tfgsLogFormat");
-	div.style.overflow = "scroll";
 	for (let i in tfgs.log.list) {
 		let log1 = tfgs.log.list[i];
 		if (fliter.name === null || fliter.name.includes(log1.name))
@@ -95,6 +94,7 @@ tfgs.log.create = function() {
 			dx = x - _px(logdiv.style.left);
 			dy = y - _px(logdiv.style.top);
 			dm = true;
+			bmove.classList.add("tfgsDrag");
 		};
 		let dragmove = function(x, y) {
 			if (dm) {
@@ -106,6 +106,7 @@ tfgs.log.create = function() {
 		};
 		let dragend = function() {
 			dm = false;
+			bmove.classList.remove("tfgsDrag");
 		};
 		bmove.addEventListener("mousedown", function(event) {
 			dragstart(event.clientX, event.clientY);

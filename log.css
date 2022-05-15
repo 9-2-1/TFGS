@@ -1,41 +1,41 @@
 .tfgsLogFormat {
 	display: block;
-	white-space: pre;
+	white-space: pre-wrap;
+	word-break: break-all;
 	font-family: monospace;
 	font-size: 15;
-	padding: 0;
-	margin: 0;
-	right: 0;
-	height: 70%;
 	overflow: scroll;
+}
+
+.tfgsLogFormat>*:nth-child(odd) {
+	background: #f0f8ff;
+}
+
+.tfgsLogFormat>*:nth-child(even) {
+	background: #def;
 }
 
 .tfgsLog {
 	position: fixed;
 	height: 300px;
 	width: 300px;
-	background: pink;
-	border: 1px solid black;
 	z-index: 100000001;
+	border-radius: 5px;
+	box-shadow: 1px 1px 2px black;
+	overflow: hidden;
+	box-sizing: border-box;
+}
+
+.tfgsLog * {
+	box-sizing: border-box;
 }
 
 .tfgsLogContent {
-	position: absolute;
-	left: 0;
-	right: 0;
-	top: 0;
-	bottom: 40px;
-	height: auto;
-	background: lightgrey;
-	border: 1px solid black;
+	height: calc(100% - 50px);
+	background: #fff;
 }
 
 .tfgsLogButtons {
-	position: absolute;
-	height: 40px;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	background: lightblue;
-	border: 1px solid black;
+	height: 50px;
+	background: #def;
 }

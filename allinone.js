@@ -23,6 +23,7 @@ let flist = [
 	"log.js",
 	"log.css",
 	"button.js",
+	"button.css",
 	"menu.js",
 	"menu.css"
 ];
