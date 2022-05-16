@@ -446,14 +446,38 @@ function changeIndex(index) {
 // colorHistory
 let colorHistory = [];
 for (let i = 0; i < 5; i++) {
-	for (let j = 0; j < 8; j++) {
+	for (let j = 0; j < 12; j++) {
 		colorHistory.push({
-			primary: RGBA2HEX(HSL2RGB([j * 360 / 8, 1, i * 0.2 + 0.1]).concat([255])),
+			primary: RGBA2HEX(HSL2RGB([j * 360 / 12, 1, i / 5 + 1 / 10]).concat([255])),
 			secondary: null,
 			gradientType: "SOLID"
 		});
 	}
 }
+for (let j = 0; j < 6; j++) {
+	colorHistory.push({
+		primary: RGBA2HEX(HSL2RGB([j * 360 / 6, 1, 0.5]).concat([255])),
+		secondary: RGBA2HEX(HSL2RGB([(j + 1) * 360 / 6, 1, 0.5]).concat([255])),
+		gradientType: "VERTICAL"
+	});
+}
+for (let j = 0; j < 12; j++) {
+	colorHistory.push({
+		primary: RGBA2HEX(HSL2RGB([0, 0, j / 11]).concat([255])),
+		secondary: null,
+		gradientType: "SOLID"
+	});
+}
+colorHistory.push({
+	primary: "#000000",
+	secondary: null,
+	gradientType: "RADIAL"
+});
+colorHistory.push({
+	primary: "#FFFFFF",
+	secondary: null,
+	gradientType: "RADIAL"
+});
 
 function addHistory(x) {
 	let pos = -1;
@@ -470,7 +494,7 @@ function addHistory(x) {
 	colorHistory.splice(0, 0, {
 		...x
 	});
-	while (colorHistory.length > 40)
+	while (colorHistory.length > 80)
 		colorHistory.pop();
 	refreshWindow();
 }
