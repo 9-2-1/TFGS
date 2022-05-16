@@ -11,7 +11,7 @@ function unnull(x) {
 	return x === null ? "transparent" : x;
 };
 
-function fakeColor(color) {
+function CSS2RGBA(color) {
 	if (color === null) return [0, 0, 0, 0];
 	let kero = document.createElement("span");
 	kero.style.color = color;
@@ -28,152 +28,12 @@ function fakeColor(color) {
 		rgba.push(Number(col[2]));
 		rgba.push(Number(col[3]));
 		if (col[4] !== undefined)
-			rgba.push(Number(col[4]) * 1);
+			rgba.push(Number(col[4]) * 255);
 		else
-			rgba.push(1);
+			rgba.push(255);
 		return rgba;
 	}
 }
-
-// let dd = document.querySelector("[class^=tfgsForcecolorInput2]");
-// let fc = fakeColor("olive");
-// dd.value = `${fc[1]},${fc[2]},${fc[3]}`;
-
-function RGB2HMM(rgb) {
-	let sta, dir;
-	// sta rgb数组最大值点
-	// dir 把r(0),g(1),b(2)值组成一个环，最大值点走向次小值点的最近方向
-	//
-	//     r
-	//    / \
-	//   /   \
-	//  g-----b
-	//
-	// 例子： r=35 g=127 b=253
-	// r最小 g较小 b最大，那么sta=2 dir=-1(b->g逆时针)
-	// r较小 g最小 b最大，那么sta=2 dir=1(b->r顺时针)
-	for (let i = 0; i < 3; i++) {
-		rgb[i] /= 255;
-	}
-
-	let hue = 0,
-		min = Infinity,
-		max = -Infinity;
-	for (let i = 0; i < 3; i++) {
-		if (rgb[i] < min) {
-			min = rgb[i];
-			dir = i; // dir -> min
-		}
-		if (rgb[i] > max) {
-			max = rgb[i];
-			sta = i;
-		}
-	}
-
-	if (max !== min) {
-		dir = 3 /*0+1+2*/ - sta - dir; // dir -> mid
-		let mid = rgb[dir];
-
-		dir = dir - sta;
-		if (dir < -1) dir += 3;
-		if (dir > 1) dir -= 3;
-
-		hue = sta * 120 + dir * (mid - min) / (max - min) * 60;
-	}
-
-	return [hue, min, max];
-}
-
-function HMM2RGB(hmm) {
-	let h = hmm[0],
-		min = hmm[1],
-		max = hmm[2];
-	let delta = max - min;
-	let rgb = [];
-	for (let i = 0; i < 3; i++)
-		rgb.push((min + fHue(h - i * 120) * delta) * 255);
-	return rgb;
-}
-
-/* --- */
-
-function HSL2HMM(hsl) {
-	let h = hsl[0],
-		s = hsl[1],
-		l = hsl[2];
-	let min, max, delta;
-	if (l >= 0.5) {
-		delta = 1 - l;
-	} else {
-		delta = l;
-	}
-	min = l - delta * s;
-	max = l + delta * s;
-	return [h, min, max];
-}
-
-function HMM2HSL(hmm) {
-	let h = hmm[0],
-		min = hmm[1],
-		max = hmm[2],
-		s, l;
-	l = (min + max) / 2;
-	if (l === 0 || l === 1)
-		s = 0;
-	else if (l >= 0.5)
-		s = (max - min) / (2 - max - min);
-	else
-		s = (max - min) / (max + min);
-	return [h, s, l];
-}
-
-/* --- */
-
-function HSB2HMM(hsb) {
-	let h = hsb[0] / (100 / 360),
-		s = hsb[1],
-		b = hsb[2];
-	h -= Math.floor(h / 360) * 360;
-	let min, max, delta;
-	min = (1 - s / 100) * b;
-	max = b;
-	return [h, min / 100, max / 100];
-}
-
-function HMM2HSB(hmm) {
-	let h = hmm[0] * (100 / 360),
-		min = hmm[1],
-		max = hmm[2],
-		s = 0,
-		b;
-	h -= Math.floor(h / 100) * 100;
-	b = max;
-	if (b > 0)
-		s = 1 - min / max;
-	s *= 100;
-	b *= 100;
-	return [h, s, b];
-}
-
-/* --- */
-
-function RGB2HSL(rgb) {
-	return HMM2HSL(RGB2HMM(rgb));
-}
-
-function RGB2HSB(rgb) {
-	return HMM2HSB(RGB2HMM(rgb));
-}
-
-function HSL2RGB(hsl) {
-	return HMM2RGB(HSL2HMM(hsl));
-}
-
-function HSB2RGB(hsb) {
-	return HMM2RGB(HSB2HMM(hsb));
-}
-
-//for(let x=-360;x<=360;x+=10)console.log(x,fHue(x));
 
 function fHue(x) {
 	x = Math.abs(x - Math.round(x / 360) * 360);
@@ -185,50 +45,138 @@ function fHue(x) {
 		return (120 - x) / 60;
 }
 
-function test() {
-	check(RGB2HSL([0, 0, 0]), [0, 0, 0]);
-	check(RGB2HSL([255, 255, 255]), [0, 0, 1]);
-	check(RGB2HSL([0, 255, 255]), [180, 1, 0.5]);
-	check(RGB2HSL([0, 255, 0]), [120, 1, 0.5]);
-	check(RGB2HSL([255, 0, 0]), [0, 1, 0.5]);
-	check(RGB2HSL([127.5, 255, 255]), [180, 1, 0.75]);
-	check(RGB2HSL([127.5, 191.25, 191.25]), [180, 1 / 3, 0.625]);
-
-	check(RGB2HSB([0, 0, 0]), [0, 0, 0]);
-	check(RGB2HSB([255, 255, 255]), [0, 0, 100]);
-	check(RGB2HSB([0, 255, 255]), [50, 100, 100]);
-	check(RGB2HSB([0, 255, 0]), [100 / 3, 100, 100]);
-	check(RGB2HSB([255, 0, 0]), [0, 100, 100]);
-	check(RGB2HSB([127.5, 255, 255]), [50, 50, 100]);
-	check(RGB2HSB([127.5, 191.25, 191.25]), [50, 100 / 3, 75]);
-
-	check(HSL2RGB([0, 0, 0]), [0, 0, 0]);
-	check(HSL2RGB([0, 0, 1]), [255, 255, 255]);
-	check(HSL2RGB([180, 1, 0.5]), [0, 255, 255]);
-	check(HSL2RGB([120, 1, 0.5]), [0, 255, 0]);
-	check(HSL2RGB([0, 1, 0.5]), [255, 0, 0]);
-	check(HSL2RGB([180, 1, 0.75]), [127.5, 255, 255]);
-	check(HSL2RGB([180, 1 / 3, 0.625]), [127.5, 191.25, 191.25]);
-
-	check(HSB2RGB([0, 0, 0]), [0, 0, 0]);
-	check(HSB2RGB([0, 0, 100]), [255, 255, 255]);
-	check(HSB2RGB([50, 100, 100]), [0, 255, 255]);
-	check(HSB2RGB([100 / 3, 100, 100]), [0, 255, 0]);
-	check(HSB2RGB([0, 100, 100]), [255, 0, 0]);
-	check(HSB2RGB([50, 50, 100]), [127.5, 255, 255]);
-	check(HSB2RGB([50, 100 / 3, 75]), [127.5, 191.25, 191.25]);
+function fHex(x) {
+	let hex = "0123456789abcdef";
+	x = Math.round(x);
+	if (x < 0) x = 0;
+	if (x > 255) x = 255;
+	return hex[Math.floor(x / 16)] + hex[x % 16];
 }
 
-// test();
+/* --- */
 
-function check(x, y) {
+function RGBA2HMMA(rgba) {
+	let sta, dir;
+	// sta rgba数组最大值点
+	// dir 把r(0),g(1),b(2)值组成一个环，最大值点走向次小值点的最近方向
+	//
+	//     r
+	//    / \
+	//   /   \
+	//  g-----b
+	//
+	// 例子： r=35 g=127 b=253
+	// r最小 g较小 b最大，那么sta=2 dir=-1(b->g逆时针)
+	// r较小 g最小 b最大，那么sta=2 dir=1(b->r顺时针)
+	for (let i = 0; i < 4; i++) {
+		rgba[i] /= 255;
+	}
+
+	let hue = 0,
+		min = Infinity,
+		max = -Infinity;
 	for (let i = 0; i < 3; i++) {
-		if (Math.abs(x[i] - y[i]) > 1e-5) {
-			console.log(x, y);
-			throw "test failed";
+		if (rgba[i] < min) {
+			min = rgba[i];
+			dir = i; // dir -> min
+		}
+		if (rgba[i] > max) {
+			max = rgba[i];
+			sta = i;
 		}
 	}
+
+	if (max !== min) {
+		dir = 3 /*0+1+2*/ - sta - dir; // dir -> mid
+		let mid = rgba[dir];
+
+		dir = dir - sta;
+		if (dir < -1) dir += 3;
+		if (dir > 1) dir -= 3;
+
+		hue = sta * 120 + dir * (mid - min) / (max - min) * 60;
+	}
+
+	return [hue, min, max, rgba[3]];
 }
+
+function HMMA2RGBA(hmma) {
+	let h = hmma[0],
+		min = hmma[1],
+		max = hmma[2];
+	let delta = max - min;
+	let rgb = [];
+	for (let i = 0; i < 3; i++)
+		rgb.push((min + fHue(h - i * 120) * delta) * 255);
+	rgb.push(Math.round(hmma[3] * 255));
+	return rgb;
+}
+
+/* --- */
+
+function HSLA2HMMA(hsla) {
+	let h = hsla[0],
+		s = hsla[1],
+		l = hsla[2],
+		a = hsla[3];
+	let min, max, delta;
+	if (l >= 0.5) {
+		delta = 1 - l;
+	} else {
+		delta = l;
+	}
+	min = l - delta * s;
+	max = l + delta * s;
+	return [h, min, max, a];
+}
+
+function HMMA2HSLA(hmma) {
+	let h = hmma[0],
+		min = hmma[1],
+		max = hmma[2],
+		a = hmma[3],
+		s, l;
+	l = (min + max) / 2;
+	if (l === 0 || l === 1)
+		s = 0;
+	else if (l >= 0.5)
+		s = (max - min) / (2 - max - min);
+	else
+		s = (max - min) / (max + min);
+	return [h, s, l, a];
+}
+
+/* --- */
+
+function HSBA2HMMA(hsba) {
+	let h = hsba[0] * 360 / 100,
+		s = hsba[1],
+		b = hsba[2],
+		a = hsba[3] / 100;
+	h -= Math.floor(h / 360) * 360;
+	let min, max, delta;
+	min = (1 - s / 100) * b;
+	max = b;
+	return [h, min / 100, max / 100, a];
+}
+
+function HMMA2HSBA(hmma) {
+	let h = hmma[0] * 100 / 360,
+		min = hmma[1],
+		max = hmma[2],
+		a = hmma[3],
+		s = 0,
+		b = max;
+	h -= Math.floor(h / 100) * 100;
+	if (b > 0)
+		s = 1 - min / max;
+	s *= 100;
+	b *= 100;
+	a *= 100
+	return [h, s, b, a];
+}
+
+/* --- */
 
 function HEX2RGBA(hex) {
 	if (hex === null || hex[0] !== "#")
@@ -237,7 +185,8 @@ function HEX2RGBA(hex) {
 		return [
 			Number("0x" + hex.slice(1, 2)),
 			Number("0x" + hex.slice(3, 2)),
-			Number("0x" + hex.slice(5, 2)), , 255
+			Number("0x" + hex.slice(5, 2)),
+			255
 		];
 	} else if (hex.length === 9) {
 		return [
@@ -253,19 +202,38 @@ function HEX2RGBA(hex) {
 function RGBA2HEX(rgba) {
 	if (rgba[3] === 0)
 		return null;
-	return "#" +
-		fHex(rgba[0]) +
-		fHex(rgba[1]) +
-		fHex(rgba[2]) +
-		(Math.round(rgba[3] === 255) ? "" : fHex(rgba[3]));
+	else
+		return "#" +
+			fHex(rgba[0]) +
+			fHex(rgba[1]) +
+			fHex(rgba[2]) +
+			(Math.round(rgba[3] === 255) ? "" : fHex(rgba[3]));
 }
 
-function fHex(x) {
-	let hex = "0123456789abcdef";
-	x = Math.round(x);
-	if (x < 0) x = 0;
-	if (x > 255) x = 255;
-	return hex[Math.floor(x / 16)] + hex[x % 16];
+/* --- */
+
+function HEX2HSBA(hex) {
+	return RGBA2HSBA(HEX2RGBA(hex));
+}
+
+function HSBA2HEX(hsba) {
+	return RGBA2HEX(HSBA2RGBA(hsba));
+}
+
+function HSLA2HSBA(hsla) {
+	return HMMA2HSBA(HSLA2HMMA(hsla));
+}
+
+function HSBA2HSLA(hsba) {
+	return HMMA2HSLA(HSBA2HMMA(hsba));
+}
+
+function RGBA2HSBA(rgba) {
+	return HMMA2HSBA(RGBA2HMMA(rgba));
+}
+
+function HSBA2RGBA(hsba) {
+	return HMMA2RGBA(HSBA2HMMA(hsba));
 }
 
 function selele(x) {
@@ -273,16 +241,16 @@ function selele(x) {
 }
 
 function clamp(x, min, max) {
-	return x < min ? min : x > max ? max : x;
+	return isNaN(x) ? min : x < min ? min : x > max ? max : Number(x);
 }
 
 function refreshWindow() {
-	editColorHMM[0] -= Math.floor(editColorHMM[0] / 360) * 360;
-	editColorHMM[1] = clamp(editColorHMM[1], 0, 1);
-	editColorHMM[2] = clamp(editColorHMM[2], editColorHMM[1], 1);
-	editColorHMM[3] = clamp(editColorHMM[3], 0, 1);
+	editColor[0] -= Math.floor(editColor[0] / 100) * 100;
+	editColor[1] = clamp(editColor[1], 0, 100);
+	editColor[2] = clamp(editColor[2], 0, 100);
+	editColor[3] = clamp(editColor[3], 0, 100);
 
-	color[colorIndex === 0 ? "primary" : "secondary"] = RGBA2HEX(HMM2RGB(editColorHMM).concat([editColorHMM[3] * 255]));
+	color[colorIndex === 0 ? "primary" : "secondary"] = HSBA2HEX(editColor);
 
 	// mode
 	let cm = selele("tfgsForcecolorMode").children;
@@ -309,34 +277,28 @@ function refreshWindow() {
 
 	// picker
 	let cp = selele("tfgsForcecolorPicker");
-	let hsb = HMM2HSB(editColorHMM);
-	cp.style.setProperty("--H", editColorHMM[0]);
-	cp.style.setProperty("--S", hsb[1]);
-	cp.style.setProperty("--B", hsb[2]);
-	cp.style.setProperty("--A", editColorHMM[3] * 100);
+	cp.style.setProperty("--H", editColor[0]);
+	cp.style.setProperty("--S", editColor[1]);
+	cp.style.setProperty("--B", editColor[2]);
+	cp.style.setProperty("--A", editColor[3]);
 
-	let HCrgb = HMM2RGB([editColorHMM[0], 0, 1]).concat([255]);
-	let ACrgb = HMM2RGB(editColorHMM).concat([255]);
-
-	cp.style.setProperty("--HC", RGBA2HEX(HCrgb));
-	cp.style.setProperty("--AC", RGBA2HEX(ACrgb));
+	cp.style.setProperty("--HC", HSBA2HEX([editColor[0], 100, 100, 100]));
+	cp.style.setProperty("--AC", HSBA2HEX([editColor[0], editColor[1], editColor[2], 100]));
 
 	let cin = selele("tfgsForcecolorInput").children;
 	let val;
 	switch (cin[0].value) {
 		case "HSBA":
-			val = HMM2HSB(editColorHMM).concat(editColorHMM[3] * 100);
+			val = editColor;
 			break;
 		case "RGBA":
-			val = HMM2RGB(editColorHMM).concat(editColorHMM[3] * 100);
+			val = HSBA2RGBA(editColor);
 			break;
 		case "RGBA255":
-			val = HMM2RGB(editColorHMM).concat(editColorHMM[3] * 255);
+			val = HSBA2RGBA(editColor);
 			break;
 		case "HSLA":
-			val = HMM2HSL(editColorHMM).concat(editColorHMM[3] * 100);
-			val[1] *= 100;
-			val[2] *= 100;
+			val = HSBA2HSLA(editColor);
 			break;
 		default:
 	}
@@ -353,7 +315,7 @@ function refreshWindow() {
 				String(valu / 10);
 		}
 	}
-	let chex = RGBA2HEX(HMM2RGB(editColorHMM).concat([editColorHMM[3] * 255]));
+	let chex = HSBA2HEX(editColor);
 	cin[5].style.setProperty("--C", unnull(chex));
 	cin[6].value = unnull(chex);
 
@@ -434,12 +396,12 @@ function dragCallback(elem, func) {
 	};
 }
 
-let editColorHMM = [180, 0.3, 0.7, 0.5];
+let editColor = [0, 0, 0, 0];
 
 function changeIndex(index) {
 	colorIndex = index;
-	let current = fakeColor(color[colorIndex === 0 ? "primary" : "secondary"]);
-	editColorHMM = RGB2HMM(current).concat([current[3]]);
+	let current = CSS2RGBA(color[colorIndex === 0 ? "primary" : "secondary"]);
+	editColor = RGBA2HSBA(current);
 	refreshWindow();
 }
 
@@ -448,7 +410,7 @@ let colorHistory = [];
 for (let i = 0; i < 5; i++) {
 	for (let j = 0; j < 12; j++) {
 		colorHistory.push({
-			primary: RGBA2HEX(HSL2RGB([j * 360 / 12, 1, i / 5 + 1 / 10]).concat([255])),
+			primary: HSBA2HEX(HSLA2HSBA([j * 360 / 12, 1, i / 5 + 1 / 10, 100])),
 			secondary: null,
 			gradientType: "SOLID"
 		});
@@ -456,14 +418,14 @@ for (let i = 0; i < 5; i++) {
 }
 for (let j = 0; j < 6; j++) {
 	colorHistory.push({
-		primary: RGBA2HEX(HSL2RGB([j * 360 / 6, 1, 0.5]).concat([255])),
-		secondary: RGBA2HEX(HSL2RGB([(j + 1) * 360 / 6, 1, 0.5]).concat([255])),
+		primary: HSBA2HEX(HSLA2HSBA([j * 360 / 6, 1, 0.5, 1])),
+		secondary: HSBA2HEX(HSLA2HSBA([(j + 1) * 360 / 6, 1, 0.5, 1]).concat([255])),
 		gradientType: "VERTICAL"
 	});
 }
 for (let j = 0; j < 12; j++) {
 	colorHistory.push({
-		primary: RGBA2HEX(HSL2RGB([0, 0, j / 11]).concat([255])),
+		primary: HSBA2HEX(HSLA2HSBA([0, 0, j / 11, 1])),
 		secondary: null,
 		gradientType: "SOLID"
 	});
@@ -553,7 +515,7 @@ try {
 			let rect = colH.getBoundingClientRect();
 			let ox = (rect.left + rect.right) / 2 - x;
 			let oy = (rect.top + rect.bottom) / 2 - y;
-			editColorHMM[0] = Math.atan2(ox, oy) * -180 / Math.PI;
+			editColor[0] = Math.atan2(ox, oy) * -180 / Math.PI / 3.6;
 			refreshWindow();
 		} catch (e) {
 			alert(e.message);
@@ -565,12 +527,8 @@ try {
 			let rect = colSB.getBoundingClientRect();
 			let s = clamp((y - rect.bottom) / (rect.top - rect.bottom), 0, 1) * 100;
 			let b = clamp((x - rect.left) / (rect.right - rect.left), 0, 1) * 100;
-			let hsb = HMM2HSB(editColorHMM);
-			hsb[1] = s;
-			hsb[2] = b;
-			let hmm = HSB2HMM(hsb);
-			editColorHMM[1] = hmm[1];
-			editColorHMM[2] = hmm[2];
+			editColor[1] = s;
+			editColor[2] = b;
 			refreshWindow();
 		} catch (e) {
 			alert(e.message);
@@ -581,7 +539,7 @@ try {
 		try {
 			let rect = colA.getBoundingClientRect();
 			let a = clamp((x - rect.left) / (rect.right - rect.left), 0, 1) * 100;
-			editColorHMM[3] = a / 100;
+			editColor[3] = a;
 			refreshWindow();
 		} catch (e) {
 			alert(e.message);
@@ -593,19 +551,19 @@ try {
 		setTimeout(function() {
 			let set = [];
 			for (let i = 1; i < 5; i++)
-				set.push(colI[i].value);
+				set.push(Number(colI[i].value));
 			switch (colI[0].value) {
 				case "HSBA":
-					editColorHMM = HSB2HMM(set).concat(set[3] / 100);
+					editColor = set;
 					break;
 				case "RGBA":
-					editColorHMM = RGB2HMM(set).concat(set[3] / 100);
+					editColor = RGBA2HSBA(set);
 					break;
 				case "RGBA255":
-					editColorHMM = RGB2HMM(set).concat(set[3] / 255);
+					editColor = RGBA2HSBA(set);
 					break;
 				case "HSLA":
-					editColorHMM = HSL2HMM([set[0], set[1] / 100, set[2] / 100]).concat(set[3] / 100);
+					editColor = HSLA2HSBA(set);
 					break;
 				default:
 			}
@@ -620,8 +578,8 @@ try {
 
 	function wheninput2() {
 		setTimeout(function() {
-			let rgba = fakeColor(colI[6].value);
-			editColorHMM = RGB2HMM(rgba).concat(rgba[3]);
+			let rgba = CSS2RGBA(colI[6].value);
+			editColor = RGBA2HSBA(rgba).concat(rgba[3]);
 			refreshWindow();
 		}, 10);
 	}
