@@ -1,6 +1,6 @@
 let color = {
 	primary: "#8566ff",
-	secondary:null,
+	secondary: null,
 	gradientType: "SOLID"
 };
 let colorIndex = 0;
@@ -476,6 +476,24 @@ function addHistory(x) {
 }
 
 try {
+	// tab
+	let ct = selele("tfgsForcecolorTab");
+	for (let i = 0; i < 2; i++) {
+		ct.children[i].addEventListener("click", function(event) {
+			let ctp = ct.parentElement;
+			for (let j = 0; j < 2; j++) {
+				if (i === j) {
+					ct.children[j].classList.add("tfgsForcecolorTabon");
+					ctp.children[j + 1].style.display = "block";
+				} else {
+					ct.children[j].classList.remove("tfgsForcecolorTabon");
+					ctp.children[j + 1].style.display = "none";
+				}
+			}
+		});
+	}
+	ct.children[0].click();
+
 	// mode
 	let cm = selele("tfgsForcecolorMode").children;
 	for (let i = 0; i < 2; i++) {
@@ -587,11 +605,11 @@ try {
 	colI[6].addEventListener("keydown", whenenter);
 
 	// history
-	let ca = selele("tfgsForcecolorAdd");
+	// let ca = selele("tfgsForcecolorAdd");
 
-	ca.addEventListener("click", function(event) {
-		addHistory(color);
-	});
+	// ca.addEventListener("click", function(event) {
+	// 	addHistory(color);
+	// });
 
 	// initial
 	changeIndex(0);

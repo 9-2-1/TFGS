@@ -1,46 +1,52 @@
 <link rel="stylesheet" href="forcecolor.css" />
 <div class="tfgsForcecolorWindow">
-	<div class="tfgsForcecolorMode">
-		<span style="--C: #00f;"></span>
-		<span style="--C: #0f0;"></span>
-		&nbsp;
-		<span style="--C: grey;"></span>
-		<span style="--C: linear-gradient(to right, white, grey);"></span>
-		<span style="--C: linear-gradient(to bottom, white, grey);"></span>
-		<span style="--C: radial-gradient(white, grey);"></span>
+	<div class="tfgsForcecolorTab">
+		<span>最近颜色</span>
+		<span>自定义颜色</span>
 	</div>
-	<div class="tfgsForcecolorPicker" style="--H: 120; --HC: #0f0; --S: 30; --B: 70; --A: 10;">
-		<div class="tfgsForcecolorH">
-			<div class="tfgsForcecolorHP">
-				<span>▲</span>
-			</div>
-			<div class="tfgsForcecolorHI">
-				<div class="tfgsForcecolorSB">
-					<div class="tfgsForcecolorSBP"></div>
+	<div class="tfgsForcecolorList"></div>
+	<div>
+		<div class="tfgsForcecolorMode">
+			<span style="--C: #00f;"></span>
+			<span style="--C: #0f0;"></span>
+			&nbsp;
+			<span style="--C: grey;"></span>
+			<span style="--C: linear-gradient(to right, white, grey);"></span>
+			<span style="--C: linear-gradient(to bottom, white, grey);"></span>
+			<span style="--C: radial-gradient(white, grey);"></span>
+		</div>
+		<div class="tfgsForcecolorPicker" style="--H: 120; --HC: #0f0; --S: 30; --B: 70; --A: 10;">
+			<div class="tfgsForcecolorH">
+				<div class="tfgsForcecolorHP">
+					<span>▲</span>
+				</div>
+				<div class="tfgsForcecolorHI">
+					<div class="tfgsForcecolorSB">
+						<div class="tfgsForcecolorSBP"></div>
+					</div>
 				</div>
 			</div>
+			<div class="tfgsForcecolorA">
+				<span class="tfgsForcecolorAC"></span>
+				<span class="tfgsForcecolorAP">▲</span>
+			</div>
 		</div>
-		<div class="tfgsForcecolorA">
-			<span class="tfgsForcecolorAC"></span>
-			<span class="tfgsForcecolorAP">▲</span>
+		<div class="tfgsForcecolorInput">
+			<select>
+				<option value="HSBA">Scratch(HSBA) (0-100,0-100,0-100,0-100)</option>
+				<option value="RGBA">RGBA (0-255,0-255,0-255,0-100%)</option>
+				<option value="RGBA255">RGBA255 (0-255,0-255,0-255,0-255)</option>
+				<option value="HSLA">HSLA (0-360,0-100%,0-100%,0-100%)</option>
+			</select>
+			<input type="number"></input>
+			<input type="number"></input>
+			<input type="number"></input>
+			<input type="number"></input>
+			<span class="tfgsForcecolorColor" style="--C: #553388;"></span>
+			<input class="tfgsForcecolorInput2" type="text"></input>
 		</div>
+		<!--<button class="tfgsForcecolorAdd">Add to history</button>-->
 	</div>
-	<div class="tfgsForcecolorInput">
-		<select>
-			<option value="HSBA">Scratch(HSBA) (0-100,0-100,0-100,0-100)</option>
-			<option value="RGBA">RGBA (0-255,0-255,0-255,0-100%)</option>
-			<option value="RGBA255">RGBA255 (0-255,0-255,0-255,0-255)</option>
-			<option value="HSLA">HSLA (0-360,0-100%,0-100%,0-100%)</option>
-		</select>
-		<input type="number"></input>
-		<input type="number"></input>
-		<input type="number"></input>
-		<input type="number"></input>
-		<span class="tfgsForcecolorColor" style="--C: #553388;"></span>
-		<input class="tfgsForcecolorInput2" type="text"></input>
-	</div>
-	<button class="tfgsForcecolorAdd">Add to history</button>
-	<div class="tfgsForcecolorList"></div>
 </div>
 
 <script src="forcecolor-.js"></script>

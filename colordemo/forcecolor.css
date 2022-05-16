@@ -195,3 +195,22 @@
 .tfgsForcecolorSelect {
 	outline: 3px solid #07f;
 }
+
+.tfgsForcecolorTab{
+	display:flex;
+	flex-direction:row;
+	width:100%;
+	padding:0px 10px 10px 10px;
+}
+
+.tfgsForcecolorTab>span{
+	display:inline-block;
+	width:100%;height:100%;
+	padding: 10px;
+	font-size:20px;
+	color:#07f;
+}
+
+.tfgsForcecolorTabon{
+	background:#bdf;
+}
