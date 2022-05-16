@@ -7,6 +7,10 @@ let colorIndex = 0;
 
 let gradients = ["SOLID", "VERTICAL", "HORIZONAL", "RADIAL"];
 
+function unnull(x) {
+	return x === null ? "transparent" : x;
+};
+
 function fakeColor(color) {
 	if (color === null) return [0, 0, 0, 0];
 	let kero = document.createElement("span");
@@ -283,8 +287,17 @@ function refreshWindow() {
 	// mode
 	let cm = selele("tfgsForcecolorMode").children;
 
-	cm[0].style.setProperty("--C", color.primary);
-	cm[1].style.setProperty("--C", color.secondary);
+	cm[0].style.setProperty("--C", unnull(color.primary));
+	if (color.gradientType === "SOLID") {
+		cm[1].style.visibility = "hidden";
+		if (colorIndex === 1) {
+			changeIndex(0);
+			return;
+		}
+	} else {
+		cm[1].style.setProperty("--C", unnull(color.secondary));
+		cm[1].style.visibility = "visible";
+	}
 
 	for (let i = 0; i < 2; i++)
 		cm[i].classList[i === colorIndex ? "add" : "remove"]("tfgsForcecolorSelect");
@@ -341,16 +354,13 @@ function refreshWindow() {
 		}
 	}
 	let chex = RGBA2HEX(HMM2RGB(editColorHMM).concat([editColorHMM[3] * 255]));
-	cin[5].style.setProperty("--C", chex);
-	cin[6].value = chex;
+	cin[5].style.setProperty("--C", unnull(chex));
+	cin[6].value = unnull(chex);
 
 	// history
 
 	let cl = selele("tfgsForcecolorList");
 	cl.innerHTML = "";
-	let unnull = function(x) {
-		return x === null ? "transparent" : x;
-	};
 	for (let i = 0; i < colorHistory.length; i++) {
 		let col = colorHistory[i];
 		let sty = "";
@@ -435,6 +445,15 @@ function changeIndex(index) {
 
 // colorHistory
 let colorHistory = [];
+for (let i = 0; i < 5; i++) {
+	for (let j = 0; j < 8; j++) {
+		colorHistory.push({
+			primary: RGBA2HEX(HSL2RGB([j * 360 / 8, 1, i * 0.2 + 0.1]).concat([255])),
+			secondary: null,
+			gradientType: "SOLID"
+		});
+	}
+}
 
 function addHistory(x) {
 	let pos = -1;
@@ -451,7 +470,7 @@ function addHistory(x) {
 	colorHistory.splice(0, 0, {
 		...x
 	});
-	while (colorHistory.length > 50)
+	while (colorHistory.length > 40)
 		colorHistory.pop();
 	refreshWindow();
 }
