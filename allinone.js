@@ -2,8 +2,23 @@ let fs = require("fs");
 let Uglifyjs = require("uglify-js");
 let Cleancss = require("clean-css");
 
+function randomkey(num) {
+	let key = "";
+	for (let i = 0; i < num; i++)
+		key += String.fromCharCode(32 + Math.floor((127 - 32) * Math.random()));
+	return key;
+}
+
+let tfgskey = JSON.stringify("__TFGS$" + randomkey(10));
+
 let allinone = `/* (allinone.js) */
 try {
+	if (${tfgskey} in window) {
+		throw new Error("TFGS 已经安装");
+	} else {
+		window[${tfgskey}] = "tfgs_installed";
+	}
+
 	function _tfgsAddCSS(css) {
 		let style = document.createElement("style");
 		style.innerHTML = css;
@@ -125,9 +140,10 @@ fs.writeFileSync("allinone/TFGS.htm", `<html>
 			<br />
 			或者，复制右边的代码（点击自动全选）：
 			<br />
+			在需要的页面，点击地址栏，全部清空后<b>输入“j”后</b>再粘贴后回车。
+			<br />
 			<textarea id="copymee"></textarea>
 			<br />
-			在需要的页面，点击地址栏，全部清空后输入“j”再粘贴后回车。
 		</center>
 		<script>
 			var x;

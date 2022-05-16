@@ -1,12 +1,4 @@
 try {
-	let elog = element("div");
-	tfgs.log.displayInterval(elog, {
-		"name": null,
-		"color": null
-	});
-	elog.addEventListener("click", tfgs.menu.create);
-	document.body.appendChild(elog);
-
 	tfgs.func.add({
 		"id": "kkk",
 		"name": "abc",

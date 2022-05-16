@@ -38,6 +38,7 @@ tfgs.button.create = function() {
 					if (ox !== x || oy !== y) od = true;
 				button.style.left = x - dx + "px";
 				button.style.top = y - dy + "px";
+				object_in_window(button, 0);
 				return true;
 			}
 			return false;
@@ -55,6 +56,7 @@ tfgs.button.create = function() {
 		});
 		button.addEventListener("touchstart", function(event) {
 			dragstart(event.targetTouches[0].clientX, event.targetTouches[0].clientY);
+			event.preventDefault();
 		});
 		window.addEventListener("mousemove", function(event) {
 			if (dragmove(event.clientX, event.clientY))
@@ -73,8 +75,23 @@ tfgs.button.create = function() {
 		window.addEventListener("mouseleave", function(event) {
 			dragend();
 		});
+		window.addEventListener("resize", function(event) {
+			object_in_window(button, 0);
+		});
 		document.body.appendChild(button);
 	} catch (e) {
 		tfgs.error(e);
 	}
 };
+
+function object_in_window(obj, pad) {
+	let objrect = obj.getBoundingClientRect();
+	if (objrect.right > window.innerWidth - pad)
+		obj.style.left = (window.innerWidth - objrect.width - pad) + "px";
+	if (objrect.left < 0 + pad)
+		obj.style.left = (0 + pad) + "px";
+	if (objrect.bottom > window.innerHeight - pad)
+		obj.style.top = (window.innerHeight - objrect.height - pad) + "px";
+	if (objrect.top < 0 + pad)
+		obj.style.top = (0 + pad) + "px";
+}
