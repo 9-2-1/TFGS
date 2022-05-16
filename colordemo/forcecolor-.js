@@ -8,6 +8,7 @@ let colorIndex = 0;
 let gradients = ["SOLID", "VERTICAL", "HORIZONAL", "RADIAL"];
 
 function fakeColor(color) {
+	if (color === null) return [0, 0, 0, 0];
 	let kero = document.createElement("span");
 	kero.style.color = color;
 	document.body.appendChild(kero);
@@ -246,6 +247,8 @@ function HEX2RGBA(hex) {
 }
 
 function RGBA2HEX(rgba) {
+	if (rgba[3] === 0)
+		return null;
 	return "#" +
 		fHex(rgba[0]) +
 		fHex(rgba[1]) +
@@ -340,6 +343,41 @@ function refreshWindow() {
 	let chex = RGBA2HEX(HMM2RGB(editColorHMM).concat([editColorHMM[3] * 255]));
 	cin[5].style.setProperty("--C", chex);
 	cin[6].value = chex;
+
+	// history
+
+	let cl = selele("tfgsForcecolorList");
+	cl.innerHTML = "";
+	let unnull = function(x) {
+		return x === null ? "transparent" : x;
+	};
+	for (let i = 0; i < colorHistory.length; i++) {
+		let col = colorHistory[i];
+		let sty = "";
+		switch (col.gradientType) {
+			case "SOLID":
+				sty = unnull(col.primary);
+				break;
+			case "VERTICAL":
+				sty = `linear-gradient(90deg,${unnull(col.primary)},${unnull(col.secondary)})`;
+				break;
+			case "HORIZONAL":
+				sty = `linear-gradient(0deg,${unnull(col.primary)},${unnull(col.secondary)})`;
+				break;
+			case "RADIAL":
+				sty = `radial-gradient(${unnull(col.primary)},${unnull(col.secondary)})`;
+				break;
+		}
+		let item = document.createElement("span");
+		item.style.setProperty("--C", sty);
+		item.addEventListener("click", function(event) {
+			color = {
+				...colorHistory[i]
+			};
+			changeIndex(0);
+		});
+		cl.appendChild(item);
+	}
 }
 
 function dragCallback(elem, func) {
@@ -395,13 +433,13 @@ function changeIndex(index) {
 	refreshWindow();
 }
 
-// history
-let history = [];
+// colorHistory
+let colorHistory = [];
 
 function addHistory(x) {
 	let pos = -1;
-	for (let i in history) {
-		let hi = history[i];
+	for (let i = 0; i < colorHistory.length; i++) {
+		let hi = colorHistory[i];
 		if (hi.gradientType === x.gradientType &&
 			hi.primary === x.primary &&
 			hi.secondary === x.secondary) {
@@ -409,10 +447,13 @@ function addHistory(x) {
 		}
 	}
 	if (pos !== -1)
-		history.splice(pos, 1);
-	history.splice(0, 0, x);
-	while (history.length > 50)
-		history.pop();
+		colorHistory.splice(pos, 1);
+	colorHistory.splice(0, 0, {
+		...x
+	});
+	while (colorHistory.length > 50)
+		colorHistory.pop();
+	refreshWindow();
 }
 
 try {
@@ -525,6 +566,13 @@ try {
 
 	colI[6].addEventListener("blur", wheninput2);
 	colI[6].addEventListener("keydown", whenenter);
+
+	// history
+	let ca = selele("tfgsForcecolorAdd");
+
+	ca.addEventListener("click", function(event) {
+		addHistory(color);
+	});
 
 	// initial
 	changeIndex(0);

@@ -154,10 +154,10 @@
 }
 
 .tfgsForcecolorList>* {
-	height: 20px;
-	width: 20px;
+	height: 30px;
+	width: 30px;
 	margin: 3px;
-	border: 2px solid black;
+	box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3) inset;
 	display: inline-block;
 }
 
@@ -165,7 +165,6 @@
 	height: 30px;
 	width: 30px;
 	margin: 2px;
-	border: 2px solid black;
 	display: inline-block;
 	box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.3);
 }
@@ -176,6 +175,8 @@
 	position: relative;
 	background: conic-gradient(grey 0%, grey 25%, white 25%, white 50%, grey 50%, grey 75%, white 75%, white 100%);
 	background-size: 20px 20px;
+	box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+	overflow: hidden;
 }
 
 .tfgsForcecolorList>*:after,
@@ -193,5 +194,4 @@
 
 .tfgsForcecolorSelect {
 	outline: 3px solid #07f;
-	border: 2px solid #07f;
 }
