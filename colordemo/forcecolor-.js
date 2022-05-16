@@ -522,13 +522,27 @@ try {
 	let cm = selele("tfgsForcecolorMode").children;
 	for (let i = 0; i < 2; i++) {
 		cm[i].addEventListener("click", function(event) {
-			changeIndex(i);
+			if (i === colorIndex && color.gradientType !== "SOLID") {
+				let tmp = color.primary;
+				color.primary = color.secondary;
+				color.secondary = tmp;
+				changeIndex(i);
+			} else {
+				changeIndex(i);
+			}
 		});
 	}
 	for (let i = 0; i < 4; i++) {
 		cm[i + 2].addEventListener("click", function(event) {
-			color.gradientType = gradients[i];
-			refreshWindow();
+			if (color.gradientType !== gradients[i]) {
+				color.gradientType = gradients[i];
+				if (gradients[i] !== "SOLID" && color.secondary === null) {
+					color.secondary = color.primary;
+					changeIndex(1);
+					return;
+				}
+				refreshWindow();
+			}
 		});
 	}
 
