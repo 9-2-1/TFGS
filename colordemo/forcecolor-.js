@@ -1,7 +1,7 @@
 let color = {
-	primary: "#ff0000",
-	secondary: "#00ff00",
-	gradientType: "RADIAL"
+	primary: "#8566ff",
+	secondary:null,
+	gradientType: "SOLID"
 };
 let colorIndex = 0;
 
