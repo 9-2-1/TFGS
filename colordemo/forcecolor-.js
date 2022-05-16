@@ -1,3 +1,12 @@
+let color = {
+	primary: "#ff0000",
+	secondary: "#00ff00",
+	gradientType: "RADIAL"
+};
+let colorIndex = 0;
+
+let gradients = ["SOLID", "VERTICAL", "HORIZONAL", "RADIAL"];
+
 function fakeColor(color) {
 	let kero = document.createElement("span");
 	kero.style.color = color;
@@ -260,20 +269,38 @@ function clamp(x, min, max) {
 	return x < min ? min : x > max ? max : x;
 }
 
-function sethmmcolor(hmma) {
-	hmma[0] -= Math.floor(hmma[0] / 360) * 360;
-	hmma[1] = clamp(hmma[1], 0, 1);
-	hmma[2] = clamp(hmma[2], hmma[1], 1);
-	hmma[3] = clamp(hmma[3], 0, 1);
+function refreshWindow() {
+	editColorHMM[0] -= Math.floor(editColorHMM[0] / 360) * 360;
+	editColorHMM[1] = clamp(editColorHMM[1], 0, 1);
+	editColorHMM[2] = clamp(editColorHMM[2], editColorHMM[1], 1);
+	editColorHMM[3] = clamp(editColorHMM[3], 0, 1);
+
+	color[colorIndex === 0 ? "primary" : "secondary"] = RGBA2HEX(HMM2RGB(editColorHMM).concat([editColorHMM[3] * 255]));
+
+	// mode
+	let cm = selele("tfgsForcecolorMode").children;
+
+	cm[0].style.setProperty("--C", color.primary);
+	cm[1].style.setProperty("--C", color.secondary);
+
+	for (let i = 0; i < 2; i++)
+		cm[i].classList[i === colorIndex ? "add" : "remove"]("tfgsForcecolorSelect");
+
+	let gradientIndex = gradients.indexOf(color.gradientType);
+
+	for (let i = 0; i < 4; i++)
+		cm[i + 2].classList[i === gradientIndex ? "add" : "remove"]("tfgsForcecolorSelect");
+
+	// picker
 	let cp = selele("tfgsForcecolorPicker");
-	let hsb = HMM2HSB(hmma);
-	cp.style.setProperty("--H", hmma[0]);
+	let hsb = HMM2HSB(editColorHMM);
+	cp.style.setProperty("--H", editColorHMM[0]);
 	cp.style.setProperty("--S", hsb[1]);
 	cp.style.setProperty("--B", hsb[2]);
-	cp.style.setProperty("--A", hmma[3] * 100);
+	cp.style.setProperty("--A", editColorHMM[3] * 100);
 
-	let HCrgb = HMM2RGB([hmma[0], 0, 1]).concat([255]);
-	let ACrgb = HMM2RGB(hmma).concat([255]);
+	let HCrgb = HMM2RGB([editColorHMM[0], 0, 1]).concat([255]);
+	let ACrgb = HMM2RGB(editColorHMM).concat([255]);
 
 	cp.style.setProperty("--HC", RGBA2HEX(HCrgb));
 	cp.style.setProperty("--AC", RGBA2HEX(ACrgb));
@@ -282,16 +309,16 @@ function sethmmcolor(hmma) {
 	let val;
 	switch (cin[0].value) {
 		case "HSBA":
-			val = HMM2HSB(hmma).concat(hmma[3] * 100);
+			val = HMM2HSB(editColorHMM).concat(editColorHMM[3] * 100);
 			break;
 		case "RGBA":
-			val = HMM2RGB(hmma).concat(hmma[3] * 100);
+			val = HMM2RGB(editColorHMM).concat(editColorHMM[3] * 100);
 			break;
 		case "RGBA255":
-			val = HMM2RGB(hmma).concat(hmma[3] * 255);
+			val = HMM2RGB(editColorHMM).concat(editColorHMM[3] * 255);
 			break;
 		case "HSLA":
-			val = HMM2HSL(hmma).concat(hmma[3] * 100);
+			val = HMM2HSL(editColorHMM).concat(editColorHMM[3] * 100);
 			val[1] *= 100;
 			val[2] *= 100;
 			break;
@@ -303,10 +330,14 @@ function sethmmcolor(hmma) {
 		if (cin[i] === sel)
 			modify = true;
 	if (!modify) {
-		for (let i = 0; i < 4; i++)
-			cin[i + 1].value = val[i].toString().replace(/(\..).*/, "$1");
+		for (let i = 0; i < 4; i++) {
+			let valu = Math.round(Math.abs(val[i]) * 10);
+			cin[i + 1].value = "" +
+				(val[i] < 0 ? "-" : "") +
+				String(valu / 10);
+		}
 	}
-	let chex = RGBA2HEX(HMM2RGB(hmma).concat([hmma[3]] * 255));
+	let chex = RGBA2HEX(HMM2RGB(editColorHMM).concat([editColorHMM[3] * 255]));
 	cin[5].style.setProperty("--C", chex);
 	cin[6].value = chex;
 }
@@ -323,7 +354,7 @@ function dragCallback(elem, func) {
 		event.stopPropagation();
 	};
 	let dragStart = function(event) {
-		if(document.activeElement!==null)
+		if (document.activeElement !== null)
 			document.activeElement.blur();
 		window.addEventListener("mousemove", dragFunc);
 		window.addEventListener("touchmove", dragFunc);
@@ -355,17 +386,59 @@ function dragCallback(elem, func) {
 	};
 }
 
-let sethmma = [180, 0.3, 0.7, 0.5];
+let editColorHMM = [180, 0.3, 0.7, 0.5];
+
+function changeIndex(index) {
+	colorIndex = index;
+	let current = fakeColor(color[colorIndex === 0 ? "primary" : "secondary"]);
+	editColorHMM = RGB2HMM(current).concat([current[3]]);
+	refreshWindow();
+}
+
+// history
+let history = [];
+
+function addHistory(x) {
+	let pos = -1;
+	for (let i in history) {
+		let hi = history[i];
+		if (hi.gradientType === x.gradientType &&
+			hi.primary === x.primary &&
+			hi.secondary === x.secondary) {
+			pos = i;
+		}
+	}
+	if (pos !== -1)
+		history.splice(pos, 1);
+	history.splice(0, 0, x);
+	while (history.length > 50)
+		history.pop();
+}
+
 try {
-	sethmmcolor(sethmma);
+	// mode
+	let cm = selele("tfgsForcecolorMode").children;
+	for (let i = 0; i < 2; i++) {
+		cm[i].addEventListener("click", function(event) {
+			changeIndex(i);
+		});
+	}
+	for (let i = 0; i < 4; i++) {
+		cm[i + 2].addEventListener("click", function(event) {
+			color.gradientType = gradients[i];
+			refreshWindow();
+		});
+	}
+
+	// picker
 	let colH = selele("tfgsForcecolorH");
 	dragCallback(colH, function(x, y) {
 		try {
 			let rect = colH.getBoundingClientRect();
 			let ox = (rect.left + rect.right) / 2 - x;
 			let oy = (rect.top + rect.bottom) / 2 - y;
-			sethmma[0] = Math.atan2(ox, oy) * -180 / Math.PI;
-			sethmmcolor(sethmma);
+			editColorHMM[0] = Math.atan2(ox, oy) * -180 / Math.PI;
+			refreshWindow();
 		} catch (e) {
 			alert(e.message);
 		}
@@ -376,13 +449,13 @@ try {
 			let rect = colSB.getBoundingClientRect();
 			let s = clamp((y - rect.bottom) / (rect.top - rect.bottom), 0, 1) * 100;
 			let b = clamp((x - rect.left) / (rect.right - rect.left), 0, 1) * 100;
-			let hsb = HMM2HSB(sethmma);
+			let hsb = HMM2HSB(editColorHMM);
 			hsb[1] = s;
 			hsb[2] = b;
 			let hmm = HSB2HMM(hsb);
-			sethmma[1] = hmm[1];
-			sethmma[2] = hmm[2];
-			sethmmcolor(sethmma);
+			editColorHMM[1] = hmm[1];
+			editColorHMM[2] = hmm[2];
+			refreshWindow();
 		} catch (e) {
 			alert(e.message);
 		}
@@ -392,8 +465,8 @@ try {
 		try {
 			let rect = colA.getBoundingClientRect();
 			let a = clamp((x - rect.left) / (rect.right - rect.left), 0, 1) * 100;
-			sethmma[3] = a / 100;
-			sethmmcolor(sethmma);
+			editColorHMM[3] = a / 100;
+			refreshWindow();
 		} catch (e) {
 			alert(e.message);
 		}
@@ -407,20 +480,20 @@ try {
 				set.push(colI[i].value);
 			switch (colI[0].value) {
 				case "HSBA":
-					sethmma = HSB2HMM(set).concat(set[3] / 100);
+					editColorHMM = HSB2HMM(set).concat(set[3] / 100);
 					break;
 				case "RGBA":
-					sethmma = RGB2HMM(set).concat(set[3] / 100);
+					editColorHMM = RGB2HMM(set).concat(set[3] / 100);
 					break;
 				case "RGBA255":
-					sethmma = RGB2HMM(set).concat(set[3] / 255);
+					editColorHMM = RGB2HMM(set).concat(set[3] / 255);
 					break;
 				case "HSLA":
-					sethmma = HSL2HMM([set[0],set[1]/100,set[2]/100]).concat(set[3] / 100);
+					editColorHMM = HSL2HMM([set[0], set[1] / 100, set[2] / 100]).concat(set[3] / 100);
 					break;
 				default:
 			}
-			sethmmcolor(sethmma);
+			refreshWindow();
 		}, 10);
 	}
 
@@ -432,13 +505,13 @@ try {
 	function wheninput2() {
 		setTimeout(function() {
 			let rgba = fakeColor(colI[6].value);
-			sethmma = RGB2HMM(rgba).concat(rgba[3]);
-			sethmmcolor(sethmma);
+			editColorHMM = RGB2HMM(rgba).concat(rgba[3]);
+			refreshWindow();
 		}, 10);
 	}
 
 	function whenchange() {
-		sethmmcolor(sethmma);
+		refreshWindow();
 	}
 
 	colI[0].addEventListener("change", whenchange);
@@ -452,6 +525,9 @@ try {
 
 	colI[6].addEventListener("blur", wheninput2);
 	colI[6].addEventListener("keydown", whenenter);
+
+	// initial
+	changeIndex(0);
 } catch (e) {
 	alert(e.message);
 }
