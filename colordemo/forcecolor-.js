@@ -1,3 +1,9 @@
+let foption = {
+	gridH: 1,
+	gridSB: 5,
+	gridA: 5
+};
+
 let color = {
 	primary: "#8566ff",
 	secondary: null,
@@ -299,6 +305,8 @@ function refreshWindow() {
 			break;
 		case "HSLA":
 			val = HSBA2HSLA(editColor);
+			val[1] *= 100;
+			val[2] *= 100;
 			break;
 		default:
 	}
@@ -341,6 +349,10 @@ function refreshWindow() {
 				break;
 		}
 		let item = document.createElement("span");
+		if (col.gradientType === color.gradientType &&
+			CSS2RGBA(col.primary) + "" === CSS2RGBA(color.primary) + "" &&
+			CSS2RGBA(col.secondary) + "" === CSS2RGBA(color.secondary) + "")
+			item.classList.add("tfgsForcecolorSelect");
 		item.style.setProperty("--C", sty);
 		item.addEventListener("click", function(event) {
 			color = {
@@ -499,7 +511,9 @@ try {
 			if (color.gradientType !== gradients[i]) {
 				color.gradientType = gradients[i];
 				if (gradients[i] !== "SOLID" && color.secondary === null) {
-					color.secondary = color.primary;
+					let hsba = RGBA2HSBA(CSS2RGBA(color.primary))
+					hsba[2] += hsba[2] > 50 ? -30 : 30;
+					color.secondary = HSBA2HEX(hsba);
 					changeIndex(1);
 					return;
 				}
@@ -515,7 +529,11 @@ try {
 			let rect = colH.getBoundingClientRect();
 			let ox = (rect.left + rect.right) / 2 - x;
 			let oy = (rect.top + rect.bottom) / 2 - y;
-			editColor[0] = Math.atan2(ox, oy) * -180 / Math.PI / 3.6;
+			let h = Math.atan2(ox, oy) * -180 / Math.PI / 3.6;
+			if (foption.gridH > 0) {
+				h = Math.round(h / foption.gridH) * foption.gridH;
+			}
+			editColor[0] = h;
 			refreshWindow();
 		} catch (e) {
 			alert(e.message);
@@ -527,6 +545,10 @@ try {
 			let rect = colSB.getBoundingClientRect();
 			let s = clamp((y - rect.bottom) / (rect.top - rect.bottom), 0, 1) * 100;
 			let b = clamp((x - rect.left) / (rect.right - rect.left), 0, 1) * 100;
+			if (foption.gridSB > 0) {
+				s = Math.round(s / foption.gridSB) * foption.gridSB;
+				b = Math.round(b / foption.gridSB) * foption.gridSB;
+			}
 			editColor[1] = s;
 			editColor[2] = b;
 			refreshWindow();
@@ -539,6 +561,9 @@ try {
 		try {
 			let rect = colA.getBoundingClientRect();
 			let a = clamp((x - rect.left) / (rect.right - rect.left), 0, 1) * 100;
+			if (foption.gridA > 0) {
+				a = Math.round(a / foption.gridA) * foption.gridA;
+			}
 			editColor[3] = a;
 			refreshWindow();
 		} catch (e) {
@@ -563,6 +588,8 @@ try {
 					editColor = RGBA2HSBA(set);
 					break;
 				case "HSLA":
+					set[1] /= 100;
+					set[2] /= 100;
 					editColor = HSLA2HSBA(set);
 					break;
 				default:
