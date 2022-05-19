@@ -1,8 +1,10 @@
 tfgs.func = {};
 
+/* 功能列表,格式见下funcinfo */
 tfgs.func.list = {};
 
 tfgs.func.add = function(funcinfo) {
+	// 格式参考 ../functions/example.js
 	// funcinfo
 	// |-id
 	// |-name
@@ -34,6 +36,7 @@ tfgs.func.add = function(funcinfo) {
 	};
 };
 
+/* 重置数据，cleardata代表是否要重置data数据(默认只还原option，也就是拓展菜单里的设置 */
 tfgs.func.default = function(cleardata) {
 	let defldata = {};
 	let flist = tfgs.func.list;
@@ -52,6 +55,7 @@ tfgs.func.default = function(cleardata) {
 	tfgs.data._default(defldata);
 };
 
+/* 设置和数据变化的触发器 */
 tfgs.func.datachange = function() {
 	tfgs.func.fixoption();
 	let flist = tfgs.func.list;
@@ -77,6 +81,7 @@ tfgs.func.datachange = function() {
 	}
 };
 
+/* 检查设置数据是否符合规则 */
 tfgs.func.fixoption = function() {
 	let flist = tfgs.func.list;
 	for (let fname in flist) {

@@ -1,3 +1,4 @@
+/* 迟早要加注释 */
 function object_format(obj, format) {
 	if (typeof format === "object") {
 		let fmtobj = Array.isArray(format) ? [] : {};
@@ -75,6 +76,7 @@ tfgs.data.getjson = function() {
 	return JSON.stringify(tfgs.data.list);
 };
 
+/* 设置全部数据，触发数据改变的触发器 */
 tfgs.data.setjson = function(json) {
 	let data = JSON.parse(json);
 	let format = {};
@@ -92,12 +94,16 @@ tfgs.data.setjson = function(json) {
 	tfgs.func.datachange();
 };
 
-tfgs.data._default = function(data) {
+/* 一个留给tfgs.func.default(恢复默认设置)的后门，其实现在就可以删了 */
+/* tfgs.data._default = function(data) {
 	tfgs.data.list = data;
-};
+};*/
 
+/* 异步加载拓展数据,返回Promise */
+/* 优先级：浏览器拓展存储 > localStorage */
 tfgs.data.load = function() {
 	return new Promise(function(resolve, reject) {
+		// 尝试浏览器拓展的存档功能 (chrome.storage, browser.storage)
 		let data = null;
 		let extStorage = null;
 		if ("chrome" in window && "storage" in chrome) {
@@ -108,7 +114,7 @@ tfgs.data.load = function() {
 		if (extStorage !== null) {
 			extStorage.sync.getItem("-tfgs-", function(ret) {
 				data = ret["-tfgs-"];
-				saveload_load2();
+				load2();
 			});
 		} else {
 			load2();
@@ -119,6 +125,7 @@ tfgs.data.load = function() {
 
 			// }
 			if (data === null && "localStorage" in window) {
+				// 不行的话，就用localStorage
 				data = localStorage.getItem("-tfgs-");
 			}
 			resolve(data);
@@ -126,8 +133,11 @@ tfgs.data.load = function() {
 	}).then(tfgs.data.setjson);
 };
 
+/* 异步保存拓展数据,返回Promise */
+/* 浏览器拓展存储 和 localStorage */
 tfgs.data.save = function() {
 	return new Promise(function(resolve, reject) {
+		// 尝试浏览器拓展的存档功能 (chrome.storage, browser.storage)
 		let extStorage = null;
 		if ("chrome" in window && "storage" in chrome) {
 			extStorage = chrome.storage;
@@ -138,16 +148,17 @@ tfgs.data.save = function() {
 			extStorage.sync.setItem({
 				"-tfgs-": tfgs.data.getjson()
 			}, function(ret) {
-				saveload_save2();
+				save2();
 			});
 		} else {
-			saveload_save2();
+			save2();
 		}
 
-		function saveload_save2() {
+		function save2() {
 			// if ("indexedDB"in window) {
 
 			// }
+			// 尝试localStorage
 			if ("localStorage" in window) {
 				localStorage.setItem("-tfgs-", tfgs.data.getjson());
 			}
@@ -156,6 +167,7 @@ tfgs.data.save = function() {
 	});
 };
 
+/* 加载数据文件 */
 tfgs.data.import = function() {
 	return new Promise(function(resolve, reject) {
 		let a = document.createElement("input");
@@ -173,6 +185,7 @@ tfgs.data.import = function() {
 	}).then(tfgs.data.setjson).then(tfgs.data.save).then(tfgs.menu.load);
 };
 
+/* 保存数据文件 */
 tfgs.data.export = function() {
 	let data = tfgs.data.getjson();
 	return new Promise(function(resolve, reject) {
@@ -184,6 +197,7 @@ tfgs.data.export = function() {
 	});
 };
 
+/* 弹窗编辑 */
 tfgs.data.edit = function() {
 	return tfgs.funcapi.prompt("-tfgs-", "编辑配置文本", tfgs.data.getjson())
 		.then(function(newdata) {
