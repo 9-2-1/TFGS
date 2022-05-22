@@ -31,8 +31,7 @@ try {
 let allinonemin = allinone;
 
 let flist = [];
-flist = flist.concat(lsSync("tfgsmenu/"));
-flist = flist.concat(lsSync("funcapis/"));
+flist = flist.concat(lsSync("tfgs/"));
 flist = flist.concat(lsSync("functions/"));
 let allcssmin = "";
 
