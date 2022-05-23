@@ -130,7 +130,20 @@ tfgs.window.create = function(options) {
 			windowDiv.style.top = y + "px";
 			frameinscreen(windowDiv);
 		},
-		onEnd: function(mode, event) {}
+		onEnd: function(mode, event) {
+			/* Edit the title when click on the title bar */
+			if (mode === "click") {
+				let newInput = element("input", "tfgsNewInput", "text");
+				newInput.value = windowDiv.children[0].children[1].innerText;
+				windowDiv.children[0].children[1].innerHTML = "";
+				windowDiv.children[0].children[1].appendChild(newInput);
+				newInput.focus();
+				newInput.addEventListener("blur", function() {
+					newInput.remove();
+					windowDiv.children[0].children[1].innerText = newInput.value;
+				});
+			}
+		}
 	});
 
 	tfgs.drag.setdrag(windowDiv.children[2], {
