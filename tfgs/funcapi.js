@@ -2,26 +2,31 @@ tfgs.funcapi = {};
 
 // 以下name指拓展id
 
-/* debug */
+/* ---------- debug ---------- */
 tfgs.funcapi.log = function(name, log) {
+	console.log(name, log);
 	tfgs.log.add(name, "#000000", log);
 };
 
 tfgs.funcapi.warn = function(name, log) {
+	console.warn(name, log);
 	tfgs.log.add(name, "#808000", log);
 };
 
 /* try{...}catch(e){api.onerror(e);} */
 /* async(...).then(...).catch(api.onerror); */
 tfgs.funcapi.onerror = function(name, err) {
+	console.error(name, err);
 	tfgs.log.add(name, "#E00000", err.message);
 };
 
 tfgs.funcapi.error = function(name, log) {
+	console.error(name, log);
 	tfgs.log.add(name, "#E00000", log);
 };
 
 tfgs.funcapi.info = function(name, log) {
+	console.info(name, log);
 	tfgs.log.add(name, "#2020F0", log);
 };
 
@@ -30,7 +35,7 @@ tfgs.funcapi.info = function(name, log) {
 	return tfgs.data.load();
 }; */
 
-/* 数据处理 */
+/* ---------- 数据处理 ---------- */
 
 /* 读取设置 */
 tfgs.funcapi.getoption = function(name) {
@@ -48,7 +53,8 @@ tfgs.funcapi.setdata = function(name, data) {
 	return tfgs.data.save();
 };
 
-/* 弹窗交互，返回Promise */
+/* ---------- 弹窗交互，返回Promise ---------- */
+
 tfgs.funcapi.alert = function(name, text) {
 	return new Promise(function(resolve, reject) {
 		alert(text);
@@ -68,7 +74,8 @@ tfgs.funcapi.prompt = function(name, text, defau) {
 	});
 };
 
-/* 为指定name的拓展定制api对象 */
+/* ---------- 为指定name的拓展定制api对象 ---------- */
+
 tfgs.funcapi._getapi = function(name) {
 	let objapi = {};
 	for (let i in tfgs.funcapi) {
