@@ -5,9 +5,16 @@
 	<link rel="stylesheet" href="../tfgs/log.css" />
 	<link rel="stylesheet" href="../tfgs/menu.css" />
 	<link rel="stylesheet" href="../tfgs/button.css" />
+	<link rel="stylesheet" href="../tfgs/window.css" />
 </head>
 
 <body>
+	<script>
+		window.onerror = function() {
+			alert(Array.apply(Array, arguments).toString());
+		};
+
+	</script>
 	<script>
 		let tfgs = {};
 
@@ -18,6 +25,8 @@
 	<script src="../tfgs/log.js"></script>
 	<script src="../tfgs/button.js"></script>
 	<script src="../tfgs/menu.js"></script>
+	<script src="../tfgs/drag.js"></script>
+	<script src="../tfgs/window.js"></script>
 	<script src="../tfgs/funcapi.js"></script>
 	<script src="menu.js"></script>
 </body>
