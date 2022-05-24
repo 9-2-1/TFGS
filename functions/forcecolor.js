@@ -2,6 +2,7 @@
 	let api = null;
 	let interval = -1;
 	let shown = false;
+	let winob = null;
 
 	function getReactInternel(elem) {
 		let keys = Object.keys(elem);
@@ -66,20 +67,25 @@
 	}
 
 	function showwindow(id) {
-		if (shown) return;
-		let win = document.createElement("div");
+		if (winob !== null) return;
+		winob = tfgs.window.create({
+			title: "forceColor",
+			canClose: false,
+			canMaximize: false,
+			minHeight: 100,
+			minWidth: 80,
+			width: 80,
+			height: 100
+		});
+		let win = winob.innerDiv;
 		win.innerHTML = `
-<div class="tfgsForcecolorWindow">
-	<input type="text" value="0"></input><br/>
-	<input type="text" value="#00ff00"></input><br/>
-	<input type="text" value="#ff0000"></input><br/>
-	<input type="text" value="SOLID"></input><br/>
-	<input type="button" value="PUSH"></input>
-</div>
+<input type="text" value="0"></input><br/>
+<input type="text" value="#00ff00"></input><br/>
+<input type="text" value="#ff0000"></input><br/>
+<input type="text" value="SOLID"></input><br/>
+<input type="button" value="PUSH"></input>
 `;
-		document.body.appendChild(win);
-		win.style = "position:fixed;height:100px;width:100px;left:50px;top:50px;overflow:scroll;background:green;z-index:200000;";
-		let ins = win.children[0].children;
+		let ins = win.children;
 		ins[8].addEventListener("click", function() {
 			try {
 				forcesetcolor(Number(ins[0].value), {
@@ -99,7 +105,10 @@
 	}
 
 	function stopscan() {
-
+		if (winob !== null) {
+			winob.close();
+			winob = null
+		}
 	}
 
 	tfgs.func.add({
@@ -117,5 +126,5 @@
 			stopscan();
 		},
 		onoption: function() {}
-	})
+	});
 }();
