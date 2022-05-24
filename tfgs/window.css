@@ -8,6 +8,10 @@
 	box-sizing: border-box;
 }
 
+.tfgsWindow * {
+	box-sizing: content-box;
+}
+
 .tfgsWindowTitle {
 	background: #08f;
 	display: flex;
@@ -54,6 +58,7 @@
 .tfgsWindowContent {
 	height: calc(100% - 20px - 2px);
 	overflow: auto;
+	position: relative;
 }
 
 .tfgsWindowResize {

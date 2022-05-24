@@ -1,5 +1,7 @@
 tfgs.window = {};
 
+tfgs.window.zIndex = 1e6;
+
 tfgs.window.create = function(options) {
 	let windowobj = {
 		/* elements */
@@ -9,22 +11,15 @@ tfgs.window.create = function(options) {
 		resizeDiv: null,
 
 		/* position */
-		x: 0,
-		y: 0,
+		x: NaN,
+		y: NaN,
 		width: 400,
 		height: 300,
 		minHeight: 0,
-		minWidth: 100,
+		minWidth: 100, // 正常模式最小宽度
+		minimizeWidth: 100, // 最小化时的宽度
 
-		/* status */
-		isMinimize: false,
-		isMaximize: false,
-		posRestore: {
-			x: 0,
-			y: 0,
-			width: 400,
-			height: 300
-		},
+		/* settings */
 		title: "",
 
 		/* options */
@@ -38,6 +33,11 @@ tfgs.window.create = function(options) {
 		onClose: function() {},
 		onResize: function() {},
 		onMove: function() {},
+
+		/* status */
+		isMinimize: false,
+		isMaximize: false,
+		posRestore: {},
 
 		/* functions */
 		_rememberPos: function() {
@@ -65,24 +65,26 @@ tfgs.window.create = function(options) {
 			this.onMove();
 		},
 		restore: function() {
-			this.isMinimize = false;
-			this.isMaximize = false;
-			this.x = this.posRestore.x;
-			this.y = this.posRestore.y;
+			if (this.isMaximize) {
+				this.x = this.posRestore.x;
+				this.y = this.posRestore.y;
+			}
 			this.width = this.posRestore.width;
 			this.height = this.posRestore.height;
+			this.isMinimize = false;
+			this.isMaximize = false;
 			this._refresh();
 			this.onResize();
 			this.onMove();
 		},
 		movetotop: function() {
-			this.windowDiv.remove();
-			document.body.appendChild(this.windowDiv);
+			this.windowDiv.style.zIndex = ++tfgs.window.zIndex;
 		},
 		close: function() {
 			if (this.onClose() === false) return;
 			this.windowDiv.remove();
 			this.windowDiv = null;
+			window.removeEventListener("resize", windowDiv._resizeCallback);
 		},
 		resize: function(w, h) {
 			if (w === this.width && h === this.height) return;
@@ -114,7 +116,7 @@ tfgs.window.create = function(options) {
 					w = this.width,
 					h = this.height;
 				if (this.isMinimize) {
-					w = mX;
+					w = this.minimizeWidth + 6;
 					h = 26;
 				} else {
 					if (w < mX) w = mX;
@@ -125,6 +127,8 @@ tfgs.window.create = function(options) {
 
 				let X = x + w,
 					Y = y + h;
+				if (isNaN(x)) x = Math.floor(Math.random() * (sX - w));
+				if (isNaN(y)) y = Math.floor(Math.random() * (sY - h));
 				if (x < 0) x = 0;
 				if (y < 0) y = 0;
 				if (X > sX) x -= X - sX;
@@ -175,11 +179,14 @@ tfgs.window.create = function(options) {
 <div class="tfgsWindowResize"></div>
 `;
 	document.body.appendChild(windowDiv);
+	windowDiv.style.zIndex = ++tfgs.window.zIndex;
 
-	window.addEventListener("resize", function() {
+	windowDiv._resizeCallback = function() {
 		windowobj._refresh();
 		windowobj.onResize();
-	});
+	};
+
+	window.addEventListener("resize", windowDiv._resizeCallback);
 
 	let titleDiv = windowDiv.children[0];
 	let innerDiv = windowDiv.children[1];
