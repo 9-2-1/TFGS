@@ -23,6 +23,7 @@ tfgs.window.create = function(options) {
 		title: "",
 
 		/* options */
+		haveLogo: true,
 		canMinimize: true,
 		canMaximize: true,
 		canClose: true,
@@ -147,7 +148,7 @@ tfgs.window.create = function(options) {
 			styl.height = this.height + "px";
 
 			showhide(this.titleDiv.children[0],
-				!this.isMinimize);
+				!this.isMinimize && this.haveLogo);
 			this.titleDiv.children[1].innerText = this.title;
 			showhide(this.titleDiv.children[2],
 				!this.isMinimize && this.canMinimize);

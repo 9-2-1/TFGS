@@ -70,8 +70,10 @@
 		if (winob !== null) return;
 		winob = tfgs.window.create({
 			title: "forceColor",
+			haveLogo: false,
 			canClose: false,
 			canMaximize: false,
+			canMinimize: false,
 			minHeight: 100,
 			minWidth: 80,
 			width: 80,
