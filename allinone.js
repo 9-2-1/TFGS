@@ -39,7 +39,7 @@ for (let i in flist) {
 	let fname = flist[i];
 	let ext = /(?:\.(.*))?$/.exec(fname)[1];
 	switch (ext) {
-		case "js":
+		case "js": {
 			let content = `/* ${fname} */
 ${fs.readFileSync(fname).toString()}
 
@@ -47,7 +47,8 @@ ${fs.readFileSync(fname).toString()}
 			allinone += content;
 			allinonemin += content;
 			break;
-		case "css":
+		}
+		case "css": {
 			let text = fs.readFileSync(fname).toString();
 			text = text.replace(/\\/g, "\\\\")
 				.replace(/\$/g, "\\$$")
@@ -58,6 +59,7 @@ _tfgsAddCSS(\`${text}\`);
 `;
 			allcssmin += text;
 			break;
+		}
 	}
 }
 

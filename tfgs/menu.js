@@ -194,7 +194,7 @@ tfgs.menu.create = function() {
 			}
 			fl.option[oname] = inp;
 
-			fopdiv1 = element("span", "tfgsMenuFuncOptionOne");
+			let fopdiv1 = element("span", "tfgsMenuFuncOptionOne");
 
 			fopdiv1.appendChild(lab);
 			fopdiv1.appendChild(inp);
@@ -230,7 +230,7 @@ tfgs.menu._json = function() {
 	for (let fname in flist) {
 		let f = flist[fname];
 		let m = mlist[fname];
-		d = json[fname] = {};
+		let d = json[fname] = {};
 		d.enable = m.enable.checked;
 		d.option = {};
 		let olist = f.option;
@@ -260,7 +260,6 @@ tfgs.menu._json = function() {
 };
 
 tfgs.menu.load = function() {
-	let json = tfgs.data.getjson();
 	let flist = tfgs.func.list;
 	let dlist = tfgs.data.list;
 	let mlist = tfgs.menu.list;

@@ -15,7 +15,7 @@ let gradients = ["SOLID", "VERTICAL", "HORIZONAL", "RADIAL"];
 
 function unnull(x) {
 	return x === null ? "transparent" : x;
-};
+}
 
 function CSS2RGBA(color) {
 	if (color === null) return [0, 0, 0, 0];
@@ -160,7 +160,7 @@ function HSBA2HMMA(hsba) {
 		b = hsba[2],
 		a = hsba[3] / 100;
 	h -= Math.floor(h / 360) * 360;
-	let min, max, delta;
+	let min, max;
 	min = (1 - s / 100) * b;
 	max = b;
 	return [h, min / 100, max / 100, a];
@@ -572,7 +572,7 @@ try {
 	});
 	let colI = selele("tfgsForcecolorInput").children;
 
-	function wheninput(event) {
+	let wheninput = function(event) {
 		setTimeout(function() {
 			let set = [];
 			for (let i = 1; i < 5; i++)
@@ -598,12 +598,12 @@ try {
 		}, 10);
 	}
 
-	function whenenter(event) {
+	let whenenter = function(event) {
 		if (event.keyCode === 13)
 			wheninput2();
 	}
 
-	function wheninput2() {
+	let wheninput2 = function() {
 		setTimeout(function() {
 			let rgba = CSS2RGBA(colI[6].value);
 			editColor = RGBA2HSBA(rgba).concat(rgba[3]);
@@ -611,7 +611,7 @@ try {
 		}, 10);
 	}
 
-	function whenchange() {
+	let whenchange = function() {
 		refreshWindow();
 	}
 

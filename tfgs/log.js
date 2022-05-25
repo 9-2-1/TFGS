@@ -61,7 +61,7 @@ tfgs.log.display = function(div, fliter) {
 	}
 };
 
-tfgs.log.create = function() {
+tfgs.log.create = function(x, y) {
 	try {
 		if (tfgs.log.dispIntv !== null) {
 			tfgs.log.logwin.movetotop();

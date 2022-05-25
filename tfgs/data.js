@@ -39,7 +39,7 @@ function object_format(obj, format) {
 				let fmtobj = [];
 				for (let x in obj) {
 					fmtobj[x] = obj[x];
-				};
+				}
 				return fmtobj;
 			}
 			case "array!":
@@ -53,7 +53,7 @@ function object_format(obj, format) {
 				let fmtobj = {};
 				for (let x in obj) {
 					fmtobj[x] = obj[x];
-				};
+				}
 				return fmtobj;
 			}
 			case "object!":
@@ -66,7 +66,7 @@ function object_format(obj, format) {
 				return obj;
 		}
 	}
-};
+}
 
 tfgs.data = {};
 

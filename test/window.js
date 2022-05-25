@@ -1,4 +1,4 @@
-tfgswindow = tfgs.window.create({
+let tfgswindow = tfgs.window.create({
 	title: "example",
 	canMaximize: true,
 	canMinimize: true,

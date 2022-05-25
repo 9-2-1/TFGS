@@ -1,7 +1,6 @@
 ! function() {
 	let api = null;
 	let interval = -1;
-	let shown = false;
 	let winob = null;
 
 	function getReactInternel(elem) {
@@ -66,7 +65,7 @@
 		return document.querySelector(`[class^=${namebegin}],[class*= ${namebegin}]`);
 	}
 
-	function showwindow(id) {
+	function showwindow() {
 		if (winob !== null) return;
 		winob = tfgs.window.create({
 			title: "forceColor",
@@ -126,7 +125,7 @@
 			if (interval !== -1) {
 				clearInterval(interval);
 				interval = -1;
-			};
+			}
 			stopscan();
 		},
 		onoption: function() {}

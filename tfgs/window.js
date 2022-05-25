@@ -304,7 +304,3 @@ tfgs.window.create = function(options) {
 function showhide(x, show) {
 	x.style.display = show ? "inherit" : "none";
 }
-
-function cssnum(x) {
-	return Number(/[-.\d]*(?:e[+-]?\d+)?/.exec(x)[0]);
-}

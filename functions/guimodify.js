@@ -15,7 +15,7 @@
 			if (namebegin === csslist[i].slice(0, namebegin.length))
 				return csslist[i];
 		return null;
-	};
+	}
 
 	function selectElement(namebegin) {
 		return document.querySelector(`[class^=${namebegin}],[class*= ${namebegin}]`);
@@ -165,7 +165,7 @@
 				}
 			});
 
-			function _fullscreenchange() {
+			let _fullscreenchange = function() {
 				let button = pbutton["fullscreen"];
 				if ((document.fullscreenElement === null) !==
 					(button.innerText === "✠"))
