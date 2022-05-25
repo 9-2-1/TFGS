@@ -4,7 +4,6 @@ tfgs.func.add({
 	name: "window f___",
 	onenable: function(_api) {
 		windowf___ = [];
-		api = _api;
 		windowf___.push(tfgs.window.create({
 			title: "Grow",
 			canMaximize: false,

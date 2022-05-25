@@ -100,7 +100,6 @@
 				api.onerror(e);
 			}
 		});
-		shown = true;
 	}
 
 	function scanner() {
