@@ -112,8 +112,10 @@ allinonemin = res.code;
 
 fs.writeFileSync("allinone/TFGS.min.js", allinonemin);
 fs.writeFileSync("allinone/TFGS.txt", "avascript:" + allinonemin.replace(/\n/g, "\\n"));
-fs.writeFileSync("allinone/TFGS.htm", `<html>
+fs.writeFileSync("allinone/TFGS.html", `<!doctype HTML>
+<html>
 	<head>
+		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
 		<title>TFGS 拓展使用方法</title>
 		<style>
