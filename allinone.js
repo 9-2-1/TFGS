@@ -12,6 +12,8 @@ function randomkey(num) {
 let tfgskey = JSON.stringify("__TFGS$" + randomkey(10));
 
 let allinone = `/* (allinone.js) */
+let tfgs = {};
+
 try {
 	if (${tfgskey} in window) {
 		throw new Error("TFGS 已经安装");
@@ -28,30 +30,16 @@ try {
 
 let allinonemin = allinone;
 
-let flist = [
-	"inspect.js",
-	"object_format.js",
-	"main.js",
-	"data.js",
-	"func.js",
-	"funcapi.js",
-	"log.js",
-	"log.css",
-	"button.js",
-	"button.css",
-	"menu.js",
-	"menu.css"
-];
-
+let flist = [];
+flist = flist.concat(lsSync("tfgs/"));
 flist = flist.concat(lsSync("functions/"));
 let allcssmin = "";
 
 for (let i in flist) {
 	let fname = flist[i];
-	if (fname === "allinone.js") continue;
 	let ext = /(?:\.(.*))?$/.exec(fname)[1];
 	switch (ext) {
-		case "js":
+		case "js": {
 			let content = `/* ${fname} */
 ${fs.readFileSync(fname).toString()}
 
@@ -59,7 +47,8 @@ ${fs.readFileSync(fname).toString()}
 			allinone += content;
 			allinonemin += content;
 			break;
-		case "css":
+		}
+		case "css": {
 			let text = fs.readFileSync(fname).toString();
 			text = text.replace(/\\/g, "\\\\")
 				.replace(/\$/g, "\\$$")
@@ -70,6 +59,7 @@ _tfgsAddCSS(\`${text}\`);
 `;
 			allcssmin += text;
 			break;
+		}
 	}
 }
 
@@ -124,6 +114,7 @@ fs.writeFileSync("allinone/TFGS.min.js", allinonemin);
 fs.writeFileSync("allinone/TFGS.txt", "avascript:" + allinonemin.replace(/\n/g, "\\n"));
 fs.writeFileSync("allinone/TFGS.htm", `<html>
 	<head>
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
 		<title>TFGS 拓展使用方法</title>
 		<style>
 			textarea {

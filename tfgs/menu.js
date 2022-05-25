@@ -1,6 +1,6 @@
 tfgs.menu = {};
 
-tfgs.menu.menudiv = null;
+tfgs.menu.menuwin = null;
 
 tfgs.menu.modi = false;
 
@@ -26,12 +26,16 @@ tfgs.menu.setmodi = function(modi) {
 			}
 			buttons[i].classList[modi === flip ? "add" : "remove"]("tfgsDisable");
 		}
+		tfgs.menu.menuwin.title = modi ? "TFGS 选项 (未保存)" : "TFGS 选项";
+		tfgs.menu.menuwin.canMinimize = !modi;
+		tfgs.menu.menuwin._refresh();
 		tfgs.menu.modi = modi;
 	}
 };
 
 tfgs.menu.create = function() {
-	if (tfgs.menu.menudiv !== null) return;
+	if (tfgs.menu.menuwin !== null)
+		return;
 	let element = function(tagName, className, type) {
 		let ele = document.createElement(tagName);
 		if (className !== undefined) ele.className = className;
@@ -39,41 +43,50 @@ tfgs.menu.create = function() {
 		if (type !== undefined) ele.type = type;
 		return ele;
 	};
-	let menudiv = element("div", "tfgsMenuBackgr");
+	let menuwin = tfgs.window.create({
+		title: "TFGS选项",
+		canMinimize: true,
+		canClose: false,
+		x: 50,
+		y: 50,
+		width: 250,
+		height: 250,
+		minWidth: 200,
+		minHeight: 100,
+		minimizeWidth: 100
+	});
+	menuwin.minimize();
+	let menudiv = menuwin.innerDiv;
 	menudiv.innerHTML = `
-<div class="tfgsMenuWindow">
-	<div class="tfgsMenuContent">
-		<!--<span class="tfgsMenuFuncSelect">Test</span>
-		<span class="tfgsMenuFuncSelect">Test</span>
-		<span class="tfgsMenuFuncSelect">Test</span>
-		<span class="tfgsMenuFuncSelect">Test</span>
-		<span class="tfgsMenuFuncSelect">Test</span>
-		<span class="tfgsMenuFuncSelect">Test</span>
-		<span class="tfgsMenuFuncSelect">Test</span>
-		<span class="tfgsMenuFuncSelect">Test</span>-->
-	</div>
-	<div class="tfgsMenuButtons">
-		<span class="tfgsButton">导出</span>
-		<span class="tfgsButton">导入</span>
-		<span class="tfgsButton tfgsDisable">编辑文本</span>
-		<span class="tfgsButton">显示日志</span>
-		<span class="tfgsButton tfgsRight">关闭</span>
-		<span class="tfgsButton tfgsRight tfgsDisable">取消更改</span>
-		<span class="tfgsButton tfgsRight tfgsDisable">保存更改</span>
-	</div>
+<div class="tfgsMenuContent">
+	<!--<span class="tfgsMenuFuncSelect">Test</span>
+	<span class="tfgsMenuFuncSelect">Test</span>
+	<span class="tfgsMenuFuncSelect">Test</span>
+	<span class="tfgsMenuFuncSelect">Test</span>
+	<span class="tfgsMenuFuncSelect">Test</span>
+	<span class="tfgsMenuFuncSelect">Test</span>
+	<span class="tfgsMenuFuncSelect">Test</span>
+	<span class="tfgsMenuFuncSelect">Test</span>-->
+</div>
+<div class="tfgsMenuButtons">
+	<span class="tfgsButton">导出</span>
+	<span class="tfgsButton">导入</span>
+	<span class="tfgsButton tfgsDisable">编辑文本</span>
+	<span class="tfgsButton tfgsRight">显示日志</span>
+	<span class="tfgsButton tfgsRight tfgsDisable">取消更改</span>
+	<span class="tfgsButton tfgsDisable">保存更改</span>
 </div>
 `;
-	let contentdiv = tfgs.menu.contentdiv = menudiv.children[0].children[0];
-	let buttondiv = tfgs.menu.buttondiv = menudiv.children[0].children[1];
+	let contentdiv = tfgs.menu.contentdiv = menudiv.children[0];
+	let buttondiv = tfgs.menu.buttondiv = menudiv.children[1];
 	let buttons = tfgs.menu.buttons = {};
 
 	buttons.export = buttondiv.children[0];
 	buttons.import = buttondiv.children[1];
 	buttons.edit = buttondiv.children[2];
 	buttons.log = buttondiv.children[3];
-	buttons.close = buttondiv.children[4];
-	buttons.cancel = buttondiv.children[5];
-	buttons.save = buttondiv.children[6];
+	buttons.cancel = buttondiv.children[4];
+	buttons.save = buttondiv.children[5];
 
 	buttons.export.addEventListener("click", function() {
 		if (!tfgs.menu.modi) tfgs.data.export();
@@ -89,9 +102,17 @@ tfgs.menu.create = function() {
 		if (!tfgs.menu.modi)
 			tfgs.log.create();
 	});
-	buttons.close.addEventListener("click", function() {
-		if (!tfgs.menu.modi) tfgs.menu.delete();
-	});
+	let _menumin = false;
+	menuwin.onResize = function() {
+		if (_menumin !== menuwin.isMinimize) {
+			if (menuwin.isMinimize) {
+				if (tfgs.menu.modi) menuwin.restore();
+			} else {
+				tfgs.menu.load();
+			}
+			_menumin = menuwin.isMinimize;
+		}
+	};
 	buttons.save.addEventListener("click", function() {
 		if (tfgs.menu.modi) {
 			try {
@@ -173,7 +194,7 @@ tfgs.menu.create = function() {
 			}
 			fl.option[oname] = inp;
 
-			fopdiv1 = element("span", "tfgsMenuFuncOptionOne");
+			let fopdiv1 = element("span", "tfgsMenuFuncOptionOne");
 
 			fopdiv1.appendChild(lab);
 			fopdiv1.appendChild(inp);
@@ -192,8 +213,7 @@ tfgs.menu.create = function() {
 		contentdiv.appendChild(funcdiv);
 	}
 
-	document.body.appendChild(menudiv);
-	tfgs.menu.menudiv = menudiv;
+	tfgs.menu.menuwin = menuwin;
 
 	tfgs.menu.load();
 }
@@ -210,7 +230,7 @@ tfgs.menu._json = function() {
 	for (let fname in flist) {
 		let f = flist[fname];
 		let m = mlist[fname];
-		d = json[fname] = {};
+		let d = json[fname] = {};
 		d.enable = m.enable.checked;
 		d.option = {};
 		let olist = f.option;
@@ -240,7 +260,6 @@ tfgs.menu._json = function() {
 };
 
 tfgs.menu.load = function() {
-	let json = tfgs.data.getjson();
 	let flist = tfgs.func.list;
 	let dlist = tfgs.data.list;
 	let mlist = tfgs.menu.list;
@@ -276,6 +295,7 @@ tfgs.menu.load = function() {
 };
 
 tfgs.menu.delete = function() {
-	tfgs.menu.menudiv.remove();
-	tfgs.menu.menudiv = null;
+	tfgs.menu.menuwin.canClose = true;
+	tfgs.menu.menuwin.close();
+	tfgs.menu.menuwin = null;
 };

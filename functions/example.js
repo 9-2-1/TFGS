@@ -10,8 +10,11 @@ tfgs.func.add({
 		"title": { // 选项变量名
 			"type": "text", // 选项类型，text 文字，number数字，check 复选框(开关)，select 选项列表
 			"name": "窗口标题", // 选项旁边的文字
-			"info": "不可超过 16 个字", // 选项说明(可选)
 			"maxlength": 16, // 设定文本最大长度
+			// "max": 9, // 数字最大值
+			// "min": 1, // 数字最小值
+			// "menu": ["a", "b", "c"], // 选项列表
+			// "value": [1, 2, 3], // 选项对应的数值
 			"default": "示例标题" // 默认值
 		}
 		// 可以添加更多内容
@@ -23,6 +26,7 @@ tfgs.func.add({
 	ondisable: function(api) {
 		document.title = oldtitle;
 	},
+	// onoption 只有在功能启用时改选项才触发
 	onoption: function(api) {
 		document.title = api.getoption().title;
 	}
