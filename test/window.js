@@ -26,21 +26,16 @@ let tfgswindow = tfgs.window.create({
 });
 
 /*
-tfgswindow.appendChild();
-tfgswindow.removeChild();
-tfgswindow.children;
-tfgswindow.childNodes;
-tfgswindow.childElements;
-tfgswindow.title; // Element
+tfgswindow.title = "ABCDEFG";
+tfgswindow.canMaximize = false;
+tfgswindow._refresh();
+
+tfgswindow.titleDiv; // Element
 
 tfgswindow.close();
-tfgswindow.maximum();
-tfgswindow.minimum();
-tfgswindow.move();
-tfgswindow.resize();
+tfgswindow.maximize();
+tfgswindow.minimize();
+tfgswindow.move(x, y);
+tfgswindow.resize(width, height);
 
-tfgswindow.hide();
-tfgswindow.show();
-
-// onclose onresize onzoom onminimum onmaximum
-// */
+*/
