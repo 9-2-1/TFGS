@@ -65,10 +65,13 @@ tfgs.log.create = function() {
 	try {
 		if (tfgs.log.dispIntv !== null) {
 			tfgs.log.logwin.movetotop();
+			tfgs.log.logwin.flash(100, 3, false);
 			return;
 		}
 		let logwin = tfgs.log.logwin = tfgs.window.create({
 			title: "日志",
+			x: typeof x === "number" ? x : 20,
+			y: typeof y === "number" ? y : 20,
 			width: 200,
 			height: 200,
 			minWidth: 100,

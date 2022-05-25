@@ -39,6 +39,8 @@ tfgs.window.create = function(options) {
 		isMinimize: false,
 		isMaximize: false,
 		posRestore: {},
+		flashMode: {},
+		flashTimer: -1,
 
 		/* functions */
 		_rememberPos: function() {
@@ -100,6 +102,32 @@ tfgs.window.create = function(options) {
 			this.y = y;
 			this._refresh();
 			this.onMove();
+		},
+		flash: function(time, count, stay) {
+			if (this.flashTimer !== -1) {
+				clearInterval(this.flashTimer);
+				// this.flashTimer=-1;
+			}
+			this.windowDiv.classList.add("tfgsEmergency");
+			let flash = true;
+			let that = this;
+			this.flashTimer = setInterval(function() {
+				if (count > 0) {
+					if (!flash) {
+						that.windowDiv.classList.add("tfgsEmergency");
+						flash = true;
+					} else {
+						that.windowDiv.classList.remove("tfgsEmergency");
+						flash = false;
+						count--;
+					}
+				} else {
+					if (stay)
+						that.windowDiv.classList.add("tfgsEmergency");
+					clearInterval(that.flashTimer);
+					that.flashTimer = -1;
+				}
+			}, time);
 		},
 		_refresh: function() {
 			let sX = window.innerWidth,
@@ -234,8 +262,15 @@ tfgs.window.create = function(options) {
 				windowobj.move(x, y);
 		},
 		onEnd: function(mode, event) {
-			if (windowobj.isMinimize && mode === "click")
-				windowobj.restore();
+			if (mode === "click") {
+				if (windowobj.isMinimize)
+					windowobj.restore();
+				if (windowobj.flashTimer !== -1) {
+					windowobj.windowDiv.classList.remove("tfgsEmergency");
+					clearInterval(windowobj.flashTimer);
+					windowobj.flashTimer = -1;
+				}
+			}
 		}
 	};
 
@@ -261,6 +296,7 @@ tfgs.window.create = function(options) {
 	windowobj.resizeDiv = resizeDiv;
 
 	windowobj._refresh();
+	windowobj.flash(300, 1, false);
 
 	return windowobj;
 };

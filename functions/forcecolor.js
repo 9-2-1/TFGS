@@ -74,10 +74,12 @@
 			canClose: false,
 			canMaximize: false,
 			canMinimize: false,
-			minHeight: 100,
+			x: 100,
+			y: 80,
+			minHeight: 120,
 			minWidth: 80,
 			width: 80,
-			height: 100
+			height: 120
 		});
 		let win = winob.innerDiv;
 		win.innerHTML = `

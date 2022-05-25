@@ -1,8 +1,13 @@
+.tfgsWindow.tfgsEmergency {
+	--tfgsWindowColor: #f80;
+}
+
 .tfgsWindow {
+	--tfgsWindowColor: #08f;
 	box-shadow: 0px 0px 2px black;
 	position: fixed;
 	background: white;
-	border: 3px solid #08f;
+	border: 3px solid var(--tfgsWindowColor);
 	border-radius: 3px;
 	overflow: hidden;
 	box-sizing: border-box;
@@ -13,12 +18,12 @@
 }
 
 .tfgsWindowTitle {
-	background: #08f;
+	background: var(--tfgsWindowColor);
 	display: flex;
 	display: -webkit-flex;
 	flex-flow: row nowrap;
 	align-items: center;
-	border-bottom: 2px solid #08f;
+	border-bottom: 3px solid var(--tfgsWindowColor);
 	color: white;
 	font-family: sans-serif;
 	font-size: 16px;
@@ -68,7 +73,7 @@
 	width: 0;
 	height: 0;
 	border-left: 15px solid transparent;
-	border-bottom: 15px solid #08f;
+	border-bottom: 15px solid var(--tfgsWindowColor);
 	cursor: se-resize;
 }
 
