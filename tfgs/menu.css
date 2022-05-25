@@ -7,7 +7,7 @@
 
 .tfgsMenuButtons {
 	height: 30px;
-	background: #08f;
+	background: var(--tfgsWindowColor);
 }
 
 .tfgsMenuFunc {
