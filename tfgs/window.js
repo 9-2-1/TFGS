@@ -39,7 +39,7 @@ tfgs.window.create = function(options) {
 		isMinimize: false,
 		isMaximize: false,
 		posRestore: {},
-		flashMode: {},
+		flashMode: false,
 		flashTimer: -1,
 
 		/* functions */
@@ -82,6 +82,14 @@ tfgs.window.create = function(options) {
 		},
 		movetotop: function() {
 			this.windowDiv.style.zIndex = ++tfgs.window.zIndex;
+			if (this.flashMode) {
+				this.windowDiv.classList.remove("tfgsEmergency");
+				this.flashMode = false;
+			}
+			if (this.flashTimer !== -1) {
+				clearInterval(this.flashTimer);
+				this.flashTimer = -1;
+			}
 		},
 		close: function() {
 			if (this.onClose() === false) return;
@@ -122,11 +130,14 @@ tfgs.window.create = function(options) {
 						count--;
 					}
 				} else {
-					if (stay)
+					if (stay) {
 						that.windowDiv.classList.add("tfgsEmergency");
+						flash = true;
+					}
 					clearInterval(that.flashTimer);
 					that.flashTimer = -1;
 				}
+				that.flashMode = flash;
 			}, time);
 		},
 		_refresh: function() {
@@ -265,11 +276,6 @@ tfgs.window.create = function(options) {
 			if (mode === "click") {
 				if (windowobj.isMinimize)
 					windowobj.restore();
-				if (windowobj.flashTimer !== -1) {
-					windowobj.windowDiv.classList.remove("tfgsEmergency");
-					clearInterval(windowobj.flashTimer);
-					windowobj.flashTimer = -1;
-				}
 			}
 		}
 	};

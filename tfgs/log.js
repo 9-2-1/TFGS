@@ -40,6 +40,7 @@ tfgs.log.displayInterval = function(div, fliter) {
 		if (tfgs.log.changed) {
 			div.innerHTML = "";
 			tfgs.log.display(div, fliter);
+			tfgs.log.logwin.flash(500, 3, true);
 			tfgs.log.changed = false;
 		}
 		div.scrollX = x;
@@ -65,7 +66,7 @@ tfgs.log.create = function(x, y) {
 	try {
 		if (tfgs.log.dispIntv !== null) {
 			tfgs.log.logwin.movetotop();
-			tfgs.log.logwin.flash(100, 3, false);
+			tfgs.log.logwin.flash(200, 3, false);
 			return;
 		}
 		let logwin = tfgs.log.logwin = tfgs.window.create({
