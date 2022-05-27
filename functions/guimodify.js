@@ -6,21 +6,6 @@
 	let foption = {};
 	let _fullscreen = false;
 
-	function selectClass(namebegin) {
-		let csslist = selectElement(namebegin);
-		if (csslist === null)
-			return null;
-		csslist = csslist.classList;
-		for (let i in csslist)
-			if (namebegin === csslist[i].slice(0, namebegin.length))
-				return csslist[i];
-		return null;
-	}
-
-	function selectElement(namebegin) {
-		return document.querySelector(`[class^=${namebegin}],[class*= ${namebegin}]`);
-	}
-
 	function configButton(options) {
 		let buttonid = options.buttonid;
 		let enable = options.enable;
@@ -34,7 +19,7 @@
 		if (enable /*foption.foldmenu*/ ) {
 			/* ------ on ------ */
 			if (pbutton[buttonid] !== undefined) {
-				let target = selectElement(targetcss);
+				let target = api.selele(targetcss);
 				if (pbutton[buttonid].parentElement !== target) {
 					pbutton[buttonid].remove();
 					pbutton[buttonid] = undefined;
@@ -46,14 +31,14 @@
 				}
 			}
 			if (pbutton[buttonid] === undefined) {
-				let target = selectElement(targetcss /*"gui_menu-bar-position_"*/ );
+				let target = api.selele(targetcss /*"gui_menu-bar-position_"*/ );
 				if (target === null) {
 					// api.warn(buttonid + ": target not found.");
 					return;
 				}
 				let button = document.createElement("span");
-				button.classList.add(selectClass("button_outlined-button_"));
-				button.classList.add(selectClass("stage-header_stage-button_"));
+				button.classList.add(api.selcss("button_outlined-button_"));
+				button.classList.add(api.selcss("stage-header_stage-button_"));
 				button.classList.add("tfgsGuimodifyButton");
 				for (let i in styles)
 					button.style[i] = styles[i];
@@ -99,7 +84,7 @@
 
 	function updateStatus() {
 		try {
-			let sel = selectElement("sprite-selector_scroll-wrapper_");
+			let sel = api.selele("sprite-selector_scroll-wrapper_");
 			if (sel !== null)
 				if (foption.foldspriteinfo ||
 					foption.foldstagebutton ||
@@ -122,7 +107,7 @@
 
 			if (foption.foldmenu) {
 				if (document.body.style.getPropertyValue("--tfgsGuimodifyMenubarHeight") === "")
-					document.body.style.setProperty("--tfgsGuimodifyMenubarHeight", window.getComputedStyle(selectElement("gui_menu-bar-position_")).height);
+					document.body.style.setProperty("--tfgsGuimodifyMenubarHeight", window.getComputedStyle(api.selele("gui_menu-bar-position_")).height);
 			} else {
 				if (document.body.style.getPropertyValue("--tfgsGuimodifyMenubarHeight") !== "")
 					document.body.style.removeProperty("--tfgsGuimodifyMenubarHeight");

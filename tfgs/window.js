@@ -205,7 +205,7 @@ tfgs.window.create = function(options) {
 	};
 
 	windowobj = Object.assign(windowobj, options);
-	let windowDiv = element("div", "tfgsWindow");
+	let windowDiv = tfgs.element.create("div", "tfgsWindow");
 	windowDiv.innerHTML = `
 <div class="tfgsWindowTitle">
 	<span>≡</span>

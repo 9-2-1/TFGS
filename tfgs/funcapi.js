@@ -74,6 +74,67 @@ tfgs.funcapi.prompt = function(name, text, defau) {
 	});
 };
 
+/* ---------- 获取Scratch相关内容 ---------- */
+
+tfgs.funcapi.blockly = function(name) {
+	return window.Blockly;
+};
+
+// 积木区相关
+tfgs.funcapi.workspace = function(name) {
+	return tfgs.funcapi.blockly().getMainWorkspace();
+};
+
+// 积木盒相关
+tfgs.funcapi.toolbox = function(name) {
+	return tfgs.funcapi.workspace().getFlyout().getWorkspace();
+};
+
+// 获取class以classname开头的元素
+tfgs.funcapi.selele = function(name, classname, element) {
+	return (element === undefined ? document : element).querySelector(`*[class^="${classname}"], *[class*=" ${classname}"]`);
+};
+
+// 获取元素中以classname开头的类型名
+tfgs.funcapi.selcss = function(name, classname, element) {
+	let elem = tfgs.funcapi.selele(name, classname, element);
+	if (elem === null)
+		return null;
+	let csslist = elem.classList;
+	for (let i in csslist)
+		if (classname === csslist[i].slice(0, classname.length))
+			return csslist[i];
+	return null;
+};
+
+// 获取元素的__reactInternalInstance$xxx
+tfgs.funcapi.reactInternal = function(name, element) {
+	let internal = "__reactInternalInstance$";
+	let fullname = null;
+	Object.keys(element).forEach(function(a) {
+		if (a.slice(0, internal.length) === internal)
+			fullname = a;
+	});
+	return fullname === null ? undefined : element[fullname];
+};
+
+// 获取 redux store, 里面有vm和绘画参数
+tfgs.funcapi.store = function(name) {
+	return tfgs.funcapi.reactInternal(
+		name, tfgs.funcapi.selele(name, "gui_page-wrapper_")
+	).child.stateNode.store;
+};
+
+// vm 对象
+tfgs.funcapi.vm = function(name) {
+	return tfgs.funcapi.store().getState().scratchGui.vm;
+};
+
+// 绘画状态
+tfgs.funcapi.paint = function(name) {
+	return tfgs.funcapi.store().getState().scratchPaint;
+};
+
 /* ---------- 为指定name的拓展定制api对象 ---------- */
 
 tfgs.funcapi._getapi = function(name) {

@@ -36,21 +36,14 @@ tfgs.menu.setmodi = function(modi) {
 tfgs.menu.create = function() {
 	if (tfgs.menu.menuwin !== null)
 		return;
-	let element = function(tagName, className, type) {
-		let ele = document.createElement(tagName);
-		if (className !== undefined) ele.className = className;
-		ele.className = className;
-		if (type !== undefined) ele.type = type;
-		return ele;
-	};
 	let menuwin = tfgs.window.create({
 		title: "TFGS选项",
 		canMinimize: true,
 		canClose: false,
 		x: 50,
 		y: 50,
-		width: 250,
-		height: 250,
+		width: 400,
+		height: 300,
 		minWidth: 200,
 		minHeight: 100,
 		minimizeWidth: 100
@@ -142,7 +135,7 @@ tfgs.menu.create = function() {
 	let list = tfgs.menu.list = {};
 	for (let fname in flist) {
 		let f = flist[fname];
-		let funcdiv = element("div", "tfgsMenuFunc");
+		let funcdiv = tfgs.element.create("div", "tfgsMenuFunc");
 		funcdiv.innerHTML = `
 <div class="tfgsMenuFuncTitle">
 	<input type="checkbox"></input>
@@ -168,22 +161,22 @@ tfgs.menu.create = function() {
 		for (let oname in olist) {
 			let o = olist[oname];
 			let lab, inp;
-			lab = element("label");
+			lab = tfgs.element.create("label");
 			lab.innerText = o.name;
 			switch (o.type) {
 				case "number":
-					inp = element("input", undefined, "number");
+					inp = tfgs.element.create("input", undefined, "number");
 					break;
 				case "text":
-					inp = element("input");
+					inp = tfgs.element.create("input");
 					break;
 				case "check":
-					inp = element("input", undefined, "checkbox");
+					inp = tfgs.element.create("input", undefined, "checkbox");
 					break;
 				case "menu":
-					inp = element("select");
+					inp = tfgs.element.create("select");
 					for (let i in o.menu) {
-						let op = element("option");
+						let op = tfgs.element.create("option");
 						op.innerText = o.menu[i];
 						op.value = i;
 						inp.appendChild(op);
@@ -194,7 +187,7 @@ tfgs.menu.create = function() {
 			}
 			fl.option[oname] = inp;
 
-			let fopdiv1 = element("span", "tfgsMenuFuncOptionOne");
+			let fopdiv1 = tfgs.element.create("span", "tfgsMenuFuncOptionOne");
 
 			fopdiv1.appendChild(lab);
 			fopdiv1.appendChild(inp);
