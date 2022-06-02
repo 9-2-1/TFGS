@@ -48,17 +48,16 @@
 			haveLogo: false,
 			canClose: false,
 			canMaximize: false,
-			canMinimize: false,
 			x: 100,
 			y: 80,
-			width: 300,
-			height: 120,
-			minWidth: 80,
+			width: 250,
+			height: 160,
+			minWidth: 120,
 			minHeight: 120
 		});
-		let win = winob.innerDiv;
+		let win = tfgs.element.create("div", "tfgsForcecolorWin");
 		win.innerHTML = `
-LeiXing: <select>
+类型: <select>
 	<option value="0">填充颜色</option>
 	<option value="1">轮廓颜色</option>
 </select><br/>
@@ -71,6 +70,8 @@ LeiXing: <select>
 	<option value="RADIAL">○</option>
 </select><br/>
 <input type="button" value="设置"></input>
+<pre>颜色格式: #RRGGBB 或者 rgb(红色, 绿色, 蓝色)
+透明颜色: #RRGGBBAA 或者 rgba(红色, 绿色, 蓝色, 不透明度)</pre>
 `;
 		let ins = win.children;
 		ins[8].addEventListener("click", function() {
@@ -84,6 +85,7 @@ LeiXing: <select>
 				api.onerror(e);
 			}
 		});
+		winob.innerDiv.appendChild(win);
 	}
 
 	function scanner() {
