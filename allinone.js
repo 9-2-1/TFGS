@@ -76,14 +76,14 @@ _tfgsAddCSS(\`${allcssmin}\`);
 `;
 
 allinone += `/* (allinone.js) */
-	tfgs.data.load().then(tfgs.button.create).catch(tfgs.error);
+	tfgs.data.load().then(tfgs.menu.create).catch(tfgs.error);
 } catch(e) {
 	alert(e.message);
 	console.error(e);
 	throw e;
 }`;
 allinonemin += `/* (allinone.js) */
-	tfgs.data.load().then(tfgs.button.create).catch(tfgs.error);
+	tfgs.data.load().then(tfgs.menu.create).catch(tfgs.error);
 } catch(e) {
 	alert(e.message);
 	console.error(e);

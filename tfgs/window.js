@@ -68,17 +68,19 @@ tfgs.window.create = function(options) {
 			this.onMove();
 		},
 		restore: function() {
-			if (this.isMaximize) {
-				this.x = this.posRestore.x;
-				this.y = this.posRestore.y;
+			if (this.isMinimize) {
+				if (this.isMaximize) {
+					this.x = this.posRestore.x;
+					this.y = this.posRestore.y;
+				}
+				this.width = this.posRestore.width;
+				this.height = this.posRestore.height;
+				this.isMinimize = false;
+				this.isMaximize = false;
+				this._refresh();
+				this.onResize();
+				this.onMove();
 			}
-			this.width = this.posRestore.width;
-			this.height = this.posRestore.height;
-			this.isMinimize = false;
-			this.isMaximize = false;
-			this._refresh();
-			this.onResize();
-			this.onMove();
 		},
 		movetotop: function() {
 			this.windowDiv.style.zIndex = ++tfgs.window.zIndex;
@@ -205,7 +207,7 @@ tfgs.window.create = function(options) {
 	};
 
 	windowobj = Object.assign(windowobj, options);
-	let windowDiv = element("div", "tfgsWindow");
+	let windowDiv = tfgs.element.create("div", "tfgsWindow");
 	windowDiv.innerHTML = `
 <div class="tfgsWindowTitle">
 	<span>≡</span>

@@ -37,7 +37,7 @@ try {
 		}
 	});
 	tfgs.data.load().then(function() {
-		tfgs.button.create();
+		tfgs.menu.create();
 	}).catch(tfgs.error);
 } catch (e) {
 	tfgs.error(e);

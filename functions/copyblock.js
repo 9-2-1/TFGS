@@ -16,18 +16,17 @@
 		tryCount = tryCount === undefined ? 0 : tryCount;
 		//部分社区的界面会加载，尝试多次
 		try {
-			workspace = Blockly.getMainWorkspace();
-			flyoutWorkspace = workspace.getFlyout().getWorkspace();
-			injectionDiv = document.getElementsByClassName("injectionDiv")[0];
+			workspace = api.workspace();
+			flyoutWorkspace = api.toolbox();
+			injectionDiv = api.selele("injectionDiv");
 			injectionDiv.addEventListener("touchstart", on_blockTouch, true);
 			//injectionDiv.addEventListener("touchmove",on_blockTouch,true);
 			//injectionDiv.addEventListener("touchstop",on_blockTouch,true);
 			document.body.addEventListener("mousedown", on_blockMousedown, true);
-			api.log("打开 TFGS");
-			api.log(workspace, flyoutWorkspace);
+			api.log("打开");
 		} catch (err) {
 			api.onerror(err);
-			api.log("TFGS 启动失败次数: ", tryCount + 1);
+			api.log("启动失败次数: ", tryCount + 1);
 			opening = setTimeout(function() {
 				TFGSON(api, tryCount + 1);
 			}, 1000);
@@ -48,7 +47,7 @@
 		//injectionDiv.removeEventListener("touchmove",on_blockTouch,true);
 		//injectionDiv.removeEventListener("touchstop",on_blockTouch,true);
 		document.body.removeEventListener("mousedown", on_blockMousedown, true);
-		api.log("关闭 TFGS");
+		api.log("关闭");
 	}
 
 	function on_blockMousedown(event) {
@@ -84,11 +83,11 @@
 		}
 		blockMenuTime = 0;
 		blockMenuTimer = setInterval(function() {
-			let menu = document.getElementsByClassName("blocklyContextMenu");
-			if (menu.length !== 0) {
+			let menu = api.selele("blocklyContextMenu");
+			if (menu !== null) {
 				clearInterval(blockMenuTimer);
 				blockMenuTimer = -1;
-				on_blockMenu(blockBox, blockId, menu[0]);
+				on_blockMenu(blockBox, blockId, menu);
 			} else {
 				blockMenuTime += 10;
 				if (blockMenuTime >= blockMenuTimeout) {
@@ -155,13 +154,15 @@
 		menuItem.innerText = name;
 		menuItem.addEventListener("click", callback);
 		element.parentElement.style.height = "4500px";
+
 		element.appendChild(menuItem);
 	}
 
 	function pasteFromXML() {
-		navigator.clipboard.readText().then(function(data) {
-			let blockXML = Blockly.Xml.textToDom(data);
-			let blockIds = Blockly.Xml.domToWorkspace(blockXML, workspace);
+		let loaddata = function(data) {
+			let blockly = api.blockly();
+			let blockXML = blockly.Xml.textToDom(data);
+			let blockIds = blockly.Xml.domToWorkspace(blockXML, workspace);
 			if (blockIds.length === 0) {
 				throw new Error("粘贴失败");
 			}
@@ -179,15 +180,24 @@
 					posY += (bl.getHeightWidth().height + 30) * workspace.scale;
 				}
 			}
-		}).catch(api.onerror);
+		};
+		if ("clipboard" in navigator) {
+			navigator.clipboard.readText().then(loaddata).catch(function(err) {
+				api.onerror(err);
+				loaddata(prompt("在下方粘贴:"));
+			});
+		} else {
+			loaddata(prompt("在下方粘贴:"));
+		}
 	}
 
 	function copyToXML(blockId, loadPrev, deleNext) {
 		try {
-			let blockXML = Blockly.Xml.workspaceToDom(workspace);
+			let blockly = api.blockly();
+			let blockXML = blockly.Xml.workspaceToDom(workspace);
 			let blockThisXML;
 			if (blockId === null) {
-				blockThisXML = Blockly.Xml.domToText(blockXML, workspace);
+				blockThisXML = blockly.Xml.domToText(blockXML, workspace);
 			} else {
 				let blockThis = findBlock(blockXML, blockId);
 				while (blockThis !== null &&
@@ -215,11 +225,18 @@
 						blockThis = blockThis.parentElement;
 					}
 				}
-				blockThisXML = "<xml>" + Blockly.Xml.domToText(blockThis, workspace) + "</xml>";
+				blockThisXML = "<xml>" + blockly.Xml.domToText(blockThis, workspace) + "</xml>";
 			}
-			navigator.clipboard.writeText(blockThisXML).then(function() {
-				//alert('复制成功');
-			}).catch(api.onerror);
+			if ("clipboard" in navigator) {
+				navigator.clipboard.writeText(blockThisXML).then(function() {
+					//alert('复制成功');
+				}).catch(function(err) {
+					api.onerror(err);
+					prompt("请复制以下内容", blockThisXML);
+				});
+			} else {
+				prompt("请复制以下内容", blockThisXML);
+			}
 		} catch (e) {
 			api.onerror(e);
 		}

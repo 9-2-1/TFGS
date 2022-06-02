@@ -8,7 +8,7 @@ tfgs.func.add({
 	default: false, // 是否默认启用
 	option: { // 设定选项列表
 		"title": { // 选项变量名
-			"type": "text", // 选项类型，text 文字，number数字，check 复选框(开关)，select 选项列表
+			"type": "text", // 选项类型，text 文字，number数字，check 复选框(开关)，menu 选项列表
 			"name": "窗口标题", // 选项旁边的文字
 			"maxlength": 16, // 设定文本最大长度
 			// "max": 9, // 数字最大值
