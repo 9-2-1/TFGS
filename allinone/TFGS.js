@@ -2,10 +2,10 @@
 let tfgs = {};
 
 try {
-	if ("__TFGS$O{{iQq\\\\}{" in window) {
+	if ("__TFGS$ZI+b\"})5wp" in window) {
 		throw new Error("TFGS 已经安装");
 	} else {
-		window["__TFGS$O{{iQq\\\\}{"] = "tfgs_installed";
+		window["__TFGS$ZI+b\"})5wp"] = "tfgs_installed";
 	}
 
 	function _tfgsAddCSS(css) {
@@ -13,38 +13,577 @@ try {
 		style.innerHTML = css;
 		document.head.appendChild(style);
 	}
-/* tfgs/button.css */
-_tfgsAddCSS(`.tfgsButton {
-	display: inline-block;
-	min-width: 40px;
-	height: 25px;
-	line-height: 25px;
-	text-align: center;
-	font-size: 16px;
-	margin: 2px;
-	background: white;
-	user-select: none;
-	border-radius: 2px;
-	box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.5);
+/* tfgs/window.js */
+tfgs.window = {};
+
+tfgs.window.zIndex = 1e6;
+
+tfgs.window.create = function(options) {
+	let windowobj = {
+		/* elements */
+		titleDiv: null,
+		innerDiv: null,
+		windowDiv: null,
+		resizeDiv: null,
+
+		/* position */
+		x: NaN,
+		y: NaN,
+		width: 400,
+		height: 300,
+		minHeight: 0,
+		minWidth: 100, // 正常模式最小宽度
+		minimizeWidth: 100, // 最小化时的宽度
+
+		/* settings */
+		title: "",
+
+		/* options */
+		haveLogo: true,
+		canMinimize: true,
+		canMaximize: true,
+		canClose: true,
+		canResize: true,
+		canMove: true,
+
+		/* callback */
+		onClose: function() {},
+		onResize: function() {},
+		onMove: function() {},
+
+		/* status */
+		isMinimize: false,
+		isMaximize: false,
+		posRestore: {},
+		flashMode: false,
+		flashTimer: -1,
+
+		/* functions */
+		_rememberPos: function() {
+			if (!this.isMinimize && !this.isMaximize) {
+				this.posRestore.x = this.x;
+				this.posRestore.y = this.y;
+				this.posRestore.width = this.width;
+				this.posRestore.height = this.height;
+			}
+		},
+		minimize: function() {
+			this._rememberPos();
+			this.isMinimize = true;
+			this.isMaximize = false;
+			this._refresh();
+			this.onResize();
+			this.onMove();
+		},
+		maximize: function() {
+			this._rememberPos();
+			this.isMinimize = false;
+			this.isMaximize = true;
+			this._refresh();
+			this.onResize();
+			this.onMove();
+		},
+		restore: function() {
+			if (this.isMinimize) {
+				if (this.isMaximize) {
+					this.x = this.posRestore.x;
+					this.y = this.posRestore.y;
+				}
+				this.width = this.posRestore.width;
+				this.height = this.posRestore.height;
+				this.isMinimize = false;
+				this.isMaximize = false;
+				this._refresh();
+				this.onResize();
+				this.onMove();
+			}
+		},
+		movetotop: function() {
+			this.windowDiv.style.zIndex = ++tfgs.window.zIndex;
+			if (this.flashMode) {
+				this.windowDiv.classList.remove("tfgsEmergency");
+				this.flashMode = false;
+			}
+			if (this.flashTimer !== -1) {
+				clearInterval(this.flashTimer);
+				this.flashTimer = -1;
+			}
+		},
+		close: function() {
+			if (this.onClose() === false) return;
+			this.windowDiv.remove();
+			this.windowDiv = null;
+			window.removeEventListener("resize", windowDiv._resizeCallback);
+		},
+		resize: function(w, h) {
+			if (w === this.width && h === this.height) return;
+			this.width = w;
+			this.height = h;
+			this._refresh();
+			this.onResize();
+		},
+		move: function(x, y) {
+			if (x === this.x && y === this.y) return;
+			this.x = x;
+			this.y = y;
+			this._refresh();
+			this.onMove();
+		},
+		flash: function(time, count, stay) {
+			if (this.flashTimer !== -1) {
+				clearInterval(this.flashTimer);
+				// this.flashTimer=-1;
+			}
+			this.windowDiv.classList.add("tfgsEmergency");
+			let flash = true;
+			let that = this;
+			this.flashTimer = setInterval(function() {
+				if (count > 0) {
+					if (!flash) {
+						that.windowDiv.classList.add("tfgsEmergency");
+						flash = true;
+					} else {
+						that.windowDiv.classList.remove("tfgsEmergency");
+						flash = false;
+						count--;
+					}
+				} else {
+					if (stay) {
+						that.windowDiv.classList.add("tfgsEmergency");
+						flash = true;
+					}
+					clearInterval(that.flashTimer);
+					that.flashTimer = -1;
+				}
+				that.flashMode = flash;
+			}, time);
+		},
+		_refresh: function() {
+			let sX = window.innerWidth,
+				sY = window.innerHeight;
+			if (this.isMaximize) {
+				this.x = 0;
+				this.y = 0;
+				this.width = sX;
+				this.height = sY;
+			} else {
+				let mX = this.minWidth + 6,
+					mY = this.minHeight + 26,
+					x = this.x,
+					y = this.y,
+					w = this.width,
+					h = this.height;
+				if (this.isMinimize) {
+					w = this.minimizeWidth + 6;
+					h = 26;
+				} else {
+					if (w < mX) w = mX;
+					if (h < mY) h = mY;
+					if (w > sX) w = sX;
+					if (h > sY) h = sY;
+				}
+
+				let X = x + w,
+					Y = y + h;
+				if (isNaN(x)) x = Math.floor(Math.random() * (sX - w));
+				if (isNaN(y)) y = Math.floor(Math.random() * (sY - h));
+				if (x < 0) x = 0;
+				if (y < 0) y = 0;
+				if (X > sX) x -= X - sX;
+				if (Y > sY) y -= Y - sY;
+
+				this.x = x;
+				this.y = y;
+				this.width = w;
+				this.height = h;
+			}
+
+			let styl = this.windowDiv.style;
+			styl.left = this.x + "px";
+			styl.top = this.y + "px";
+			styl.width = this.width + "px";
+			styl.height = this.height + "px";
+
+			showhide(this.titleDiv.children[0],
+				!this.isMinimize && this.haveLogo);
+			this.titleDiv.children[1].innerText = this.title;
+			showhide(this.titleDiv.children[2],
+				!this.isMinimize && this.canMinimize);
+			showhide(this.titleDiv.children[3],
+				this.isMaximize);
+			showhide(this.titleDiv.children[4],
+				!this.isMinimize && !this.isMaximize && this.canMaximize);
+			showhide(this.titleDiv.children[5],
+				this.canClose);
+			showhide(this.innerDiv,
+				!this.isMinimize);
+			showhide(this.resizeDiv,
+				!this.isMinimize && !this.isMaximize && this.canResize);
+		}
+	};
+
+	windowobj = Object.assign(windowobj, options);
+	let windowDiv = tfgs.element.create("div", "tfgsWindow");
+	windowDiv.innerHTML = `
+<div class="tfgsWindowTitle">
+	<span>≡</span>
+	<span class="tfgsWindowText"></span>
+	<span>_</span>
+	<span>▭</span>
+	<span>□</span>
+	<span>✕</span>
+</div>
+<div class="tfgsWindowContent"></div>
+<div class="tfgsWindowResize"></div>
+`;
+	document.body.appendChild(windowDiv);
+	windowDiv.style.zIndex = ++tfgs.window.zIndex;
+
+	windowDiv._resizeCallback = function() {
+		windowobj._refresh();
+		windowobj.onResize();
+	};
+
+	window.addEventListener("resize", windowDiv._resizeCallback);
+
+	let titleDiv = windowDiv.children[0];
+	let innerDiv = windowDiv.children[1];
+	let resizeDiv = windowDiv.children[2];
+
+	let titleDivs = titleDiv.children;
+
+	// 不能写成
+	// windowDiv.addEventListener("mousedown", windowobj.movetotop, true);
+	// 否则里面的this会指向windowDiv而不是windowobj
+
+	windowDiv.addEventListener("mousedown", function(event) {
+		windowobj.movetotop();
+	}, true);
+
+	titleDivs[2].addEventListener("click", function(event) {
+		windowobj.minimize();
+	});
+
+	titleDivs[3].addEventListener("click", function(event) {
+		windowobj.restore();
+	});
+
+	titleDivs[4].addEventListener("click", function(event) {
+		windowobj.maximize();
+	});
+
+	titleDivs[5].addEventListener("click", function(event) {
+		windowobj.close();
+	});
+
+	let moveObj = {
+		onStart: function(event) {
+			if (windowobj.isMaximize)
+				return null;
+			windowobj.movetotop();
+			return {
+				x: windowobj.x,
+				y: windowobj.y
+			};
+		},
+		onMove: function(x, y, event) {
+			if (windowobj.canMove)
+				windowobj.move(x, y);
+		},
+		onEnd: function(mode, event) {
+			if (mode === "click") {
+				if (windowobj.isMinimize)
+					windowobj.restore();
+			}
+		}
+	};
+
+	tfgs.drag.setdrag(titleDivs[0], moveObj);
+	tfgs.drag.setdrag(titleDivs[1], moveObj);
+
+	tfgs.drag.setdrag(resizeDiv, {
+		onStart: function(event) {
+			return {
+				x: windowobj.width,
+				y: windowobj.height
+			};
+		},
+		onMove: function(x, y, event) {
+			windowobj.resize(x, y);
+		},
+		onEnd: function(mode, event) {}
+	});
+
+	windowobj.windowDiv = windowDiv;
+	windowobj.titleDiv = titleDiv;
+	windowobj.innerDiv = innerDiv;
+	windowobj.resizeDiv = resizeDiv;
+
+	windowobj._refresh();
+	windowobj.flash(300, 1, false);
+
+	return windowobj;
+};
+
+function showhide(x, show) {
+	x.style.display = show ? "inherit" : "none";
 }
 
-.tfgsButton:active {
-	background: #9cf;
+
+/* tfgs/error.js */
+tfgs.error = function(e) {
+	alert(e.message);
+	console.error(e);
+	throw e;
+};
+
+
+/* tfgs/log.js */
+tfgs.log = {};
+
+tfgs.log.list = [];
+
+tfgs.log.dispIntv = null;
+
+tfgs.log.add = function(name, color, log) {
+	tfgs.log.list.push({
+		name: name,
+		color: color,
+		log: log
+	});
+	while (tfgs.log.list.length > 500)
+		tfgs.log.list.splice(0, 1);
+	tfgs.log.changed = true;
+};
+
+tfgs.log.clear = function() {
+	tfgs.log.list = [];
+	tfgs.log.changed = true;
+};
+
+tfgs.log.displayInterval = function(div, fliter) {
+	tfgs.log.display(div, fliter);
+	tfgs.log.changed = false;
+	return setInterval(function() {
+		let x = div.scrollX,
+			y = div.scrollY;
+		if (tfgs.log.changed) {
+			div.innerHTML = "";
+			if (tfgs.log.display(div, fliter)) {
+				tfgs.log.logwin.flash(500, 3, true);
+			}
+			tfgs.log.changed = false;
+		}
+		div.scrollX = x;
+		div.scrollY = y;
+	}, 100);
+};
+
+tfgs.log.display = function(div, fliter) {
+	let empty = true;
+	div.classList.add("tfgsLogFormat");
+	for (let i in tfgs.log.list) {
+		let log1 = tfgs.log.list[i];
+		if (fliter.name === null || fliter.name.includes(log1.name))
+			if (fliter.color === null || fliter.color.includes(log1.color)) {
+				let eline = tfgs.element.create("div");
+				eline.style.color = log1.color;
+				eline.innerText = log1.name + "\t" + log1.log;
+				div.appendChild(eline);
+				empty = false;
+			}
+	}
+	return !empty;
+};
+
+tfgs.log.create = function(x, y) {
+	try {
+		if (tfgs.log.dispIntv !== null) {
+			tfgs.log.logwin.movetotop();
+			tfgs.log.logwin.flash(200, 3, false);
+			return;
+		}
+		let logwin = tfgs.log.logwin = tfgs.window.create({
+			title: "日志",
+			x: typeof x === "number" ? x : 20,
+			y: typeof y === "number" ? y : 20,
+			width: 200,
+			height: 200,
+			minWidth: 100,
+			minHeight: 50,
+			minimizeWidth: 70
+		});
+		let logdiv = logwin.innerDiv;
+		logdiv.innerHTML = `
+<div class="tfgsLogContent"></div>
+<div class="tfgsLogButtons">
+	<span class="tfgsButton tfgsRight">清空</span>
+</div>
+`;
+		let contentdiv = logdiv.children[0];
+		let buttondiv = logdiv.children[1];
+		let bclear = buttondiv.children[0];
+		tfgs.log.dispIntv = tfgs.log.displayInterval(contentdiv, {
+			"name": null,
+			"color": null
+		});
+		bclear.addEventListener("click", function() {
+			tfgs.log.clear();
+		});
+		logwin.onClose = function() {
+			clearInterval(tfgs.log.dispIntv);
+			logdiv.remove();
+			tfgs.log.dispIntv = null;
+		};
+	} catch (e) {
+		tfgs.error(e);
+	}
+};
+
+
+/* tfgs/log.css */
+_tfgsAddCSS(`.tfgsLogFormat {
+	display: block;
+	white-space: pre-wrap;
+	word-break: break-all;
+	font-family: monospace;
+	font-size: 15;
+	overflow: scroll;
 }
 
-.tfgsDisable {
-	display: none;
+.tfgsLogFormat>*:nth-child(odd) {
+	background: #f0f8ff;
 }
 
-.tfgsRight {
-	float: right;
+.tfgsLogFormat>*:nth-child(even) {
+	background: #def;
+}
+
+.tfgsLogContent {
+	height: calc(100% - 30px);
+	background: #fff;
+}
+
+.tfgsLogButtons {
+	height: 30px;
+	background: var(--tfgsWindowColor);
 }
 `);
-/* tfgs/button.js */
-tfgs.button = {};
+/* tfgs/func.js */
+tfgs.func = {};
 
-tfgs.button.create = function() {
-	tfgs.menu.create();
+/* 功能列表,格式见下funcinfo */
+tfgs.func.list = {};
+
+tfgs.func.add = function(funcinfo) {
+	// 格式参考 ../functions/example.js
+	// funcinfo
+	// |-id
+	// |-name
+	// |-info
+	// |-option
+	// | |-(id)
+	// | |-name
+	// | |-info
+	// | |-type
+	// | |-min(number)
+	// | |-max(number)
+	// | |-step(number)
+	// | |-maxlength(text)
+	// | |-menu(menu)
+	// | \-default
+	// |-onenable
+	// |-ondisable
+	// \-onoption
+	if (funcinfo.id in tfgs.func.list) throw new Error("id used: " + funcinfo.id);
+	tfgs.func.list[funcinfo.id] = {
+		name: funcinfo.name,
+		info: funcinfo.info,
+		default: funcinfo.default,
+		option: funcinfo.option,
+		onenable: funcinfo.onenable,
+		ondisable: funcinfo.ondisable,
+		onoption: funcinfo.onoption,
+		enable: false
+	};
+};
+
+/* 重置数据，cleardata代表是否要重置data数据(默认只还原option，也就是拓展菜单里的设置 */
+tfgs.func.default = function(cleardata) {
+	let defldata = {};
+	let flist = tfgs.func.list;
+	for (let fname in flist) {
+		let olist = flist[fname].option;
+		let odefl = {};
+		for (let oname in olist) {
+			odefl[oname] = olist[oname].default;
+		}
+		defldata[fname] = {
+			"enable": flist[fname].default,
+			"option": odefl,
+			"data": cleardata ? undefined : fname in tfgs.data.list ? tfgs.data.list[fname].data : undefined
+		};
+	}
+	tfgs.data._default(defldata);
+};
+
+/* 设置和数据变化的触发器 */
+tfgs.func.datachange = function() {
+	tfgs.func.fixoption();
+	let flist = tfgs.func.list;
+	for (let fname in flist) {
+		let e = tfgs.func.list[fname];
+		let E = tfgs.data.list[fname].enable;
+		if (e.enable !== E) {
+			try {
+				e[E ? "onenable" : "ondisable"](tfgs.funcapi._getapi(fname));
+			} catch (e) {
+				tfgs.funcapi.error(fname, "Error: " + e.message);
+				console.error(e);
+			}
+			e.enable = E;
+		} else if (E) {
+			try {
+				e.onoption(tfgs.funcapi._getapi(fname));
+			} catch (e) {
+				tfgs.funcapi.error(fname, "Error: " + e.message);
+				console.error(e);
+			}
+		}
+	}
+};
+
+/* 检查设置数据是否符合规则 */
+tfgs.func.fixoption = function() {
+	let flist = tfgs.func.list;
+	for (let fname in flist) {
+		if (typeof tfgs.data.list[fname].enable !== "boolean")
+			tfgs.data.list[fname].enable = flist[fname].default;
+		let olist = flist[fname].option;
+		for (let oname in olist) {
+			let o = olist[oname];
+			let O = tfgs.data.list[fname].option;
+			switch (o.type) {
+				case "text":
+					if (O[oname] === null || O[oname] === undefined) O[oname] = o.default;
+					if (typeof O[oname] !== "string") O[oname] = String(O[oname]);
+					if ("maxlength" in o && O[oname].length > o.maxlength) O[oname] = O[oname].slice(0, o.maxlength);
+					break;
+				case "number":
+					if (typeof O[oname] !== "number") O[oname] = Number(O[oname]);
+					if (isNaN(O[oname])) O[oname] = o.default;
+					if (O[oname] < o.min) O[oname] = o.min;
+					if (O[oname] > o.max) O[oname] = o.max;
+					break;
+				case "check":
+					if (typeof O[oname] !== "boolean") O[oname] = o.default;
+					break;
+				case "menu":
+					if (!o.value.includes(O[oname])) O[oname] = o.default;
+					break;
+			}
+		}
+	}
 };
 
 
@@ -258,238 +797,6 @@ tfgs.data.edit = function() {
 };
 
 
-/* tfgs/drag.js */
-tfgs.drag = {};
-
-// TODO I remenber that the function I have seen in the source code of Scratch. Later I will grep it out.
-function getEventXY() {
-	if ("targetTouches" in event) {
-		return {
-			x: Math.round(event.targetTouches[0].clientX),
-			y: Math.round(event.targetTouches[0].clientY)
-		};
-	}
-	return {
-		x: Math.round(event.clientX),
-		y: Math.round(event.clientY)
-	};
-}
-
-// Example
-// let canceldrag = tfgs.drag.setdrag(div, {
-// 	"onStart": function(event) {
-// 		if (draggable) {
-// 			return {
-// 				offsetX,
-// 				offsetY
-// 			};
-// 		} else {
-// 			return null;
-// 		}
-// 	},
-// 	"onDrag": function(x, y, event) {
-// 		offsetX = x;
-// 		offsetY = y
-// 		// limits
-// 		if (offsetX < 0)
-// 			offsetX = 0;
-// 		// ...
-// 		updateElement();
-// 	},
-// 	"onEnd": function(mode, event) {
-// 		if (mode === "click") {
-// 			handleClick();
-// 		}
-// 	}
-// });
-// after you want to disable drag...
-// canceldrag();
-
-tfgs.drag.setdrag = function(elem, options) {
-	//elem
-	//options
-	//  onStart [!] MUST return current position/offset or null to stop
-	//  onMove
-	//  onEnd
-	let offsetX, offsetY;
-	let mode, lastxy;
-	let handleDragStart = function(event) {
-		let beginPos = options.onStart(event);
-		if (beginPos === null) {
-			return;
-		}
-		let xy = getEventXY(event);
-		lastxy = xy;
-		offsetX = xy.x - beginPos.x;
-		offsetY = xy.y - beginPos.y;
-		mode = "click";
-
-		window.addEventListener("mousemove", handleDragMove);
-		window.addEventListener("mouseup", handleDragEnd);
-		window.addEventListener("mouseleave", handleDragEnd);
-		window.addEventListener("blur", handleDragEnd);
-		elem.addEventListener("touchmove", handleDragMove);
-		elem.addEventListener("touchend", handleDragEnd);
-
-		event.preventDefault();
-		event.cancelBubble = true;
-		return false;
-	};
-	let handleDragMove = function(event) {
-		let xy = getEventXY(event);
-		if (lastxy.x !== xy.x || lastxy.y !== xy.y) {
-			options.onMove(xy.x - offsetX, xy.y - offsetY, event);
-			lastxy = xy;
-			mode = "drag";
-		}
-	};
-	let handleDragEnd = function(event) {
-		options.onEnd(mode, event);
-
-		window.removeEventListener("mousemove", handleDragMove);
-		window.removeEventListener("mouseup", handleDragEnd);
-		window.removeEventListener("mouseleave", handleDragEnd);
-		window.removeEventListener("blur", handleDragEnd);
-		elem.removeEventListener("touchmove", handleDragMove);
-		elem.removeEventListener("touchend", handleDragEnd);
-	};
-
-	elem.addEventListener("mousedown", handleDragStart);
-	elem.addEventListener("touchstart", handleDragStart);
-
-	return function canceldrag() {
-		elem.removeEventListener("mousedown", handleDragStart);
-		elem.removeEventListener("touchstart", handleDragStart);
-	};
-};
-
-
-/* tfgs/error.js */
-tfgs.error = function(e) {
-	alert(e.message);
-	console.error(e);
-	throw e;
-};
-
-
-/* tfgs/func.js */
-tfgs.func = {};
-
-/* 功能列表,格式见下funcinfo */
-tfgs.func.list = {};
-
-tfgs.func.add = function(funcinfo) {
-	// 格式参考 ../functions/example.js
-	// funcinfo
-	// |-id
-	// |-name
-	// |-info
-	// |-option
-	// | |-(id)
-	// | |-name
-	// | |-info
-	// | |-type
-	// | |-min(number)
-	// | |-max(number)
-	// | |-step(number)
-	// | |-maxlength(text)
-	// | |-menu(menu)
-	// | \-default
-	// |-onenable
-	// |-ondisable
-	// \-onoption
-	if (funcinfo.id in tfgs.func.list) throw new Error("id used: " + funcinfo.id);
-	tfgs.func.list[funcinfo.id] = {
-		name: funcinfo.name,
-		info: funcinfo.info,
-		default: funcinfo.default,
-		option: funcinfo.option,
-		onenable: funcinfo.onenable,
-		ondisable: funcinfo.ondisable,
-		onoption: funcinfo.onoption,
-		enable: false
-	};
-};
-
-/* 重置数据，cleardata代表是否要重置data数据(默认只还原option，也就是拓展菜单里的设置 */
-tfgs.func.default = function(cleardata) {
-	let defldata = {};
-	let flist = tfgs.func.list;
-	for (let fname in flist) {
-		let olist = flist[fname].option;
-		let odefl = {};
-		for (let oname in olist) {
-			odefl[oname] = olist[oname].default;
-		}
-		defldata[fname] = {
-			"enable": flist[fname].default,
-			"option": odefl,
-			"data": cleardata ? undefined : fname in tfgs.data.list ? tfgs.data.list[fname].data : undefined
-		};
-	}
-	tfgs.data._default(defldata);
-};
-
-/* 设置和数据变化的触发器 */
-tfgs.func.datachange = function() {
-	tfgs.func.fixoption();
-	let flist = tfgs.func.list;
-	for (let fname in flist) {
-		let e = tfgs.func.list[fname];
-		let E = tfgs.data.list[fname].enable;
-		if (e.enable !== E) {
-			try {
-				e[E ? "onenable" : "ondisable"](tfgs.funcapi._getapi(fname));
-			} catch (e) {
-				tfgs.funcapi.error(fname, "Error: " + e.message);
-				console.error(e);
-			}
-			e.enable = E;
-		} else if (E) {
-			try {
-				e.onoption(tfgs.funcapi._getapi(fname));
-			} catch (e) {
-				tfgs.funcapi.error(fname, "Error: " + e.message);
-				console.error(e);
-			}
-		}
-	}
-};
-
-/* 检查设置数据是否符合规则 */
-tfgs.func.fixoption = function() {
-	let flist = tfgs.func.list;
-	for (let fname in flist) {
-		if (typeof tfgs.data.list[fname].enable !== "boolean")
-			tfgs.data.list[fname].enable = flist[fname].default;
-		let olist = flist[fname].option;
-		for (let oname in olist) {
-			let o = olist[oname];
-			let O = tfgs.data.list[fname].option;
-			switch (o.type) {
-				case "text":
-					if (O[oname] === null || O[oname] === undefined) O[oname] = o.default;
-					if (typeof O[oname] !== "string") O[oname] = String(O[oname]);
-					if ("maxlength" in o && O[oname].length > o.maxlength) O[oname] = O[oname].slice(0, o.maxlength);
-					break;
-				case "number":
-					if (typeof O[oname] !== "number") O[oname] = Number(O[oname]);
-					if (isNaN(O[oname])) O[oname] = o.default;
-					if (O[oname] < o.min) O[oname] = o.min;
-					if (O[oname] > o.max) O[oname] = o.max;
-					break;
-				case "check":
-					if (typeof O[oname] !== "boolean") O[oname] = o.default;
-					break;
-				case "menu":
-					if (!o.value.includes(O[oname])) O[oname] = o.default;
-					break;
-			}
-		}
-	}
-};
-
-
 /* tfgs/funcapi.js */
 tfgs.funcapi = {};
 
@@ -567,6 +874,67 @@ tfgs.funcapi.prompt = function(name, text, defau) {
 	});
 };
 
+/* ---------- 获取Scratch相关内容 ---------- */
+
+tfgs.funcapi.blockly = function(name) {
+	return window.Blockly;
+};
+
+// 积木区相关
+tfgs.funcapi.workspace = function(name) {
+	return tfgs.funcapi.blockly().getMainWorkspace();
+};
+
+// 积木盒相关
+tfgs.funcapi.toolbox = function(name) {
+	return tfgs.funcapi.workspace().getFlyout().getWorkspace();
+};
+
+// 获取class以classname开头的元素
+tfgs.funcapi.selele = function(name, classname, element) {
+	return (element === undefined ? document : element).querySelector(`*[class^="${classname}"], *[class*=" ${classname}"]`);
+};
+
+// 获取元素中以classname开头的类型名
+tfgs.funcapi.selcss = function(name, classname, element) {
+	let elem = tfgs.funcapi.selele(name, classname, element);
+	if (elem === null)
+		return null;
+	let csslist = elem.classList;
+	for (let i in csslist)
+		if (classname === csslist[i].slice(0, classname.length))
+			return csslist[i];
+	return null;
+};
+
+// 获取元素的__reactInternalInstance$xxx
+tfgs.funcapi.reactInternal = function(name, element) {
+	let internal = "__reactInternalInstance$";
+	let fullname = null;
+	Object.keys(element).forEach(function(a) {
+		if (a.slice(0, internal.length) === internal)
+			fullname = a;
+	});
+	return fullname === null ? undefined : element[fullname];
+};
+
+// 获取 redux store, 里面有vm和绘画参数
+tfgs.funcapi.store = function(name) {
+	return tfgs.funcapi.reactInternal(
+		name, tfgs.funcapi.selele(name, "gui_page-wrapper_")
+	).child.stateNode.store;
+};
+
+// vm 对象
+tfgs.funcapi.vm = function(name) {
+	return tfgs.funcapi.store().getState().scratchGui.vm;
+};
+
+// 绘画状态
+tfgs.funcapi.paint = function(name) {
+	return tfgs.funcapi.store().getState().scratchPaint;
+};
+
 /* ---------- 为指定name的拓展定制api对象 ---------- */
 
 tfgs.funcapi._getapi = function(name) {
@@ -585,144 +953,122 @@ tfgs.funcapi._getapi = function(name) {
 };
 
 
-/* tfgs/log.css */
-_tfgsAddCSS(`.tfgsLogFormat {
-	display: block;
-	white-space: pre-wrap;
-	word-break: break-all;
-	font-family: monospace;
-	font-size: 15;
-	overflow: scroll;
+/* tfgs/button.css */
+_tfgsAddCSS(`.tfgsButton {
+	display: inline-block;
+	min-width: 40px;
+	height: 25px;
+	line-height: 25px;
+	text-align: center;
+	font-size: 16px;
+	margin: 2px;
+	background: white;
+	user-select: none;
+	border-radius: 2px;
+	box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.5);
 }
 
-.tfgsLogFormat>*:nth-child(odd) {
-	background: #f0f8ff;
+.tfgsButton:active {
+	background: #9cf;
 }
 
-.tfgsLogFormat>*:nth-child(even) {
-	background: #def;
+.tfgsDisable {
+	display: none;
 }
 
-.tfgsLogContent {
-	height: calc(100% - 30px);
-	background: #fff;
-}
-
-.tfgsLogButtons {
-	height: 30px;
-	background: var(--tfgsWindowColor);
+.tfgsRight {
+	float: right;
 }
 `);
-/* tfgs/log.js */
-function isstr(x) {
-	return typeof x === "string";
+/* tfgs/window.css */
+_tfgsAddCSS(`.tfgsWindow.tfgsEmergency {
+	--tfgsWindowColor: #f80;
 }
 
-function element(tagname, classname, type) {
-	let ele = document.createElement(tagname);
-	if (isstr(classname)) ele.className = classname;
-	if (isstr(type)) ele.type = type;
-	return ele;
+.tfgsWindow {
+	--tfgsWindowColor: #08f;
+	box-shadow: 0px 0px 2px black;
+	position: fixed;
+	background: white;
+	border: 3px solid var(--tfgsWindowColor);
+	border-radius: 3px;
+	overflow: hidden;
+	box-sizing: border-box;
 }
 
-tfgs.log = {};
+.tfgsWindow * {
+	box-sizing: content-box;
+}
 
-tfgs.log.list = [];
+.tfgsWindowTitle {
+	background: var(--tfgsWindowColor);
+	display: flex;
+	display: -webkit-flex;
+	flex-flow: row nowrap;
+	align-items: center;
+	border-bottom: 3px solid var(--tfgsWindowColor);
+	color: white;
+	font-family: sans-serif;
+	font-size: 16px;
+	line-height: 20px;
+	height: 20px;
+}
 
-tfgs.log.dispIntv = null;
+.tfgsWindowTitle>span {
+	width: 20px;
+	height: 20px;
+	text-align: center;
+	flex: none;
+	user-select: none;
+	-moz-user-select: none;
+}
 
-tfgs.log.add = function(name, color, log) {
-	tfgs.log.list.push({
-		name: name,
-		color: color,
-		log: log
-	});
-	while (tfgs.log.list.length > 500)
-		tfgs.log.list.splice(0, 1);
-	tfgs.log.changed = true;
-};
+.tfgsWindowTitle>span:active {
+	background: rgba(0, 0, 0, 0.25);
+	box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3) inset;
+}
 
-tfgs.log.clear = function() {
-	tfgs.log.list = [];
-	tfgs.log.changed = true;
-};
+.tfgsWindowTitle>.tfgsWindowText {
+	width: fit-content;
+	flex: auto;
+	overflow: hidden;
+	white-space: pre;
+	text-overflow: ellipsis;
+	text-overflow: "...";
+	position: relative;
+}
 
-tfgs.log.displayInterval = function(div, fliter) {
-	tfgs.log.display(div, fliter);
-	tfgs.log.changed = false;
-	return setInterval(function() {
-		let x = div.scrollX,
-			y = div.scrollY;
-		if (tfgs.log.changed) {
-			div.innerHTML = "";
-			tfgs.log.display(div, fliter);
-			tfgs.log.logwin.flash(500, 3, true);
-			tfgs.log.changed = false;
-		}
-		div.scrollX = x;
-		div.scrollY = y;
-	}, 100);
-};
+.tfgsWindowTitle>.tfgsWindowText:active {
+	background: none;
+	box-shadow: none;
+}
 
-tfgs.log.display = function(div, fliter) {
-	div.classList.add("tfgsLogFormat");
-	for (let i in tfgs.log.list) {
-		let log1 = tfgs.log.list[i];
-		if (fliter.name === null || fliter.name.includes(log1.name))
-			if (fliter.color === null || fliter.color.includes(log1.color)) {
-				let eline = element("div");
-				eline.style.color = log1.color;
-				eline.innerText = log1.name + "\t" + log1.log;
-				div.appendChild(eline);
-			}
-	}
-};
+.tfgsWindowContent {
+	height: calc(100% - 20px - 2px);
+	overflow: auto;
+	position: relative;
+}
 
-tfgs.log.create = function(x, y) {
-	try {
-		if (tfgs.log.dispIntv !== null) {
-			tfgs.log.logwin.movetotop();
-			tfgs.log.logwin.flash(200, 3, false);
-			return;
-		}
-		let logwin = tfgs.log.logwin = tfgs.window.create({
-			title: "日志",
-			x: typeof x === "number" ? x : 20,
-			y: typeof y === "number" ? y : 20,
-			width: 200,
-			height: 200,
-			minWidth: 100,
-			minHeight: 50,
-			minimizeWidth: 70
-		});
-		let logdiv = logwin.innerDiv;
-		logdiv.innerHTML = `
-<div class="tfgsLogContent"></div>
-<div class="tfgsLogButtons">
-	<span class="tfgsButton tfgsRight">清空</span>
-</div>
-`;
-		let contentdiv = logdiv.children[0];
-		let buttondiv = logdiv.children[1];
-		let bclear = buttondiv.children[0];
-		tfgs.log.dispIntv = tfgs.log.displayInterval(contentdiv, {
-			"name": null,
-			"color": null
-		});
-		bclear.addEventListener("click", function() {
-			tfgs.log.clear();
-		});
-		logwin.onClose = function() {
-			clearInterval(tfgs.log.dispIntv);
-			logdiv.remove();
-			tfgs.log.dispIntv = null;
-		};
-	} catch (e) {
-		tfgs.error(e);
-	}
-};
+.tfgsWindowResize {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	width: 0;
+	height: 0;
+	border-left: 15px solid transparent;
+	border-bottom: 15px solid var(--tfgsWindowColor);
+	cursor: se-resize;
+}
 
-
+.tfgsWindowResize:after {
+	content: "=";
+	position: absolute;
+	left: -8px;
+	top: 0px;
+	transform: rotate(-45deg);
+	color: white;
+}
+`);
 /* tfgs/menu.css */
 _tfgsAddCSS(`.tfgsMenuContent {
 	height: calc(100% - 30px);
@@ -851,21 +1197,14 @@ tfgs.menu.setmodi = function(modi) {
 tfgs.menu.create = function() {
 	if (tfgs.menu.menuwin !== null)
 		return;
-	let element = function(tagName, className, type) {
-		let ele = document.createElement(tagName);
-		if (className !== undefined) ele.className = className;
-		ele.className = className;
-		if (type !== undefined) ele.type = type;
-		return ele;
-	};
 	let menuwin = tfgs.window.create({
 		title: "TFGS选项",
 		canMinimize: true,
 		canClose: false,
 		x: 50,
 		y: 50,
-		width: 250,
-		height: 250,
+		width: 400,
+		height: 300,
 		minWidth: 200,
 		minHeight: 100,
 		minimizeWidth: 100
@@ -957,7 +1296,7 @@ tfgs.menu.create = function() {
 	let list = tfgs.menu.list = {};
 	for (let fname in flist) {
 		let f = flist[fname];
-		let funcdiv = element("div", "tfgsMenuFunc");
+		let funcdiv = tfgs.element.create("div", "tfgsMenuFunc");
 		funcdiv.innerHTML = `
 <div class="tfgsMenuFuncTitle">
 	<input type="checkbox"></input>
@@ -983,22 +1322,22 @@ tfgs.menu.create = function() {
 		for (let oname in olist) {
 			let o = olist[oname];
 			let lab, inp;
-			lab = element("label");
+			lab = tfgs.element.create("label");
 			lab.innerText = o.name;
 			switch (o.type) {
 				case "number":
-					inp = element("input", undefined, "number");
+					inp = tfgs.element.create("input", undefined, "number");
 					break;
 				case "text":
-					inp = element("input");
+					inp = tfgs.element.create("input");
 					break;
 				case "check":
-					inp = element("input", undefined, "checkbox");
+					inp = tfgs.element.create("input", undefined, "checkbox");
 					break;
 				case "menu":
-					inp = element("select");
+					inp = tfgs.element.create("select");
 					for (let i in o.menu) {
-						let op = element("option");
+						let op = tfgs.element.create("option");
 						op.innerText = o.menu[i];
 						op.value = i;
 						inp.appendChild(op);
@@ -1009,7 +1348,7 @@ tfgs.menu.create = function() {
 			}
 			fl.option[oname] = inp;
 
-			let fopdiv1 = element("span", "tfgsMenuFuncOptionOne");
+			let fopdiv1 = tfgs.element.create("span", "tfgsMenuFuncOptionOne");
 
 			fopdiv1.appendChild(lab);
 			fopdiv1.appendChild(inp);
@@ -1116,914 +1455,124 @@ tfgs.menu.delete = function() {
 };
 
 
-/* tfgs/window.css */
-_tfgsAddCSS(`.tfgsWindow.tfgsEmergency {
-	--tfgsWindowColor: #f80;
+/* tfgs/drag.js */
+tfgs.drag = {};
+
+// TODO I remenber that the function I have seen in the source code of Scratch. Later I will grep it out.
+function getEventXY() {
+	if ("targetTouches" in event) {
+		return {
+			x: Math.round(event.targetTouches[0].clientX),
+			y: Math.round(event.targetTouches[0].clientY)
+		};
+	}
+	return {
+		x: Math.round(event.clientX),
+		y: Math.round(event.clientY)
+	};
 }
 
-.tfgsWindow {
-	--tfgsWindowColor: #08f;
-	box-shadow: 0px 0px 2px black;
-	position: fixed;
-	background: white;
-	border: 3px solid var(--tfgsWindowColor);
-	border-radius: 3px;
-	overflow: hidden;
-	box-sizing: border-box;
-}
+// Example
+// let canceldrag = tfgs.drag.setdrag(div, {
+// 	"onStart": function(event) {
+// 		if (draggable) {
+// 			return {
+// 				offsetX,
+// 				offsetY
+// 			};
+// 		} else {
+// 			return null;
+// 		}
+// 	},
+// 	"onDrag": function(x, y, event) {
+// 		offsetX = x;
+// 		offsetY = y
+// 		// limits
+// 		if (offsetX < 0)
+// 			offsetX = 0;
+// 		// ...
+// 		updateElement();
+// 	},
+// 	"onEnd": function(mode, event) {
+// 		if (mode === "click") {
+// 			handleClick();
+// 		}
+// 	}
+// });
+// after you want to disable drag...
+// canceldrag();
 
-.tfgsWindow * {
-	box-sizing: content-box;
-}
+tfgs.drag.setdrag = function(elem, options) {
+	//elem
+	//options
+	//  onStart [!] MUST return current position/offset or null to stop
+	//  onMove
+	//  onEnd
+	let offsetX, offsetY;
+	let mode, lastxy;
+	let handleDragStart = function(event) {
+		let beginPos = options.onStart(event);
+		if (beginPos === null) {
+			return;
+		}
+		let xy = getEventXY(event);
+		lastxy = xy;
+		offsetX = xy.x - beginPos.x;
+		offsetY = xy.y - beginPos.y;
+		mode = "click";
 
-.tfgsWindowTitle {
-	background: var(--tfgsWindowColor);
-	display: flex;
-	display: -webkit-flex;
-	flex-flow: row nowrap;
-	align-items: center;
-	border-bottom: 3px solid var(--tfgsWindowColor);
-	color: white;
-	font-family: sans-serif;
-	font-size: 16px;
-	line-height: 20px;
-	height: 20px;
-}
+		window.addEventListener("mousemove", handleDragMove);
+		window.addEventListener("mouseup", handleDragEnd);
+		window.addEventListener("mouseleave", handleDragEnd);
+		window.addEventListener("blur", handleDragEnd);
+		elem.addEventListener("touchmove", handleDragMove);
+		elem.addEventListener("touchend", handleDragEnd);
 
-.tfgsWindowTitle>span {
-	width: 20px;
-	height: 20px;
-	text-align: center;
-	flex: none;
-	user-select: none;
-	-moz-user-select: none;
-}
-
-.tfgsWindowTitle>span:active {
-	background: rgba(0, 0, 0, 0.25);
-	box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3) inset;
-}
-
-.tfgsWindowTitle>.tfgsWindowText {
-	width: fit-content;
-	flex: auto;
-	overflow: hidden;
-	white-space: pre;
-	text-overflow: ellipsis;
-	text-overflow: "...";
-	position: relative;
-}
-
-.tfgsWindowTitle>.tfgsWindowText:active {
-	background: none;
-	box-shadow: none;
-}
-
-.tfgsWindowContent {
-	height: calc(100% - 20px - 2px);
-	overflow: auto;
-	position: relative;
-}
-
-.tfgsWindowResize {
-	position: absolute;
-	right: 0;
-	bottom: 0;
-	width: 0;
-	height: 0;
-	border-left: 15px solid transparent;
-	border-bottom: 15px solid var(--tfgsWindowColor);
-	cursor: se-resize;
-}
-
-.tfgsWindowResize:after {
-	content: "=";
-	position: absolute;
-	left: -8px;
-	top: 0px;
-	transform: rotate(-45deg);
-	color: white;
-}
-`);
-/* tfgs/window.js */
-tfgs.window = {};
-
-tfgs.window.zIndex = 1e6;
-
-tfgs.window.create = function(options) {
-	let windowobj = {
-		/* elements */
-		titleDiv: null,
-		innerDiv: null,
-		windowDiv: null,
-		resizeDiv: null,
-
-		/* position */
-		x: NaN,
-		y: NaN,
-		width: 400,
-		height: 300,
-		minHeight: 0,
-		minWidth: 100, // 正常模式最小宽度
-		minimizeWidth: 100, // 最小化时的宽度
-
-		/* settings */
-		title: "",
-
-		/* options */
-		haveLogo: true,
-		canMinimize: true,
-		canMaximize: true,
-		canClose: true,
-		canResize: true,
-		canMove: true,
-
-		/* callback */
-		onClose: function() {},
-		onResize: function() {},
-		onMove: function() {},
-
-		/* status */
-		isMinimize: false,
-		isMaximize: false,
-		posRestore: {},
-		flashMode: false,
-		flashTimer: -1,
-
-		/* functions */
-		_rememberPos: function() {
-			if (!this.isMinimize && !this.isMaximize) {
-				this.posRestore.x = this.x;
-				this.posRestore.y = this.y;
-				this.posRestore.width = this.width;
-				this.posRestore.height = this.height;
-			}
-		},
-		minimize: function() {
-			this._rememberPos();
-			this.isMinimize = true;
-			this.isMaximize = false;
-			this._refresh();
-			this.onResize();
-			this.onMove();
-		},
-		maximize: function() {
-			this._rememberPos();
-			this.isMinimize = false;
-			this.isMaximize = true;
-			this._refresh();
-			this.onResize();
-			this.onMove();
-		},
-		restore: function() {
-			if (this.isMaximize) {
-				this.x = this.posRestore.x;
-				this.y = this.posRestore.y;
-			}
-			this.width = this.posRestore.width;
-			this.height = this.posRestore.height;
-			this.isMinimize = false;
-			this.isMaximize = false;
-			this._refresh();
-			this.onResize();
-			this.onMove();
-		},
-		movetotop: function() {
-			this.windowDiv.style.zIndex = ++tfgs.window.zIndex;
-			if (this.flashMode) {
-				this.windowDiv.classList.remove("tfgsEmergency");
-				this.flashMode = false;
-			}
-			if (this.flashTimer !== -1) {
-				clearInterval(this.flashTimer);
-				this.flashTimer = -1;
-			}
-		},
-		close: function() {
-			if (this.onClose() === false) return;
-			this.windowDiv.remove();
-			this.windowDiv = null;
-			window.removeEventListener("resize", windowDiv._resizeCallback);
-		},
-		resize: function(w, h) {
-			if (w === this.width && h === this.height) return;
-			this.width = w;
-			this.height = h;
-			this._refresh();
-			this.onResize();
-		},
-		move: function(x, y) {
-			if (x === this.x && y === this.y) return;
-			this.x = x;
-			this.y = y;
-			this._refresh();
-			this.onMove();
-		},
-		flash: function(time, count, stay) {
-			if (this.flashTimer !== -1) {
-				clearInterval(this.flashTimer);
-				// this.flashTimer=-1;
-			}
-			this.windowDiv.classList.add("tfgsEmergency");
-			let flash = true;
-			let that = this;
-			this.flashTimer = setInterval(function() {
-				if (count > 0) {
-					if (!flash) {
-						that.windowDiv.classList.add("tfgsEmergency");
-						flash = true;
-					} else {
-						that.windowDiv.classList.remove("tfgsEmergency");
-						flash = false;
-						count--;
-					}
-				} else {
-					if (stay) {
-						that.windowDiv.classList.add("tfgsEmergency");
-						flash = true;
-					}
-					clearInterval(that.flashTimer);
-					that.flashTimer = -1;
-				}
-				that.flashMode = flash;
-			}, time);
-		},
-		_refresh: function() {
-			let sX = window.innerWidth,
-				sY = window.innerHeight;
-			if (this.isMaximize) {
-				this.x = 0;
-				this.y = 0;
-				this.width = sX;
-				this.height = sY;
-			} else {
-				let mX = this.minWidth + 6,
-					mY = this.minHeight + 26,
-					x = this.x,
-					y = this.y,
-					w = this.width,
-					h = this.height;
-				if (this.isMinimize) {
-					w = this.minimizeWidth + 6;
-					h = 26;
-				} else {
-					if (w < mX) w = mX;
-					if (h < mY) h = mY;
-					if (w > sX) w = sX;
-					if (h > sY) h = sY;
-				}
-
-				let X = x + w,
-					Y = y + h;
-				if (isNaN(x)) x = Math.floor(Math.random() * (sX - w));
-				if (isNaN(y)) y = Math.floor(Math.random() * (sY - h));
-				if (x < 0) x = 0;
-				if (y < 0) y = 0;
-				if (X > sX) x -= X - sX;
-				if (Y > sY) y -= Y - sY;
-
-				this.x = x;
-				this.y = y;
-				this.width = w;
-				this.height = h;
-			}
-
-			let styl = this.windowDiv.style;
-			styl.left = this.x + "px";
-			styl.top = this.y + "px";
-			styl.width = this.width + "px";
-			styl.height = this.height + "px";
-
-			showhide(this.titleDiv.children[0],
-				!this.isMinimize && this.haveLogo);
-			this.titleDiv.children[1].innerText = this.title;
-			showhide(this.titleDiv.children[2],
-				!this.isMinimize && this.canMinimize);
-			showhide(this.titleDiv.children[3],
-				this.isMaximize);
-			showhide(this.titleDiv.children[4],
-				!this.isMinimize && !this.isMaximize && this.canMaximize);
-			showhide(this.titleDiv.children[5],
-				this.canClose);
-			showhide(this.innerDiv,
-				!this.isMinimize);
-			showhide(this.resizeDiv,
-				!this.isMinimize && !this.isMaximize && this.canResize);
+		event.preventDefault();
+		event.cancelBubble = true;
+		return false;
+	};
+	let handleDragMove = function(event) {
+		let xy = getEventXY(event);
+		if (lastxy.x !== xy.x || lastxy.y !== xy.y) {
+			options.onMove(xy.x - offsetX, xy.y - offsetY, event);
+			lastxy = xy;
+			mode = "drag";
 		}
 	};
+	let handleDragEnd = function(event) {
+		options.onEnd(mode, event);
 
-	windowobj = Object.assign(windowobj, options);
-	let windowDiv = element("div", "tfgsWindow");
-	windowDiv.innerHTML = `
-<div class="tfgsWindowTitle">
-	<span>≡</span>
-	<span class="tfgsWindowText"></span>
-	<span>_</span>
-	<span>▭</span>
-	<span>□</span>
-	<span>✕</span>
-</div>
-<div class="tfgsWindowContent"></div>
-<div class="tfgsWindowResize"></div>
-`;
-	document.body.appendChild(windowDiv);
-	windowDiv.style.zIndex = ++tfgs.window.zIndex;
-
-	windowDiv._resizeCallback = function() {
-		windowobj._refresh();
-		windowobj.onResize();
+		window.removeEventListener("mousemove", handleDragMove);
+		window.removeEventListener("mouseup", handleDragEnd);
+		window.removeEventListener("mouseleave", handleDragEnd);
+		window.removeEventListener("blur", handleDragEnd);
+		elem.removeEventListener("touchmove", handleDragMove);
+		elem.removeEventListener("touchend", handleDragEnd);
 	};
 
-	window.addEventListener("resize", windowDiv._resizeCallback);
+	elem.addEventListener("mousedown", handleDragStart);
+	elem.addEventListener("touchstart", handleDragStart);
 
-	let titleDiv = windowDiv.children[0];
-	let innerDiv = windowDiv.children[1];
-	let resizeDiv = windowDiv.children[2];
-
-	let titleDivs = titleDiv.children;
-
-	// 不能写成
-	// windowDiv.addEventListener("mousedown", windowobj.movetotop, true);
-	// 否则里面的this会指向windowDiv而不是windowobj
-
-	windowDiv.addEventListener("mousedown", function(event) {
-		windowobj.movetotop();
-	}, true);
-
-	titleDivs[2].addEventListener("click", function(event) {
-		windowobj.minimize();
-	});
-
-	titleDivs[3].addEventListener("click", function(event) {
-		windowobj.restore();
-	});
-
-	titleDivs[4].addEventListener("click", function(event) {
-		windowobj.maximize();
-	});
-
-	titleDivs[5].addEventListener("click", function(event) {
-		windowobj.close();
-	});
-
-	let moveObj = {
-		onStart: function(event) {
-			if (windowobj.isMaximize)
-				return null;
-			windowobj.movetotop();
-			return {
-				x: windowobj.x,
-				y: windowobj.y
-			};
-		},
-		onMove: function(x, y, event) {
-			if (windowobj.canMove)
-				windowobj.move(x, y);
-		},
-		onEnd: function(mode, event) {
-			if (mode === "click") {
-				if (windowobj.isMinimize)
-					windowobj.restore();
-			}
-		}
+	return function canceldrag() {
+		elem.removeEventListener("mousedown", handleDragStart);
+		elem.removeEventListener("touchstart", handleDragStart);
 	};
-
-	tfgs.drag.setdrag(titleDivs[0], moveObj);
-	tfgs.drag.setdrag(titleDivs[1], moveObj);
-
-	tfgs.drag.setdrag(resizeDiv, {
-		onStart: function(event) {
-			return {
-				x: windowobj.width,
-				y: windowobj.height
-			};
-		},
-		onMove: function(x, y, event) {
-			windowobj.resize(x, y);
-		},
-		onEnd: function(mode, event) {}
-	});
-
-	windowobj.windowDiv = windowDiv;
-	windowobj.titleDiv = titleDiv;
-	windowobj.innerDiv = innerDiv;
-	windowobj.resizeDiv = resizeDiv;
-
-	windowobj._refresh();
-	windowobj.flash(300, 1, false);
-
-	return windowobj;
 };
 
-function showhide(x, show) {
-	x.style.display = show ? "inherit" : "none";
-}
+
+/* tfgs/element.js */
+tfgs.element = {};
+
+tfgs.element.create = function(tagName, className, type) {
+	let ele = document.createElement(tagName);
+	if (className !== undefined) ele.className = className;
+	ele.className = className;
+	if (type !== undefined) ele.type = type;
+	return ele;
+};
 
 
-/* functions/copyblock.js */
-! function() {
-	let api;
-	// 左边是积木区，右边是积木拖出区
-	let workspace, flyoutWorkspace;
-	let injectionDiv;
-	// 打开重试计时器
-	let opening = -1;
-	// 积木菜单检测计时器 *
-	let blockMenuTimer = -1;
-	let blockMenuTime = 0;
-	const blockMenuTimeout = 1200; // ms
-
-	// 打开 tfgs
-	function TFGSON(_api, tryCount) {
-		api = _api;
-		tryCount = tryCount === undefined ? 0 : tryCount;
-		//部分社区的界面会加载，尝试多次
-		try {
-			workspace = Blockly.getMainWorkspace();
-			flyoutWorkspace = workspace.getFlyout().getWorkspace();
-			injectionDiv = document.getElementsByClassName("injectionDiv")[0];
-			injectionDiv.addEventListener("touchstart", on_blockTouch, true);
-			//injectionDiv.addEventListener("touchmove",on_blockTouch,true);
-			//injectionDiv.addEventListener("touchstop",on_blockTouch,true);
-			document.body.addEventListener("mousedown", on_blockMousedown, true);
-			api.log("打开 TFGS");
-			api.log(workspace, flyoutWorkspace);
-		} catch (err) {
-			api.onerror(err);
-			api.log("TFGS 启动失败次数: ", tryCount + 1);
-			opening = setTimeout(function() {
-				TFGSON(api, tryCount + 1);
-			}, 1000);
-			return;
-		}
-	}
-
-	function TFGSOFF() {
-		// 停止重试
-		if (opening !== -1) {
-			clearTimeout(opening);
-			opening = -1;
-		}
-		// 把事件响应函数卸掉就是关闭了
-		if (injectionDiv) {
-			injectionDiv.removeEventListener("touchstart", on_blockTouch, true);
-		}
-		//injectionDiv.removeEventListener("touchmove",on_blockTouch,true);
-		//injectionDiv.removeEventListener("touchstop",on_blockTouch,true);
-		document.body.removeEventListener("mousedown", on_blockMousedown, true);
-		api.log("关闭 TFGS");
-	}
-
-	function on_blockMousedown(event) {
-		if (event.button === 2) { // 右键
-			on_blockMenuPossible(event.clientX, event.clientY);
-		}
-	}
-
-	function on_blockTouch(event) {
-		if (event.touches.length === 0) {
-			return;
-		}
-		let touch = event.touches[0];
-		on_blockMenuPossible(touch.clientX, touch.clientY);
-	}
-
-	function on_blockMenuPossible(x, y) {
-		let element = document.elementFromPoint(x, y);
-		let blockBox, blockId;
-		if (element === null) {
-			return;
-		}
-		//api.log(element);
-		let clickSVG = getSVG(element);
-		if (clickSVG === null) {
-			return;
-		}
-		blockBox = clickSVG.classList.contains("blocklyFlyout");
-		blockId = getBlockId(element);
-		if (blockMenuTimer !== -1) {
-			clearInterval(blockMenuTimer);
-			blockMenuTimer = -1;
-		}
-		blockMenuTime = 0;
-		blockMenuTimer = setInterval(function() {
-			let menu = document.getElementsByClassName("blocklyContextMenu");
-			if (menu.length !== 0) {
-				clearInterval(blockMenuTimer);
-				blockMenuTimer = -1;
-				on_blockMenu(blockBox, blockId, menu[0]);
-			} else {
-				blockMenuTime += 10;
-				if (blockMenuTime >= blockMenuTimeout) {
-					clearInterval(blockMenuTimer);
-					blockMenuTimer = -1;
-				}
-			}
-		}, 10);
-	}
-
-	function on_blockMenu(blockBox, blockId, menu) {
-		if (blockId !== null) {
-			addToContextMenu("复制这个积木", function() {
-				copyToXML(blockId, false, true);
-				menu.remove();
-			}, menu);
-			/*addToContextMenu("复制以下积木", function() {
-				copyToXML(blockId, false, false);
-				menu.remove();
-			}, menu);*/
-			addToContextMenu("复制这组积木", function() {
-				copyToXML(blockId, true, false);
-				menu.remove();
-			}, menu);
-		} else {
-			addToContextMenu("复制全部积木", function() {
-				copyToXML(null, true, false);
-				menu.remove();
-			}, menu);
-			addToContextMenu("粘贴积木文本", function() {
-				pasteFromXML();
-				menu.remove();
-			}, menu);
-		}
-	}
-
-	function getSVG(element) {
-		while (element !== null && element.tagName.toLowerCase() !== "svg") {
-			element = element.parentElement;
-		}
-		return element;
-	}
-
-	function getBlockId(element) {
-		while (element !== null &&
-			element.tagName.toLowerCase() !== "svg"
-		) {
-			if (element.tagName.toLowerCase() === "g") {
-				let id = element.getAttribute("data-id");
-				if (id !== null) {
-					return id;
-				}
-			}
-			element = element.parentElement;
-		}
-		return null;
-	}
-
-	function addToContextMenu(name, callback, element) {
-		let menuItem = document.createElement("div");
-		menuItem.classList.add("goog-menuitem");
-		menuItem.setAttribute("role", "menuitem");
-		menuItem.style.userSelect = "none";
-		menuItem.innerText = name;
-		menuItem.addEventListener("click", callback);
-		element.parentElement.style.height = "4500px";
-		element.appendChild(menuItem);
-	}
-
-	function pasteFromXML() {
-		navigator.clipboard.readText().then(function(data) {
-			let blockXML = Blockly.Xml.textToDom(data);
-			let blockIds = Blockly.Xml.domToWorkspace(blockXML, workspace);
-			if (blockIds.length === 0) {
-				throw new Error("粘贴失败");
-			}
-			let met = workspace.getMetrics();
-			let posX = met.viewLeft + 15;
-			let posY = met.viewTop + 15;
-			for (let i = 0; i < blockIds.length; i++) {
-				let bl = workspace.getBlockById(blockIds[i]);
-				if (bl.getParent() === null) {
-					let oldpos = bl.getRelativeToSurfaceXY();
-					bl.moveBy(
-						posX / workspace.scale - oldpos.x,
-						posY / workspace.scale - oldpos.y
-					);
-					posY += (bl.getHeightWidth().height + 30) * workspace.scale;
-				}
-			}
-		}).catch(api.onerror);
-	}
-
-	function copyToXML(blockId, loadPrev, deleNext) {
-		try {
-			let blockXML = Blockly.Xml.workspaceToDom(workspace);
-			let blockThisXML;
-			if (blockId === null) {
-				blockThisXML = Blockly.Xml.domToText(blockXML, workspace);
-			} else {
-				let blockThis = findBlock(blockXML, blockId);
-				while (blockThis !== null &&
-					blockThis.tagName.toLowerCase() !== "block"
-				) {
-					blockThis = blockThis.parentElement;
-				}
-				if (blockThis === null) {
-					throw new Error('复制失败:找不到积木');
-				}
-				if (deleNext) {
-					let bc = blockThis.children;
-					for (let i = 0; i < bc.length; i++) {
-						if (bc[i].tagName.toLowerCase() === "next") {
-							bc[i].remove();
-							i--;
-						}
-					}
-				}
-				if (loadPrev) {
-					while (blockThis.parentElement !== null &&
-						(blockThis.parentElement.tagName.toLowerCase() === 'block' ||
-							blockThis.parentElement.tagName.toLowerCase() === 'next')
-					) {
-						blockThis = blockThis.parentElement;
-					}
-				}
-				blockThisXML = "<xml>" + Blockly.Xml.domToText(blockThis, workspace) + "</xml>";
-			}
-			navigator.clipboard.writeText(blockThisXML).then(function() {
-				//alert('复制成功');
-			}).catch(api.onerror);
-		} catch (e) {
-			api.onerror(e);
-		}
-	}
-
-	function findBlock(blockXML, blockId) {
-		if (blockXML.getAttribute('id') === blockId) {
-			return blockXML;
-		} else {
-			let bc = blockXML.children;
-			for (let i = 0; i < bc.length; i++) {
-				let find = findBlock(bc[i], blockId);
-				if (find !== null) {
-					return find;
-				}
-			}
-			return null;
-		}
-	}
-
-	tfgs.func.add({
-		id: "copyblock",
-		name: "复制积木为文字",
-		info: "在右键菜单中添加“复制积木”“粘贴积木”选项，可以跨作品复制，或者粘贴到记事本(是xml格式)",
-		default: false,
-		option: {},
-		onenable: TFGSON,
-		ondisable: TFGSOFF,
-		onoption: function() {}
-	});
-}();
-
-
-/* functions/example.js */
-let oldtitle;
-tfgs.func.add({
-	id: "example",
-	name: "自定义窗口标题", // 设定功能名字
-	author: "作者名字", // 设定作者(可选)
-	version: "v0.1.0", // 设定版本(可选)
-	info: "让你能够修改窗口的标题", // 设定说明(可选)
-	default: false, // 是否默认启用
-	option: { // 设定选项列表
-		"title": { // 选项变量名
-			"type": "text", // 选项类型，text 文字，number数字，check 复选框(开关)，select 选项列表
-			"name": "窗口标题", // 选项旁边的文字
-			"maxlength": 16, // 设定文本最大长度
-			// "max": 9, // 数字最大值
-			// "min": 1, // 数字最小值
-			// "menu": ["a", "b", "c"], // 选项列表
-			// "value": [1, 2, 3], // 选项对应的数值
-			"default": "示例标题" // 默认值
-		}
-		// 可以添加更多内容
-	},
-	onenable: function(api) {
-		oldtitle = document.title;
-		document.title = api.getoption().title;
-	},
-	ondisable: function(api) {
-		document.title = oldtitle;
-	},
-	// onoption 只有在功能启用时改选项才触发
-	onoption: function(api) {
-		document.title = api.getoption().title;
-	}
-});
-
-
-/* functions/forcecolor.js */
-! function() {
-	let api = null;
-	let interval = -1;
-	let winob = null;
-
-	function getReactInternel(elem) {
-		let keys = Object.keys(elem);
-		let rII = null;
-		for (let i in keys)
-			if (keys[i].slice(0, 24) === "__reactInternalInstance$")
-				rII = keys[i];
-		if (rII === null)
-			throw new Error("reactInternelInstance not found");
-		return rII;
-	}
-
-	// 获取 redux store, 里面有vm和绘画参数
-	function getStore() {
-		let gp = document.querySelector('[class^=gui_page-wrapper_]');
-		let keys = Object.keys(gp);
-		let rII = null;
-		for (let i in keys)
-			if (keys[i].slice(0, 24) === "__reactInternalInstance$")
-				rII = keys[i];
-		if (rII === null)
-			throw new Error("reactInternelInstance not found");
-		let st = gp[rII].child.stateNode.store;
-		// st.getState().scratchGui.vm; -- vm
-		// st.getState().scratchPaint.color.
-		// fillColor strokeColor strokeWidth gradientType primary secondary
-		// SOLID VERTICAL HORIZONTAL RADIAL
-
-		// st.dispatch({type: "xxx", ...args})
-		return st;
-	}
-
-	function forcesetcolor(id, data) {
-		// step 1
-		let div = selectElement("paint-editor_editor-container-top_")
-		div = div.children[1].children[0].children[id];
-		let key = getReactInternel(div);
-		let stateNode = div[key].return.return.return.stateNode;
-		stateNode.handleChangeGradientType(data.gradientType);
-		stateNode.props.onChangeColorIndex(0);
-		stateNode.handleChangeColor(data.primary);
-		if (data.gradientType !== "SOLID") {
-			stateNode.props.onChangeColorIndex(1);
-			stateNode.handleChangeColor(data.secondary);
-		}
-		stateNode.handleCloseColor();
-		stateNode.props.onUpdateImage();
-
-		// step 2
-		let st = getStore();
-		let color = st.getState().scratchPaint.color;
-		let colid = id === 1 ? "strokeColor" : "fillColor";
-		color[colid].gradientType = data.gradientType;
-		color[colid].primary = data.primary;
-		color[colid].secondary = data.secondary;
-		let vm = st.getState().scratchGui.vm;
-		vm.refreshWorkspace();
-	}
-
-	function selectElement(namebegin) {
-		return document.querySelector(`[class^=${namebegin}],[class*= ${namebegin}]`);
-	}
-
-	function showwindow() {
-		if (winob !== null) return;
-		winob = tfgs.window.create({
-			title: "forceColor",
-			haveLogo: false,
-			canClose: false,
-			canMaximize: false,
-			canMinimize: false,
-			x: 100,
-			y: 80,
-			minHeight: 120,
-			minWidth: 80,
-			width: 80,
-			height: 120
-		});
-		let win = winob.innerDiv;
-		win.innerHTML = `
-<input type="text" value="0"></input><br/>
-<input type="text" value="#00ff00"></input><br/>
-<input type="text" value="#ff0000"></input><br/>
-<input type="text" value="SOLID"></input><br/>
-<input type="button" value="PUSH"></input>
-`;
-		let ins = win.children;
-		ins[8].addEventListener("click", function() {
-			try {
-				forcesetcolor(Number(ins[0].value), {
-					primary: ins[2].value,
-					secondary: ins[4].value,
-					gradientType: ins[6].value
-				});
-			} catch (e) {
-				api.onerror(e);
-			}
-		});
-	}
-
-	function scanner() {
-		showwindow();
-	}
-
-	function stopscan() {
-		if (winob !== null) {
-			winob.close();
-			winob = null
-		}
-	}
-
-	tfgs.func.add({
-		id: "forcecolor",
-		name: "qiangxinshezhitoumingyanse",
-		onenable: function(_api) {
-			api = _api;
-			if (interval === -1) interval = setInterval(scanner, 100);
-		},
-		ondisable: function() {
-			if (interval !== -1) {
-				clearInterval(interval);
-				interval = -1;
-			}
-			stopscan();
-		},
-		onoption: function() {}
-	});
-}();
-
-
-/* functions/guimodify.css */
-_tfgsAddCSS(`span.tfgsGuimodifyButton {
-	position: absolute;
-	color: grey;
-	font-size: 1em;
-	line-height: 1em;
-	text-align: center;
-}
-
-body.tfgsGuimodifyMenubarFold div[class^=gui_menu-bar-position_] {
-	top: calc(0px - var(--tfgsGuimodifyMenubarHeight));
-	margin-bottom: calc(0px - var(--tfgsGuimodifyMenubarHeight));
-}
-
-body.tfgsGuimodifyMenubarFold div[class^=gui_body-wrapper_] {
-	height: 100%;
-}
-
-body.tfgsGuimodifyBlocktoolFold .blocklyFlyoutScrollbar,
-body.tfgsGuimodifyBlocktoolFold .blocklyFlyout {
-	left: -250px;
-}
-
-body.tfgsGuimodifyStagetargetFold div[class^=gui_stage-and-target-wrapper_] {
-	display: none;
-}
-
-body.tfgsGuimodifySpriteinfoFold div[class^=sprite-info_sprite-info_] {
-	max-height: 0px;
-	padding: 0px;
-	overflow: hidden;
-}
-
-body.tfgsGuimodifyStagebuttonFold div[class^=target-pane_stage-selector-wrapper_] {
-	max-width: 0px;
-	padding: 0px;
-	margin-left: 0px;
-	margin-right: 0px;
-	overflow: hidden;
-}
-
-body.tfgsGuimodifyStageFold div[class^=stage-wrapper_stage-canvas-wrapper_] {
-	max-height: 0px;
-	padding: 0px;
-	overflow: hidden;
-}
-
-body.tfgsGuimodifyFullscreen {
-	overflow: scroll;
-}
-
-body.tfgsGuimodifyExpand100 {
-	position: fixed;
-	bottom: 0;
-}
-
-body.tfgsGuimodifyAssetpanelFold [class^=selector_wrapper_] {
-	position: absolute;
-	height: 100%;
-	width: 100%;
-	z-index: 2;
-}
-
-body.tfgsGuimodifyAssetpanelFold [class^=selector_list-area_] {
-	flex-direction: row;
-	flex-wrap: wrap;
-	align-content: flex-start;
-}
-
-body.tfgsGuimodifyAssetpanelFold [class*=" sprite-selector-item_sprite-selector-item_"] {
-	margin-left: 0.8em;
-}
-
-body.tfgsGuimodifyAssetpanelFold [class^=asset-panel_detail-area_] {
-	padding-left: 45px;
-}
-`);
 /* functions/guimodify.js */
 ! function() {
 	let api;
@@ -2032,21 +1581,6 @@ body.tfgsGuimodifyAssetpanelFold [class^=asset-panel_detail-area_] {
 	let pbutton = {};
 	let foption = {};
 	let _fullscreen = false;
-
-	function selectClass(namebegin) {
-		let csslist = selectElement(namebegin);
-		if (csslist === null)
-			return null;
-		csslist = csslist.classList;
-		for (let i in csslist)
-			if (namebegin === csslist[i].slice(0, namebegin.length))
-				return csslist[i];
-		return null;
-	}
-
-	function selectElement(namebegin) {
-		return document.querySelector(`[class^=${namebegin}],[class*= ${namebegin}]`);
-	}
 
 	function configButton(options) {
 		let buttonid = options.buttonid;
@@ -2061,7 +1595,7 @@ body.tfgsGuimodifyAssetpanelFold [class^=asset-panel_detail-area_] {
 		if (enable /*foption.foldmenu*/ ) {
 			/* ------ on ------ */
 			if (pbutton[buttonid] !== undefined) {
-				let target = selectElement(targetcss);
+				let target = api.selele(targetcss);
 				if (pbutton[buttonid].parentElement !== target) {
 					pbutton[buttonid].remove();
 					pbutton[buttonid] = undefined;
@@ -2073,14 +1607,14 @@ body.tfgsGuimodifyAssetpanelFold [class^=asset-panel_detail-area_] {
 				}
 			}
 			if (pbutton[buttonid] === undefined) {
-				let target = selectElement(targetcss /*"gui_menu-bar-position_"*/ );
+				let target = api.selele(targetcss /*"gui_menu-bar-position_"*/ );
 				if (target === null) {
 					// api.warn(buttonid + ": target not found.");
 					return;
 				}
 				let button = document.createElement("span");
-				button.classList.add(selectClass("button_outlined-button_"));
-				button.classList.add(selectClass("stage-header_stage-button_"));
+				button.classList.add(api.selcss("button_outlined-button_"));
+				button.classList.add(api.selcss("stage-header_stage-button_"));
 				button.classList.add("tfgsGuimodifyButton");
 				for (let i in styles)
 					button.style[i] = styles[i];
@@ -2126,7 +1660,7 @@ body.tfgsGuimodifyAssetpanelFold [class^=asset-panel_detail-area_] {
 
 	function updateStatus() {
 		try {
-			let sel = selectElement("sprite-selector_scroll-wrapper_");
+			let sel = api.selele("sprite-selector_scroll-wrapper_");
 			if (sel !== null)
 				if (foption.foldspriteinfo ||
 					foption.foldstagebutton ||
@@ -2149,7 +1683,7 @@ body.tfgsGuimodifyAssetpanelFold [class^=asset-panel_detail-area_] {
 
 			if (foption.foldmenu) {
 				if (document.body.style.getPropertyValue("--tfgsGuimodifyMenubarHeight") === "")
-					document.body.style.setProperty("--tfgsGuimodifyMenubarHeight", window.getComputedStyle(selectElement("gui_menu-bar-position_")).height);
+					document.body.style.setProperty("--tfgsGuimodifyMenubarHeight", window.getComputedStyle(api.selele("gui_menu-bar-position_")).height);
 			} else {
 				if (document.body.style.getPropertyValue("--tfgsGuimodifyMenubarHeight") !== "")
 					document.body.style.removeProperty("--tfgsGuimodifyMenubarHeight");
@@ -2368,6 +1902,436 @@ body.tfgsGuimodifyAssetpanelFold [class^=asset-panel_detail-area_] {
 }();
 
 
+/* functions/forcecolor.js */
+! function() {
+	let api = null;
+	let interval = -1;
+	let winob = null;
+
+	function forcesetcolor(id, data) {
+		// 强行发送颜色更改
+		let div = api.selele("paint-editor_editor-container-top_")
+		//id: 0填充 1轮廓
+		div = div.children[1].children[0].children[id];
+		let stateNode = api.reactInternal(div).return.return.return.stateNode;
+
+		// 找到 stateNode 后，可以访问并执行react回调函数
+		// 经过尝试和查看scratch源代码可以发现这些函数可以修改颜色
+		stateNode.handleChangeGradientType(data.gradientType);
+		// 改左颜色
+		stateNode.props.onChangeColorIndex(0);
+		stateNode.handleChangeColor(data.primary);
+		// 如果需要改右颜色，就改右颜色
+		// 如果在纯色模式下还去改右颜色会变成改左颜色，因此要特判
+		if (data.gradientType !== "SOLID") {
+			stateNode.props.onChangeColorIndex(1);
+			stateNode.handleChangeColor(data.secondary);
+		}
+		// 象征性地
+		stateNode.handleCloseColor();
+		// 更改颜色后，如果有选中的项，它们会改变颜色，调用onUpdateImage提交造型的修改以免丢失。
+		stateNode.props.onUpdateImage();
+
+		// 如果设置的颜色包含透明度，在颜色通过方法一传播到最后的时候会被检查函数拦下，导致当前颜色没有改变（但是选中元素的颜色会正常改变），此时使用方法二
+		let vm = api.vm();
+		let color = tfgs.funcapi.paint().color;
+		// 强行改变color的值，这在redux中很不规范，但是有效
+		let colid = id === 1 ? "strokeColor" : "fillColor";
+		color[colid].gradientType = data.gradientType;
+		color[colid].primary = data.primary;
+		color[colid].secondary = data.secondary;
+		// 关键：调用refreshWorkspace直接刷新工作区，此时当前颜色完美改变。
+		vm.refreshWorkspace();
+	}
+
+	function showwindow() {
+		if (winob !== null) {
+			return;
+		}
+		winob = tfgs.window.create({
+			title: "forceColor",
+			haveLogo: false,
+			canClose: false,
+			canMaximize: false,
+			x: 100,
+			y: 80,
+			width: 250,
+			height: 160,
+			minWidth: 120,
+			minHeight: 120
+		});
+		let win = tfgs.element.create("div", "tfgsForcecolorWin");
+		win.innerHTML = `
+类型: <select>
+	<option value="0">填充颜色</option>
+	<option value="1">轮廓颜色</option>
+</select><br/>
+颜色1: <input type="text" value="#00ff00"></input><br/>
+颜色2: <input type="text" value="#ff0000"></input><br/>
+混合模式: <select>
+	<option value="SOLID">■</option>
+	<option value="VERTICAL">↓</option>
+	<option value="HORIZONTAL">→</option>
+	<option value="RADIAL">○</option>
+</select><br/>
+<input type="button" value="设置"></input>
+<pre>颜色格式: #RRGGBB 或者 rgb(红色, 绿色, 蓝色)
+透明颜色: #RRGGBBAA 或者 rgba(红色, 绿色, 蓝色, 不透明度)</pre>
+`;
+		let ins = win.children;
+		ins[8].addEventListener("click", function() {
+			try {
+				forcesetcolor(Number(ins[0].value), {
+					primary: ins[2].value,
+					secondary: ins[4].value,
+					gradientType: ins[6].value
+				});
+			} catch (e) {
+				api.onerror(e);
+			}
+		});
+		winob.innerDiv.appendChild(win);
+	}
+
+	function scanner() {
+		showwindow();
+	}
+
+	function stopscan() {
+		if (winob !== null) {
+			winob.close();
+			winob = null
+		}
+	}
+
+	tfgs.func.add({
+		id: "forcecolor",
+		name: "强行设定颜色",
+		onenable: function(_api) {
+			api = _api;
+			if (interval === -1) interval = setInterval(scanner, 100);
+		},
+		ondisable: function() {
+			if (interval !== -1) {
+				clearInterval(interval);
+				interval = -1;
+			}
+			stopscan();
+		},
+		onoption: function() {}
+	});
+}();
+
+
+/* functions/copyblock.js */
+! function() {
+	let api;
+	// 左边是积木区，右边是积木拖出区
+	let workspace, flyoutWorkspace;
+	let injectionDiv;
+	// 打开重试计时器
+	let opening = -1;
+	// 积木菜单检测计时器 *
+	let blockMenuTimer = -1;
+	let blockMenuTime = 0;
+	const blockMenuTimeout = 1200; // ms
+
+	// 打开 tfgs
+	function TFGSON(_api, tryCount) {
+		api = _api;
+		tryCount = tryCount === undefined ? 0 : tryCount;
+		//部分社区的界面会加载，尝试多次
+		try {
+			workspace = api.workspace();
+			flyoutWorkspace = api.toolbox();
+			injectionDiv = api.selele("injectionDiv");
+			injectionDiv.addEventListener("touchstart", on_blockTouch, true);
+			//injectionDiv.addEventListener("touchmove",on_blockTouch,true);
+			//injectionDiv.addEventListener("touchstop",on_blockTouch,true);
+			document.body.addEventListener("mousedown", on_blockMousedown, true);
+			api.log("打开");
+		} catch (err) {
+			api.onerror(err);
+			api.log("启动失败次数: ", tryCount + 1);
+			opening = setTimeout(function() {
+				TFGSON(api, tryCount + 1);
+			}, 1000);
+			return;
+		}
+	}
+
+	function TFGSOFF() {
+		// 停止重试
+		if (opening !== -1) {
+			clearTimeout(opening);
+			opening = -1;
+		}
+		// 把事件响应函数卸掉就是关闭了
+		if (injectionDiv) {
+			injectionDiv.removeEventListener("touchstart", on_blockTouch, true);
+		}
+		//injectionDiv.removeEventListener("touchmove",on_blockTouch,true);
+		//injectionDiv.removeEventListener("touchstop",on_blockTouch,true);
+		document.body.removeEventListener("mousedown", on_blockMousedown, true);
+		api.log("关闭");
+	}
+
+	function on_blockMousedown(event) {
+		if (event.button === 2) { // 右键
+			on_blockMenuPossible(event.clientX, event.clientY);
+		}
+	}
+
+	function on_blockTouch(event) {
+		if (event.touches.length === 0) {
+			return;
+		}
+		let touch = event.touches[0];
+		on_blockMenuPossible(touch.clientX, touch.clientY);
+	}
+
+	function on_blockMenuPossible(x, y) {
+		let element = document.elementFromPoint(x, y);
+		let blockBox, blockId;
+		if (element === null) {
+			return;
+		}
+		//api.log(element);
+		let clickSVG = getSVG(element);
+		if (clickSVG === null) {
+			return;
+		}
+		blockBox = clickSVG.classList.contains("blocklyFlyout");
+		blockId = getBlockId(element);
+		if (blockMenuTimer !== -1) {
+			clearInterval(blockMenuTimer);
+			blockMenuTimer = -1;
+		}
+		blockMenuTime = 0;
+		blockMenuTimer = setInterval(function() {
+			let menu = api.selele("blocklyContextMenu");
+			if (menu !== null) {
+				clearInterval(blockMenuTimer);
+				blockMenuTimer = -1;
+				on_blockMenu(blockBox, blockId, menu);
+			} else {
+				blockMenuTime += 10;
+				if (blockMenuTime >= blockMenuTimeout) {
+					clearInterval(blockMenuTimer);
+					blockMenuTimer = -1;
+				}
+			}
+		}, 10);
+	}
+
+	function on_blockMenu(blockBox, blockId, menu) {
+		if (blockId !== null) {
+			addToContextMenu("复制这个积木", function() {
+				copyToXML(blockId, false, true);
+				menu.remove();
+			}, menu);
+			/*addToContextMenu("复制以下积木", function() {
+				copyToXML(blockId, false, false);
+				menu.remove();
+			}, menu);*/
+			addToContextMenu("复制这组积木", function() {
+				copyToXML(blockId, true, false);
+				menu.remove();
+			}, menu);
+		} else {
+			addToContextMenu("复制全部积木", function() {
+				copyToXML(null, true, false);
+				menu.remove();
+			}, menu);
+			addToContextMenu("粘贴积木文本", function() {
+				pasteFromXML();
+				menu.remove();
+			}, menu);
+		}
+	}
+
+	function getSVG(element) {
+		while (element !== null && element.tagName.toLowerCase() !== "svg") {
+			element = element.parentElement;
+		}
+		return element;
+	}
+
+	function getBlockId(element) {
+		while (element !== null &&
+			element.tagName.toLowerCase() !== "svg"
+		) {
+			if (element.tagName.toLowerCase() === "g") {
+				let id = element.getAttribute("data-id");
+				if (id !== null) {
+					return id;
+				}
+			}
+			element = element.parentElement;
+		}
+		return null;
+	}
+
+	function addToContextMenu(name, callback, element) {
+		let menuItem = document.createElement("div");
+		menuItem.classList.add("goog-menuitem");
+		menuItem.setAttribute("role", "menuitem");
+		menuItem.style.userSelect = "none";
+		menuItem.innerText = name;
+		menuItem.addEventListener("click", callback);
+		element.parentElement.style.height = "4500px";
+
+		element.appendChild(menuItem);
+	}
+
+	function pasteFromXML() {
+		let loaddata = function(data) {
+			let blockly = api.blockly();
+			let blockXML = blockly.Xml.textToDom(data);
+			let blockIds = blockly.Xml.domToWorkspace(blockXML, workspace);
+			if (blockIds.length === 0) {
+				throw new Error("粘贴失败");
+			}
+			let met = workspace.getMetrics();
+			let posX = met.viewLeft + 15;
+			let posY = met.viewTop + 15;
+			for (let i = 0; i < blockIds.length; i++) {
+				let bl = workspace.getBlockById(blockIds[i]);
+				if (bl.getParent() === null) {
+					let oldpos = bl.getRelativeToSurfaceXY();
+					bl.moveBy(
+						posX / workspace.scale - oldpos.x,
+						posY / workspace.scale - oldpos.y
+					);
+					posY += (bl.getHeightWidth().height + 30) * workspace.scale;
+				}
+			}
+		};
+		if ("clipboard" in navigator) {
+			navigator.clipboard.readText().then(loaddata).catch(function(err) {
+				api.onerror(err);
+				loaddata(prompt("在下方粘贴:"));
+			});
+		} else {
+			loaddata(prompt("在下方粘贴:"));
+		}
+	}
+
+	function copyToXML(blockId, loadPrev, deleNext) {
+		try {
+			let blockly = api.blockly();
+			let blockXML = blockly.Xml.workspaceToDom(workspace);
+			let blockThisXML;
+			if (blockId === null) {
+				blockThisXML = blockly.Xml.domToText(blockXML, workspace);
+			} else {
+				let blockThis = findBlock(blockXML, blockId);
+				while (blockThis !== null &&
+					blockThis.tagName.toLowerCase() !== "block"
+				) {
+					blockThis = blockThis.parentElement;
+				}
+				if (blockThis === null) {
+					throw new Error('复制失败:找不到积木');
+				}
+				if (deleNext) {
+					let bc = blockThis.children;
+					for (let i = 0; i < bc.length; i++) {
+						if (bc[i].tagName.toLowerCase() === "next") {
+							bc[i].remove();
+							i--;
+						}
+					}
+				}
+				if (loadPrev) {
+					while (blockThis.parentElement !== null &&
+						(blockThis.parentElement.tagName.toLowerCase() === 'block' ||
+							blockThis.parentElement.tagName.toLowerCase() === 'next')
+					) {
+						blockThis = blockThis.parentElement;
+					}
+				}
+				blockThisXML = "<xml>" + blockly.Xml.domToText(blockThis, workspace) + "</xml>";
+			}
+			if ("clipboard" in navigator) {
+				navigator.clipboard.writeText(blockThisXML).then(function() {
+					//alert('复制成功');
+				}).catch(function(err) {
+					api.onerror(err);
+					prompt("请复制以下内容", blockThisXML);
+				});
+			} else {
+				prompt("请复制以下内容", blockThisXML);
+			}
+		} catch (e) {
+			api.onerror(e);
+		}
+	}
+
+	function findBlock(blockXML, blockId) {
+		if (blockXML.getAttribute('id') === blockId) {
+			return blockXML;
+		} else {
+			let bc = blockXML.children;
+			for (let i = 0; i < bc.length; i++) {
+				let find = findBlock(bc[i], blockId);
+				if (find !== null) {
+					return find;
+				}
+			}
+			return null;
+		}
+	}
+
+	tfgs.func.add({
+		id: "copyblock",
+		name: "复制积木为文字",
+		info: "在右键菜单中添加“复制积木”“粘贴积木”选项，可以跨作品复制，或者粘贴到记事本(是xml格式)",
+		default: false,
+		option: {},
+		onenable: TFGSON,
+		ondisable: TFGSOFF,
+		onoption: function() {}
+	});
+}();
+
+
+/* functions/example.js */
+let oldtitle;
+tfgs.func.add({
+	id: "example",
+	name: "自定义窗口标题", // 设定功能名字
+	author: "作者名字", // 设定作者(可选)
+	version: "v0.1.0", // 设定版本(可选)
+	info: "让你能够修改窗口的标题", // 设定说明(可选)
+	default: false, // 是否默认启用
+	option: { // 设定选项列表
+		"title": { // 选项变量名
+			"type": "text", // 选项类型，text 文字，number数字，check 复选框(开关)，menu 选项列表
+			"name": "窗口标题", // 选项旁边的文字
+			"maxlength": 16, // 设定文本最大长度
+			// "max": 9, // 数字最大值
+			// "min": 1, // 数字最小值
+			// "menu": ["a", "b", "c"], // 选项列表
+			// "value": [1, 2, 3], // 选项对应的数值
+			"default": "示例标题" // 默认值
+		}
+		// 可以添加更多内容
+	},
+	onenable: function(api) {
+		oldtitle = document.title;
+		document.title = api.getoption().title;
+	},
+	ondisable: function(api) {
+		document.title = oldtitle;
+	},
+	// onoption 只有在功能启用时改选项才触发
+	onoption: function(api) {
+		document.title = api.getoption().title;
+	}
+});
+
+
 /* functions/windowf___.js */
 let windowf___;
 tfgs.func.add({
@@ -2408,8 +2372,254 @@ function conti() {
 }
 
 
+/* functions/guimodify.css */
+_tfgsAddCSS(`span.tfgsGuimodifyButton {
+	position: absolute;
+	color: grey;
+	font-size: 1em;
+	line-height: 1em;
+	text-align: center;
+}
+
+body.tfgsGuimodifyMenubarFold div[class^=gui_menu-bar-position_] {
+	top: calc(0px - var(--tfgsGuimodifyMenubarHeight));
+	margin-bottom: calc(0px - var(--tfgsGuimodifyMenubarHeight));
+}
+
+body.tfgsGuimodifyMenubarFold div[class^=gui_body-wrapper_] {
+	height: 100%;
+}
+
+body.tfgsGuimodifyBlocktoolFold .blocklyFlyoutScrollbar,
+body.tfgsGuimodifyBlocktoolFold .blocklyFlyout {
+	left: -250px;
+}
+
+body.tfgsGuimodifyStagetargetFold div[class^=gui_stage-and-target-wrapper_] {
+	display: none;
+}
+
+body.tfgsGuimodifySpriteinfoFold div[class^=sprite-info_sprite-info_] {
+	max-height: 0px;
+	padding: 0px;
+	overflow: hidden;
+}
+
+body.tfgsGuimodifyStagebuttonFold div[class^=target-pane_stage-selector-wrapper_] {
+	max-width: 0px;
+	padding: 0px;
+	margin-left: 0px;
+	margin-right: 0px;
+	overflow: hidden;
+}
+
+body.tfgsGuimodifyStageFold div[class^=stage-wrapper_stage-canvas-wrapper_] {
+	max-height: 0px;
+	padding: 0px;
+	overflow: hidden;
+}
+
+body.tfgsGuimodifyFullscreen {
+	overflow: scroll;
+}
+
+body.tfgsGuimodifyExpand100 {
+	position: fixed;
+	bottom: 0;
+}
+
+body.tfgsGuimodifyAssetpanelFold [class^=selector_wrapper_] {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	z-index: 2;
+}
+
+body.tfgsGuimodifyAssetpanelFold [class^=selector_list-area_] {
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-content: flex-start;
+}
+
+body.tfgsGuimodifyAssetpanelFold [class*=" sprite-selector-item_sprite-selector-item_"] {
+	margin-left: 0.8em;
+}
+
+body.tfgsGuimodifyAssetpanelFold [class^=asset-panel_detail-area_] {
+	padding-left: 45px;
+}
+`);
+/* functions/ccwterm.css */
+_tfgsAddCSS(`.tfgsCCWtermSpan {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.tfgsCCWtermSpan>span {
+	display: inline-block;
+	width: calc(var(--termWidth) * var(--scale));
+	height: calc(var(--termHeight) * var(--scale));
+	overflow: hidden;
+}
+
+.tfgsCCWtermSpan>span>div#terminal-container {
+	background: black;
+	transform: scale(var(--scale));
+	transform-origin: -10px -10px;
+}
+`);
+/* functions/ccwterm.js */
+! function() {
+	let api, termwin = null,
+		termdiv = null,
+		lastvisi = "?",
+		win = null,
+		readyt = -1,
+		lastmode = "?",
+		vm;
+
+	function getready() {
+		if (readyt === -1) {
+			readyt = setInterval(getready, 100);
+			return;
+		}
+		if (win === null) {
+			termwin = document.getElementById("gandi-terminal");
+			termdiv = termwin.children[1];
+			let tstyle = window.getComputedStyle(termdiv);
+			let termspan = tfgs.element.create("span", "tfgsCCWtermSpan");
+			let twidth = Number(tstyle.width.slice(0, -2)) + 20;
+			let theight = Number(tstyle.height.slice(0, -2)) + 20;
+			api.log(tstyle.width);
+			api.log(tstyle.height);
+			win = tfgs.window.create({
+				title: "wterm",
+				canClose: false,
+				width: twidth + 6,
+				height: theight + 26,
+				onResize: function() {
+					let istyle = window.getComputedStyle(this.innerDiv);
+					let iw = Number(istyle.width.slice(0, -2));
+					let ih = Number(istyle.height.slice(0, -2));
+					termspan.style.setProperty("--scale", Math.min(iw / twidth, ih / theight));
+				}
+			});
+			termspan.innerHTML = "<span></span>";
+			termspan.children[0].appendChild(termdiv);
+			termspan.style.setProperty("--termWidth", twidth + "px");
+			termspan.style.setProperty("--termHeight", theight + "px");
+			win.innerDiv.appendChild(termspan);
+			termwin.style.display = "none";
+		}
+		win.title = termwin.children[0].children[0].innerText;
+		win._refresh();
+		if (lastvisi !== termwin.style.visibility) {
+			lastvisi = termwin.style.visibility;
+			api.log(`visibility: ${lastvisi}`);
+			if (termwin.style.visibility !== "visible") {
+				// HIDE
+				switch (api.getoption().mode) {
+					case "respect":
+						win.windowDiv.style.visibility = "hidden";
+						break;
+					case "minmax":
+						win.minimize();
+						break;
+					case "minshow":
+						win.minimize();
+						break;
+					case "ignore":
+						break;
+				}
+			} else {
+				// SHOW
+				win.windowDiv.style.visibility = "visible";
+				win.movetotop();
+				switch (api.getoption().mode) {
+					case "respect":
+						break;
+					case "minmax":
+						win.restore();
+						break;
+					case "minshow":
+						break;
+					case "ignore":
+						break;
+				}
+				win.flash(200, 3, true);
+			}
+		}
+	}
+
+	function closecontrol() {
+		if (win !== null) {
+			win.close();
+			win = null;
+		}
+		if (termwin !== null) {
+			termwin.style.display = "block";
+			termwin.appendChild(termdiv);
+		}
+	}
+
+	tfgs.func.add({
+		id: "ccwterm",
+		name: "将ccw控制台放入tfgs窗口",
+		info: "这个东西，我们叫它'Terminal'(终端)，微软叫它'Console'(控制台)，用着xterm又叫它控制台的ccw是",
+		default: false,
+		option: {
+			mode: {
+				type: "menu",
+				name: "响应控制台消息",
+				menu: ["尊重显示和隐藏操作", "将显示/隐藏理解为还原/最小化", "显示时闪烁,隐藏时最小化", "忽略隐藏请求"],
+				value: ["respect", "minmax", "minshow", "ignore"],
+				default: "respect"
+			}
+		},
+		onenable: function(_api) {
+			api = _api;
+			lastvisi = "?";
+			lastmode = api.getoption().mode;
+			getready();
+		},
+		ondisable: function() {
+			if (readyt !== -1) {
+				clearInterval(readyt);
+				readyt = -1;
+			}
+			closecontrol();
+		},
+		onoption: function() {
+			if (api.getoption().mode !== lastmode) {
+				lastvisi = "?";
+				lastmode = api.getoption().mode;
+			}
+		}
+	});
+}();
+
+
+/* functions/forcecolor.css */
+_tfgsAddCSS(`.tfgsForcecolorWin {
+	font-size: 16px;
+	text-align: center;
+}
+
+.tfgsForcecolorWin input {
+	width: 150px;
+	border: 1px solid black;
+}
+
+.tfgsForcecolorWin pre {
+	font-size: 8px;
+}
+`);
 /* (allinone.js) */
-	tfgs.data.load().then(tfgs.button.create).catch(tfgs.error);
+	tfgs.data.load().then(tfgs.menu.create).catch(tfgs.error);
 } catch(e) {
 	alert(e.message);
 	console.error(e);
