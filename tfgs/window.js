@@ -68,7 +68,7 @@ tfgs.window.create = function(options) {
 			this.onMove();
 		},
 		restore: function() {
-			if (this.isMinimize) {
+			if (this.isMinimize || this.isMaximize) {
 				if (this.isMaximize) {
 					this.x = this.posRestore.x;
 					this.y = this.posRestore.y;
