@@ -150,6 +150,8 @@
 	<span class="tfgsJoystickMouseClick">👆</span>
 	<span class="tfgsJoystickMouseClick">🖕</span>
 	<span class="tfgsJoystickMouseClick">☝️</span>
+	<span class="tfgsJoystickMouseClick">▲</span>
+	<span class="tfgsJoystickMouseClick">▼</span>
 	<span class="tfgsJoystickMouseSwitch">⌨</span>
 </span>`;
 
@@ -160,15 +162,52 @@
 		bindbutton(jMous.children[1].children[0], 0);
 		bindbutton(jMous.children[1].children[1], 1);
 		bindbutton(jMous.children[1].children[2], 2);
+		bindwheel(jMous.children[1].children[3], -120);
+		bindwheel(jMous.children[1].children[4], 120);
 
-		jMous.children[1].children[3].ontouchstart = function() {
+		jMous.children[1].children[5].ontouchstart = function() {
 			this.style.background = "grey";
 		};
 
-		jMous.children[1].children[3].ontouchend = function() {
+		jMous.children[1].children[5].ontouchend = function() {
 			this.style.background = "inherit";
 			switchto(0);
 		};
+
+		function bindwheel(elem, delta) {
+			let interval = -1;
+			let step = function() {
+				const event = new WheelEvent('wheel', {
+					view: window,
+					ctrlKey: control,
+					altKey: alt,
+					shiftKey: shift,
+					clientX: mousex,
+					clientY: mousey,
+					deltaY: delta / 4,
+					wheelDelta: -delta,
+					bubbles: true,
+					cancelable: true
+				});
+				(document.elementFromPoint(mousex, mousey) || document.body).dispatchEvent(event);
+			};
+
+			elem.ontouchstart = function() {
+				if (interval !== -1) {
+					clearInterval(interval);
+				}
+				step();
+				interval = setInterval(step, 50);
+				this.style.background = "grey";
+			};
+
+			elem.ontouchend = function() {
+				if (interval !== -1) {
+					clearInterval(interval);
+				}
+				this.style.background = "inherit";
+			};
+		}
 
 		function bindbutton(elem, button) {
 			elem.ontouchstart = function() {
