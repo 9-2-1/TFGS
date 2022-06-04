@@ -86,13 +86,13 @@
 						ccode = 38;
 						cname = "ArrowUp";
 						break;
-					case "↓":
-						ccode = 39;
-						cname = "ArrowDown";
-						break;
 					case "→":
-						ccode = 40;
+						ccode = 39;
 						cname = "ArrowRight";
+						break;
+					case "↓":
+						ccode = 40;
+						cname = "ArrowDown";
 						break;
 					case " ":
 						ccode = 0;
