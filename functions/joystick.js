@@ -221,13 +221,20 @@
 			}
 
 			cursordiv.style.left = mousex - 1 + "px";
-			cursordiv.style.top = mousey - 2 + "px";
+			cursordiv.style.top = mousey - 8 + "px";
 
 			if (e.type === "touchmove") {
 				touchnewx /= tlist.length;
 				touchnewy /= tlist.length;
-				mousex += touchnewx - touchx;
-				mousey += touchnewy - touchy;
+				let deltax = touchnewx - touchx;
+				let deltay = touchnewy - touchy;
+				let k = 1 * Math.pow(Math.sqrt(deltax * deltax + deltay * deltay), 0.5);
+				mousex += deltax * k;
+				mousey += deltay * k;
+				if (mousex < 0) mousex = 0;
+				if (mousey < 0) mousey = 0;
+				if (mousex > window.innerWidth - 1) mousex = window.innerWidth - 1;
+				if (mousey > window.innerHeight - 1) mousey = window.innerHeight - 1;
 				touchx = touchnewx;
 				touchy = touchnewy;
 				const event = new MouseEvent('mousemove', {

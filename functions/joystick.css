@@ -74,4 +74,6 @@
 	text-shadow: 0px 0px 2px white;
 	color: grey;
 	pointer-events: none;
+	opacity: 0.5;
+	font-size: 30px;
 }
