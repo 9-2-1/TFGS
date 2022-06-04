@@ -10,7 +10,12 @@
 </head>
 
 <body>
+	<div onmousedown="this.innerText='被点了'">测试点击</div>
+	<div id="testKeyB">测试键盘</div>
 	<script>
+		window.onkeydown = function() {
+			document.getElementById("testKeyB").innerText = '按下 ' + event.key;
+		}
 		window.onerror = function() {
 			alert(Array.apply(Array, arguments).toString());
 		};
