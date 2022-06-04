@@ -144,19 +144,34 @@ tfgs.funcapi.vm = function(name) {
 		errors.push(e);
 		try {
 			// 获取VM方法1
-			return tfs.funcapi.selele(name, "gui_page-wrapper_").return.return.return.return.return.return.return.return.stateNode.props.vm;
+			return tfs.funcapi.selele(name, "gui_page-wrapper_")
+				.return.return.return.return
+				.return.return.return.return
+				.stateNode.props.vm;
 		} catch (e) {
 			errors.push(e);
 			try {
 				// 获取VM方法2
-				return tfgs.funcapi.store(name).getState().scratchGui.vm;
+				return tfgs.funcapi.reactInternal(name,
+						tfgs.funcapi.selele("stage-wrapper_")
+					)
+					.return.return.return.return
+					.return.return.return.return
+					.return.return
+					.stateNode.props.vm;
 			} catch (e) {
 				errors.push(e);
-				for (let i in e) {
-					tfgs.funcapi.error(name, `funcapi: 方法${i+1}错误:`);
-					tfgs.funcapi.onerror(name, e);
+				try {
+					// 获取VM方法3
+					return tfgs.funcapi.store(name).getState().scratchGui.vm;
+				} catch (e) {
+					errors.push(e);
+					for (let i in e) {
+						tfgs.funcapi.error(name, `funcapi: 方法${i+1}错误:`);
+						tfgs.funcapi.onerror(name, e);
+					}
+					throw new Error("tfgs.funcapi.vm: cannot find vm");
 				}
-				throw new Error("tfgs.funcapi.vm: cannot find vm");
 			}
 		}
 	}
