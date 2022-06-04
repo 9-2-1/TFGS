@@ -104,8 +104,14 @@
 				}
 				line.appendChild(crex(char1, char2, ccode, cname));
 			}
+			line.ontouchstart = function(e) {
+				e.preventDefault();
+			};
 			jKeyB.appendChild(line);
 		}
+		jKeyB.ontouchstart = function(e) {
+			e.preventDefault();
+		};
 
 		function crex(key, key2, code, name) {
 			let x = tfgs.element.create("span");
