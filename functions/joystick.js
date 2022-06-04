@@ -85,7 +85,7 @@
 						break;
 					case "␣":
 						ccode = 32;
-						cname = "Space";
+						cname = " ";
 						break;
 					case "↵":
 						ccode = 13;
@@ -330,25 +330,43 @@
 
 		function bindkey(key, key2, code, name) {
 			let x = tfgs.element.create("span");
+			let interval = -1;
+			let timeout = -1;
+			let step = function() {
+				if (name === "Control") control = true;
+				if (name === "Alt") alt = true;
+				if (name === "Shift") shift = true;
+				const event = new KeyboardEvent('keydown', {
+					view: window,
+					ctrlKey: control,
+					altKey: alt,
+					shiftKey: shift,
+					key: name !== null ? name : shift ? key2 : key,
+					code: code,
+					keyCode: code,
+					bubbles: true,
+					cancelable: true
+				});
+				(document.activeElement || document.body).dispatchEvent(event);
+			};
 			x.innerText = key + (key !== key2 ? " " + key2 : "");
 			x.ontouchstart = function(e) {
 				e.preventDefault();
 				if (name !== "tfgsSwitch") {
-					if (name === "Control") control = true;
-					if (name === "Alt") alt = true;
-					if (name === "Shift") shift = true;
-					const event = new KeyboardEvent('keydown', {
-						view: window,
-						ctrlKey: control,
-						altKey: alt,
-						shiftKey: shift,
-						key: name !== null ? name : shift ? key2 : key,
-						code: code,
-						keyCode: code,
-						bubbles: true,
-						cancelable: true
-					});
-					(document.activeElement || document.body).dispatchEvent(event);
+					if (interval !== -1) {
+						clearInterval(interval);
+					}
+					if (timeout !== -1) {
+						clearTimeout(timeout);
+					}
+					interval = -1;
+					timeout = -1;
+					step();
+					timeout = setTimeout(function() {
+						timeout = -1;
+						step();
+						interval = setInterval(step, 50);
+					}, 600);
 				}
 				x.style.background = "grey";
 			};
@@ -358,6 +376,14 @@
 			x.ontouchend = function(e) {
 				e.preventDefault();
 				if (name !== "tfgsSwitch") {
+					if (interval !== -1) {
+						clearInterval(interval);
+					}
+					if (timeout !== -1) {
+						clearTimeout(timeout);
+					}
+					interval = -1;
+					timeout = -1;
 					if (name === "Control") control = false;
 					if (name === "Alt") alt = false;
 					if (name === "Shift") shift = false;
@@ -382,7 +408,7 @@
 			if (name === "Shift") x.style.flexGrow = 2;
 			if (name === "Control") x.style.flexGrow = 2;
 			if (name === "Enter") x.style.flexGrow = 1.5;
-			if (name === "Space") x.style.flexGrow = 4;
+			if (name === " ") x.style.flexGrow = 4;
 			return x;
 		}
 	}
