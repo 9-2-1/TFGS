@@ -131,7 +131,7 @@
 						ccode = char1.codePointAt(0);
 						cname = null;
 				}
-				line.appendChild(crex(char1, char2, ccode, cname));
+				line.appendChild(bindkey(char1, char2, ccode, cname));
 			}
 			line.ontouchstart = function(e) {
 				e.preventDefault();
@@ -147,52 +147,62 @@
 		jMous.innerHTML = `
 <span class="tfgsJoystickMouseMove"></span>
 <span>
-	<span class="tfgsJoystickMouseClick">+</span>
-	<span class="tfgsJoystickMouseSwitch">⌬</span>
+	<span class="tfgsJoystickMouseClick">👆</span>
+	<span class="tfgsJoystickMouseClick">🖕</span>
+	<span class="tfgsJoystickMouseClick">☝️</span>
+	<span class="tfgsJoystickMouseSwitch">⌨</span>
 </span>`;
 
 		jMous.children[0].ontouchstart = synctouch;
 		jMous.children[0].ontouchmove = synctouch;
 		jMous.children[0].ontouchend = synctouch;
 
-		jMous.children[1].children[0].ontouchstart = function() {
-			const event = new MouseEvent('mousedown', {
-				view: window,
-				ctrlKey: control,
-				altKey: alt,
-				shiftKey: shift,
-				clientX: mousex,
-				clientY: mousey,
-				bubbles: true,
-				cancelable: true
-			});
-			this.style.background = "grey";
-			(document.elementFromPoint(mousex, mousey) || document.body).dispatchEvent(event);
-		};
+		bindbutton(jMous.children[1].children[0], 0);
+		bindbutton(jMous.children[1].children[1], 1);
+		bindbutton(jMous.children[1].children[2], 2);
 
-		jMous.children[1].children[0].ontouchend = function() {
-			const event = new MouseEvent('mouseup', {
-				view: window,
-				ctrlKey: control,
-				altKey: alt,
-				shiftKey: shift,
-				clientX: mousex,
-				clientY: mousey,
-				bubbles: true,
-				cancelable: true
-			});
-			this.style.background = "inherit";
-			(document.elementFromPoint(mousex, mousey) || document.body).dispatchEvent(event);
-		};
-
-		jMous.children[1].children[1].ontouchstart = function() {
+		jMous.children[1].children[3].ontouchstart = function() {
 			this.style.background = "grey";
 		};
 
-		jMous.children[1].children[1].ontouchend = function() {
+		jMous.children[1].children[3].ontouchend = function() {
 			this.style.background = "inherit";
 			switchto(0);
 		};
+
+		function bindbutton(elem, button) {
+			elem.ontouchstart = function() {
+				const event = new MouseEvent('mousedown', {
+					view: window,
+					button: button,
+					ctrlKey: control,
+					altKey: alt,
+					shiftKey: shift,
+					clientX: mousex,
+					clientY: mousey,
+					bubbles: true,
+					cancelable: true
+				});
+				this.style.background = "grey";
+				(document.elementFromPoint(mousex, mousey) || document.body).dispatchEvent(event);
+			};
+
+			elem.ontouchend = function() {
+				const event = new MouseEvent('mouseup', {
+					view: window,
+					button: button,
+					ctrlKey: control,
+					altKey: alt,
+					shiftKey: shift,
+					clientX: mousex,
+					clientY: mousey,
+					bubbles: true,
+					cancelable: true
+				});
+				this.style.background = "inherit";
+				(document.elementFromPoint(mousex, mousey) || document.body).dispatchEvent(event);
+			};
+		}
 
 		function synctouch(e) {
 			e.preventDefault();
@@ -272,7 +282,7 @@
 			}
 		}
 
-		function crex(key, key2, code, name) {
+		function bindkey(key, key2, code, name) {
 			let x = tfgs.element.create("span");
 			x.innerText = key + (key !== key2 ? " " + key2 : "");
 			x.ontouchstart = function(e) {
