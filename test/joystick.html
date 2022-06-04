@@ -1,0 +1,39 @@
+<html>
+
+<head>
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+	<link rel="stylesheet" href="../functions/joystick.css" />
+	<link rel="stylesheet" href="../tfgs/log.css" />
+	<link rel="stylesheet" href="../tfgs/menu.css" />
+	<link rel="stylesheet" href="../tfgs/button.css" />
+	<link rel="stylesheet" href="../tfgs/window.css" />
+</head>
+
+<body>
+	<script>
+		window.onerror = function() {
+			alert(Array.apply(Array, arguments).toString());
+		};
+		let tfgs = {};
+
+	</script>
+	<script src="../tfgs/element.js"></script>
+	<script src="../tfgs/error.js"></script>
+	<script src="../tfgs/data.js"></script>
+	<script src="../tfgs/func.js"></script>
+	<script src="../tfgs/log.js"></script>
+	<script src="../tfgs/button.js"></script>
+	<script src="../tfgs/menu.js"></script>
+	<script src="../tfgs/funcapi.js"></script>
+	<script src="../tfgs/window.js"></script>
+	<script src="../tfgs/drag.js"></script>
+	<script src="../functions/joystick.js"></script>
+	<script>
+		tfgs.data.load().then(function() {
+			tfgs.menu.create();
+		}).catch(tfgs.error);
+
+	</script>
+</body>
+
+</html>

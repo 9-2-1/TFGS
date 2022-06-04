@@ -1,89 +1,170 @@
 ! function() {
-	let api, win = null,
-		vm;
+	let api, win = null;
+	let shift = false,
+		control = false,
+		alt = false;
+
+	function monitorkey(event) {
+		control = event.ctrlKey;
+		alt = event.altKey;
+		shift = event.shiftKey;
+	}
 
 	function opencontrol() {
+		window.addEventListener("keydown", monitorkey);
+		window.addEventListener("keyup", monitorkey);
+
+		shift = false;
+		control = false;
+		alt = false;
 		win = tfgs.window.create({
 			title: "JoyStick",
 			canClose: false,
 			canMaximize: false
 		});
 
-		crex(" ",32);
-		crex("←",37);
-		crex("↑",38);
-		crex("↓",39);
-		crex("→",40);
-		crex("A",65);
-		crex("B",66);
-		crex("C",67);
-		crex("D",68);
-		crex("E",69);
-		crex("F",70);
-		crex("G",71);
-		crex("H",72);
-		crex("I",73);
-		crex("J",74);
-		crex("K",75);
-		crex("L",76);
-		crex("M",77);
-		crex("N",78);
-		crex("O",79);
-		crex("P",80);
-		crex("Q",81);
-		crex("R",82);
-		crex("S",83);
-		crex("T",84);
-		crex("U",85);
-		crex("V",86);
-		crex("W",87);
-		crex("X",88);
-		crex("Y",89);
-		crex("Z",90);
-		crex("0",96);
-		crex("1",97);
-		crex("2",98);
-		crex("3",99);
-		crex("4",100);
-		crex("5",101);
-		crex("6",102);
-		crex("7",103);
-		crex("8",104);
-		crex("9",105);
+		let wdiv = win.innerDiv;
+		wdiv.innerHTML = `
+<div class="tfgsJoystick">
+	<div class="tfgsJoystickKeyBoard"></div>
+	<div class="tfgsJoystickMouse"></div>
+	<div class="tfgsJoystickGamepad"></div>
+</div>`;
 
-		function crex(key,code){
-			let x=tfgs.element.create("span","tfgsJoystickButton");
-			x.innerText=key;
+		let jKeyB = wdiv.children[0].children[0];
+		let jMous = wdiv.children[0].children[1];
+		let jJoys = wdiv.children[0].children[2];
+
+		// let char1 = "~1234567890-=⌫\n⇄QWERTYUIOP[]\\\n ASDFGHJKL';↵\n⇧ZXCVBNM,./ \n⌃⌥␣←↑↓→⌬".split('\n');
+		// let char2 = "`!@#$%^&*()_+⌫\n⇄QWERTYUIOP{}|\n ASDFGHJKL\":↵\n⇧ZXCVBNM<>? \n⌃⌥␣←↑↓→⌬".split('\n');
+
+		let char1 = "1234567890\nQWERTYUIOP\nASDFGHJKL\nZXCVBNM↑↵\n⌬␣←↓→".split('\n');
+		let char2 = "1234567890\nQWERTYUIOP\nASDFGHJKL\nZXCVBNM↑↵\n⌬␣←↓→".split('\n');
+
+		for (let i in char1) {
+			let line1 = char1[i].split('');
+			let line2 = char2[i].split('');
+			line = tfgs.element.create("span");
+			for (let j in line1) {
+				let char1 = line1[j];
+				let char2 = line2[j];
+				let ccode, cname;
+				switch (char1) {
+					case "⌫":
+						ccode = 8;
+						cname = "Backspace";
+						break;
+					case "⇄":
+						ccode = 9;
+						cname = "Tab";
+						break;
+					case "␣":
+						ccode = 32;
+						cname = "Space";
+						break;
+					case "↵":
+						ccode = 13;
+						cname = "Enter";
+						break;
+					case "⇧":
+						ccode = 0;
+						cname = "Shift";
+						break;
+					case "⌥":
+						ccode = 0;
+						cname = "Alt";
+						break;
+					case "⌃":
+						ccode = 0;
+						cname = "Control";
+						break;
+					case "←":
+						ccode = 37;
+						cname = "ArrowLeft";
+						break;
+					case "↑":
+						ccode = 38;
+						cname = "ArrowUp";
+						break;
+					case "↓":
+						ccode = 39;
+						cname = "ArrowDown";
+						break;
+					case "→":
+						ccode = 40;
+						cname = "ArrowRight";
+						break;
+					case " ":
+						ccode = 0;
+						cname = "Unidentified";
+						break;
+					default:
+						ccode = char1.codePointAt(0);
+						cname = null;
+				}
+				line.appendChild(crex(char1, char2, ccode, cname));
+			}
+			jKeyB.appendChild(line);
+		}
+
+		function crex(key, key2, code, name) {
+			let x = tfgs.element.create("span");
+			x.innerText = key + (key !== key2 ? " " + key2 : "");
+			x.__key = key;
+			x.__key2 = key2;
 			x.ontouchstart = function(e) {
+				if (name === "Control") control = true;
+				if (name === "Alt") alt = true;
+				if (name === "Shift") shift = true;
 				e.preventDefault();
 				const event = new KeyboardEvent('keydown', {
 					view: window,
-					key: key,
-					code:code,
-					keyCode:code,
+					ctrlKey: control,
+					altKey: alt,
+					shiftKey: shift,
+					key: name !== null ? name : shift ? key2 : key,
+					code: code,
+					keyCode: code,
 					bubbles: true,
 					cancelable: true
 				});
-				(document.activeElement||document.body).dispatchEvent(event);
+				(document.activeElement || document.body).dispatchEvent(event);
+				x.style.background = "grey";
 			};
 			x.ontouchmove = function(e) {
 				e.preventDefault();
 			};
 			x.ontouchend = function(e) {
 				e.preventDefault();
+				if (name === "Control") control = false;
+				if (name === "Alt") alt = false;
+				if (name === "Shift") shift = false;
 				const event = new KeyboardEvent('keyup', {
 					view: window,
-					key: key,
+					ctrlKey: control,
+					altKey: alt,
+					shiftKey: shift,
+					key: name !== null ? name : shift ? key2 : key,
+					code: code,
+					keyCode: code,
 					bubbles: true,
 					cancelable: true
 				});
-				(document.activeElement||document.body).dispatchEvent(event);
+				(document.activeElement || document.body).dispatchEvent(event);
+				x.style.background = "inherit";
 			};
-			win.innerDiv.appendChild(x);
+			if (name === "Unidentified") x.style.flexGrow = 1.5;
+			if (name === "Shift") x.style.flexGrow = 2;
+			if (name === "Control") x.style.flexGrow = 2;
+			if (name === "Enter") x.style.flexGrow = 1.5;
+			if (name === "Space") x.style.flexGrow = 4;
+			return x;
 		}
 	}
 
 	function closecontrol() {
+		window.removeEventListener("keydown", monitorkey);
+		window.removeEventListener("keyup", monitorkey);
 		if (win !== null) {
 			win.close();
 		}
