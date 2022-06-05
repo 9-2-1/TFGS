@@ -45,18 +45,18 @@
 	<div class="tfgsJoystickGamepad"></div>
 </div>`;
 
-			wdiv.ontouchstart = function(e) {
-				e.preventDefault();
-				e.stopPropagation();
-			};
-			wdiv.ontouchmove = function(e) {
-				e.preventDefault();
-				e.stopPropagation();
-			};
-			wdiv.ontouchend = function(e) {
-				e.preventDefault();
-				e.stopPropagation();
-			};
+		wdiv.ontouchstart = function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+		};
+		wdiv.ontouchmove = function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+		};
+		wdiv.ontouchend = function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+		};
 
 		let jKeyB = wdiv.children[0].children[0];
 		let jMous = wdiv.children[0].children[1];
@@ -144,7 +144,7 @@
 						ccode = char1.codePointAt(0);
 						cname = null;
 				}
-				line.appendChild(bindkey(char1, char2, ccode, cname));
+				line.appendChild(createKey(char1, char2, ccode, cname));
 			}
 			jKeyB.appendChild(line);
 		}
@@ -154,9 +154,90 @@
 		jMous.innerHTML = `
 <span class="tfgsJoystickMouseMove"></span>
 <span>
-	<span class="tfgsJoystickMouseClick">👆</span>
-	<span class="tfgsJoystickMouseClick">🖕</span>
-	<span class="tfgsJoystickMouseClick">☝️</span>
+	<span class="tfgsJoystickMouseClick">
+		<svg width=20 height=30>
+			<path d="
+				M 1 10
+				A 9 9 0 0 1 19 10
+				L 19 20
+				A 9 9 0 0 1 1 20
+				Z
+				M 1 15
+				L 19 15
+				M 10 1
+				L 10 5
+				M 8 7
+				A 2 2 0 0 1 12 7
+				L 12 9
+				A 2 2 0 0 1 8 9
+				Z
+				M 10 11
+				L 10 15
+			" stroke=black stroke-width=1 fill=none />
+			<path d="
+				M 1 10
+				A 9 9 0 0 1 10 1
+				L 10 15
+				L 1 15
+			" stroke=none fill=black />
+		</svg>
+	</span>
+	<span class="tfgsJoystickMouseClick">
+		<svg width=20 height=30>
+			<path d="
+				M 1 10
+				A 9 9 0 0 1 19 10
+				L 19 20
+				A 9 9 0 0 1 1 20
+				Z
+				M 1 15
+				L 19 15
+				M 10 1
+				L 10 5
+				M 8 7
+				A 2 2 0 0 1 12 7
+				L 12 9
+				A 2 2 0 0 1 8 9
+				Z
+				M 10 11
+				L 10 15
+			" stroke=black stroke-width=1 fill=none />
+			<path d="
+				M 8 7
+				A 2 2 0 0 1 12 7
+				L 12 9
+				A 2 2 0 0 1 8 9
+			" stroke=none fill=black />
+		</svg>
+	</span>
+	<span class="tfgsJoystickMouseClick">
+		<svg width=20 height=30>
+			<path d="
+				M 1 10
+				A 9 9 0 0 1 19 10
+				L 19 20
+				A 9 9 0 0 1 1 20
+				Z
+				M 1 15
+				L 19 15
+				M 10 1
+				L 10 5
+				M 8 7
+				A 2 2 0 0 1 12 7
+				L 12 9
+				A 2 2 0 0 1 8 9
+				Z
+				M 10 11
+				L 10 15
+			" stroke=black stroke-width=1 fill=none />
+			<path d="
+				M 10 1
+				A 9 9 0 0 1 19 10
+				L 19 15
+				L 10 15
+			" stroke=none fill=black />
+		</svg>
+	</span>
 	<span class="tfgsJoystickMouseClick">▲</span>
 	<span class="tfgsJoystickMouseClick">▼</span>
 	<span class="tfgsJoystickMouseSwitch">⌨</span>
@@ -176,8 +257,7 @@
 			this.style.background = "grey";
 		};
 
-		jMous.children[1].children[5].ontouchmove = function(e) {
-		};
+		jMous.children[1].children[5].ontouchmove = function(e) {};
 
 		jMous.children[1].children[5].ontouchend = function(e) {
 			this.style.background = "inherit";
@@ -265,11 +345,22 @@
 			if (cursordiv === null) {
 				cursordiv = tfgs.element.create("span", "tfgsJoystickCursor");
 				document.body.appendChild(cursordiv);
-				cursordiv.innerText = "◤";
+				cursordiv.innerHTML = `<svg>
+	<path d="
+		M 0 0
+		L 15 20
+		L 10 21.67
+		L 14 29.67
+		L 9 31.33
+		L 5 23.33
+		L 0 25
+		Z
+	" stroke=black stroke-width=1 fill=white />
+</svg>`;
 			}
 
 			cursordiv.style.left = mousex - 1 + "px";
-			cursordiv.style.top = mousey - 8 + "px";
+			cursordiv.style.top = mousey - 1 + "px";
 
 			if (e.type === "touchmove") {
 				touchnewx /= tlist.length;
@@ -337,7 +428,7 @@
 			}
 		}
 
-		function bindkey(key, key2, code, name) {
+		function createKey(key, key2, code, name) {
 			let x = tfgs.element.create("span");
 			let interval = -1;
 			let timeout = -1;
@@ -358,7 +449,30 @@
 				});
 				(document.activeElement || document.body).dispatchEvent(event);
 			};
-			x.innerText = key + (key !== key2 ? " " + key2 : "");
+			if (name === "tfgsSwitch") {
+				x.innerHTML = `<svg width=20 height=30>
+	<path d="
+		M 1 10
+		A 9 9 0 0 1 19 10
+		L 19 20
+		A 9 9 0 0 1 1 20
+		Z
+		M 1 15
+		L 19 15
+		M 10 1
+		L 10 5
+		M 8 7
+		A 2 2 0 0 1 12 7
+		L 12 9
+		A 2 2 0 0 1 8 9
+		Z
+		M 10 11
+		L 10 15
+	" stroke=black stroke-width=1 fill=none />
+</svg>`;
+			} else {
+				x.innerText = key + (key !== key2 ? " " + key2 : "");
+			}
 			x.ontouchstart = function(e) {
 				if (name !== "tfgsSwitch") {
 					if (interval !== -1) {
