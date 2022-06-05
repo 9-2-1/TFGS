@@ -74,7 +74,7 @@
 			}
 		}
 
-		switchto(0);
+		switchto(6);
 
 		// 0: keyBoard
 
@@ -396,9 +396,6 @@
 </svg>`;
 			}
 
-			cursordiv.style.left = mousex - 1 + "px";
-			cursordiv.style.top = mousey - 1 + "px";
-
 			if (e.type === "touchmove" || e.type === "mousemove" && realmousedown) {
 				touchnewx /= tlist.length;
 				touchnewy /= tlist.length;
@@ -433,6 +430,9 @@
 					touchy = touchnewy / tlist.length;
 				}
 			}
+
+			cursordiv.style.left = mousex - 1 + "px";
+			cursordiv.style.top = mousey - 1 + "px";
 		}
 
 		function sendKeyEvent(type, data) {
@@ -461,12 +461,34 @@
 				cancelable: true
 			}, data));
 			let elem = document.elementFromPoint(mousex, mousey);
+			let eventx = event.clientX,
+				eventy = event.clientY;
+			if (elem !== null) {
+				while (true) {
+					let next = null;
+					if (elem.tagName.toLowerCase() === "iframe") {
+						let offs = elem.getBoundingClientRect();
+						eventx -= offs.left;
+						eventy -= offs.top;
+						next = elem.contentWindow.document.elementFromPoint(eventx, eventy);
+					} else if (type === "mousedown" && elem.shadowRoot !== null && elem.shadowRoot !== undefined) {
+						next = elem.shadowRoot.elementFromPoint(eventx, eventy);
+					}
+					if (next === null) {
+						break;
+					} else {
+						elem = next;
+					}
+				}
+			}
 			if (elem === null) elem = window;
 			let pare = elem;
 			while (pare !== null && pare !== win.windowDiv) {
 				pare = pare.parentElement;
 			}
 			if (pare === null) {
+				event.clientX = eventx;
+				event.clientY = eventy;
 				elem.dispatchEvent(event);
 			}
 		}
