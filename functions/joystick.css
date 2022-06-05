@@ -42,16 +42,16 @@
 }
 
 .tfgsJoystickMouse>.tfgsJoystickMouseMove {
-	flex: 1 1 0;
+	flex: 4 4 0;
 	border: 1px solid black;
 	margin: 1px;
 	padding: 1px;
 }
 
 .tfgsJoystickMouse>span {
+	flex: 1 1 0;
 	display: flex;
 	flex-flow: row nowrap;
-	flex: 0 0 40px;
 }
 
 .tfgsJoystickMouseClick {
@@ -62,7 +62,7 @@
 }
 
 .tfgsJoystickMouseSwitch {
-	flex: 0 0 40px;
+	flex: 1 1 0;
 	border: 1px solid black;
 	margin: 1px;
 	padding: 1px;
@@ -74,6 +74,5 @@
 	text-shadow: 0px 0px 2px white;
 	color: grey;
 	pointer-events: none;
-	opacity: 0.5;
 	font-size: 30px;
 }
