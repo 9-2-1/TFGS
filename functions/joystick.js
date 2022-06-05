@@ -135,11 +135,29 @@
 			}
 			line.ontouchstart = function(e) {
 				e.preventDefault();
+				e.stopPropagation();
+			};
+			line.ontouchmove = function(e) {
+				e.preventDefault();
+				e.stopPropagation();
+			};
+			line.ontouchend = function(e) {
+				e.preventDefault();
+				e.stopPropagation();
 			};
 			jKeyB.appendChild(line);
 		}
 		jKeyB.ontouchstart = function(e) {
 			e.preventDefault();
+			e.stopPropagation();
+		};
+		jKeyB.ontouchmove = function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+		};
+		jKeyB.ontouchend = function(e) {
+			e.preventDefault();
+			e.stopPropagation();
 		};
 
 		// 1: mouse
@@ -165,11 +183,20 @@
 		bindwheel(jMous.children[1].children[3], -120);
 		bindwheel(jMous.children[1].children[4], 120);
 
-		jMous.children[1].children[5].ontouchstart = function() {
+		jMous.children[1].children[5].ontouchstart = function(e) {
+			e.preventDefault();
+			e.stopPropagation();
 			this.style.background = "grey";
 		};
 
-		jMous.children[1].children[5].ontouchend = function() {
+		jMous.children[1].children[5].ontouchmove = function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+		};
+
+		jMous.children[1].children[5].ontouchend = function(e) {
+			e.preventDefault();
+			e.stopPropagation();
 			this.style.background = "inherit";
 			switchto(0);
 		};
@@ -192,25 +219,36 @@
 				(document.elementFromPoint(mousex, mousey) || document.body).dispatchEvent(event);
 			};
 
-			elem.ontouchstart = function() {
+			elem.ontouchstart = function(e) {
 				if (interval !== -1) {
 					clearInterval(interval);
 				}
 				step();
 				interval = setInterval(step, 50);
 				this.style.background = "grey";
+				e.preventDefault();
+				e.stopPropagation();
 			};
 
-			elem.ontouchend = function() {
+			elem.ontouchmove = function(e) {
+				e.preventDefault();
+				e.stopPropagation();
+			};
+
+			elem.ontouchend = function(e) {
 				if (interval !== -1) {
 					clearInterval(interval);
 				}
 				this.style.background = "inherit";
+				e.preventDefault();
+				e.stopPropagation();
 			};
 		}
 
 		function bindbutton(elem, button) {
-			elem.ontouchstart = function() {
+			elem.ontouchstart = function(e) {
+				e.preventDefault();
+				e.stopPropagation();
 				const event = new MouseEvent('mousedown', {
 					view: window,
 					button: button,
@@ -226,7 +264,14 @@
 				(document.elementFromPoint(mousex, mousey) || document.body).dispatchEvent(event);
 			};
 
-			elem.ontouchend = function() {
+			elem.ontouchmove = function(e) {
+				e.preventDefault();
+				e.stopPropagation();
+			};
+
+			elem.ontouchend = function(e) {
+				e.preventDefault();
+				e.stopPropagation();
 				const event = new MouseEvent('mouseup', {
 					view: window,
 					button: button,
@@ -245,6 +290,7 @@
 
 		function synctouch(e) {
 			e.preventDefault();
+			e.stopPropagation();
 			let tlist = e.targetTouches;
 			let touchnewx = 0,
 				touchnewy = 0;
@@ -352,6 +398,7 @@
 			x.innerText = key + (key !== key2 ? " " + key2 : "");
 			x.ontouchstart = function(e) {
 				e.preventDefault();
+				e.stopPropagation();
 				if (name !== "tfgsSwitch") {
 					if (interval !== -1) {
 						clearInterval(interval);
@@ -372,9 +419,11 @@
 			};
 			x.ontouchmove = function(e) {
 				e.preventDefault();
+				e.stopPropagation();
 			};
 			x.ontouchend = function(e) {
 				e.preventDefault();
+				e.stopPropagation();
 				if (name !== "tfgsSwitch") {
 					if (interval !== -1) {
 						clearInterval(interval);
