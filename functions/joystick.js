@@ -305,19 +305,10 @@
 		function bindwheel(elem, delta) {
 			let interval = -1;
 			let step = function() {
-				const event = new WheelEvent('wheel', {
-					view: window,
-					ctrlKey: control,
-					altKey: alt,
-					shiftKey: shift,
-					clientX: mousex,
-					clientY: mousey,
+				sendWheelEvent(mousex, mousey, "wheel", {
 					deltaY: delta / 4,
 					wheelDelta: -delta,
-					bubbles: true,
-					cancelable: true
 				});
-				(document.elementFromPoint(mousex, mousey) || document.body).dispatchEvent(event);
 			};
 
 			elem.onmousedown = elem.ontouchstart = function(e) {
@@ -339,35 +330,15 @@
 
 		function bindbutton(elem, button) {
 			elem.onmousedown = elem.ontouchstart = function(e) {
-				const event = new MouseEvent('mousedown', {
-					view: window,
-					button: button,
-					ctrlKey: control,
-					altKey: alt,
-					shiftKey: shift,
-					clientX: mousex,
-					clientY: mousey,
-					bubbles: true,
-					cancelable: true
+				sendMouseEvent(mousex, mousey, "mousedown", {
+					button: button
 				});
 				this.style.background = "grey";
-				(document.elementFromPoint(mousex, mousey) || document.body).dispatchEvent(event);
 			};
 
 			elem.onmouseup = elem.ontouchend = function(e) {
-				const event = new MouseEvent('mouseup', {
-					view: window,
-					button: button,
-					ctrlKey: control,
-					altKey: alt,
-					shiftKey: shift,
-					clientX: mousex,
-					clientY: mousey,
-					bubbles: true,
-					cancelable: true
-				});
+				sendMouseEvent(mousex, mousey, "mouseup", {});
 				this.style.background = "inherit";
-				(document.elementFromPoint(mousex, mousey) || document.body).dispatchEvent(event);
 			};
 		}
 
@@ -442,48 +413,18 @@
 				if (mousey > window.innerHeight - 1) mousey = window.innerHeight - 1;
 				touchx = touchnewx;
 				touchy = touchnewy;
-				const event = new MouseEvent('mousemove', {
-					view: window,
-					ctrlKey: control,
-					altKey: alt,
-					shiftKey: shift,
-					clientX: mousex,
-					clientY: mousey,
-					bubbles: true,
-					cancelable: true
-				});
-				(document.elementFromPoint(mousex, mousey) || document.body).dispatchEvent(event);
+				sendMouseEvent(mousex, mousey, "mousemove", {});
 			} else {
 				if (tlist.length > 1) {
 					if (!moused) {
-						const event = new MouseEvent('mousedown', {
-							view: window,
-							ctrlKey: control,
-							altKey: alt,
-							shiftKey: shift,
-							clientX: mousex,
-							clientY: mousey,
-							bubbles: true,
-							cancelable: true
-						});
+						sendMouseEvent(mousex, mousey, "mousedown", {});
 						this.style.background = "grey";
-						(document.elementFromPoint(mousex, mousey) || document.body).dispatchEvent(event);
 					}
 					moused = true;
 				} else {
 					if (moused) {
-						const event = new MouseEvent('mouseup', {
-							view: window,
-							ctrlKey: control,
-							altKey: alt,
-							shiftKey: shift,
-							clientX: mousex,
-							clientY: mousey,
-							bubbles: true,
-							cancelable: true
-						});
+						sendMouseEvent(mousex, mousey, "mouseup", {});
 						this.style.background = "inherit";
-						(document.elementFromPoint(mousex, mousey) || document.body).dispatchEvent(event);
 					}
 					moused = false;
 				}
@@ -494,6 +435,50 @@
 			}
 		}
 
+		function sendKeyEvent(type, data) {
+			const event = new KeyboardEvent(type, Object.assign({
+				view: window,
+				ctrlKey: control,
+				altKey: alt,
+				shiftKey: shift,
+				bubbles: true,
+				cancelable: true
+			}, data));
+			let elem = document.activeElement;
+			if (elem === null) elem = window;
+			elem.dispatchEvent(event);
+		}
+
+		function sendMouseLikeEvent(btype, mousex, mousey, type, data) {
+			const event = new btype(type, Object.assign({
+				view: window,
+				ctrlKey: control,
+				altKey: alt,
+				shiftKey: shift,
+				clientX: mousex,
+				clientY: mousey,
+				bubbles: true,
+				cancelable: true
+			}, data));
+			let elem = document.elementFromPoint(mousex, mousey);
+			if (elem === null) elem = window;
+			let pare = elem;
+			while (pare !== null && pare !== win.windowDiv) {
+				pare = pare.parentElement;
+			}
+			if (pare === null) {
+				elem.dispatchEvent(event);
+			}
+		}
+
+		function sendMouseEvent(mousex, mousey, type, data) {
+			sendMouseLikeEvent(MouseEvent, mousex, mousey, type, data);
+		}
+
+		function sendWheelEvent(mousex, mousey, type, data) {
+			sendMouseLikeEvent(WheelEvent, mousex, mousey, type, data);
+		}
+
 		function createKey(key, key2, code, name, nextId) {
 			let x = tfgs.element.create("span");
 			let interval = -1;
@@ -502,18 +487,11 @@
 				if (name === "Control") control = true;
 				if (name === "Alt") alt = true;
 				if (name === "Shift") shift = true;
-				const event = new KeyboardEvent('keydown', {
-					view: window,
-					ctrlKey: control,
-					altKey: alt,
-					shiftKey: shift,
+				sendKeyEvent("keydown", {
 					key: name !== null ? name : shift ? key2 : key,
 					code: code,
 					keyCode: code,
-					bubbles: true,
-					cancelable: true
 				});
-				(document.activeElement || document.body).dispatchEvent(event);
 			};
 			if (name === "tfgsSwitch") {
 				x.innerHTML = nextId === 6 ? `<svg width=20 height=30>
@@ -571,18 +549,11 @@
 					if (name === "Control") control = false;
 					if (name === "Alt") alt = false;
 					if (name === "Shift") shift = false;
-					const event = new KeyboardEvent('keyup', {
-						view: window,
-						ctrlKey: control,
-						altKey: alt,
-						shiftKey: shift,
+					sendKeyEvent("keyup", {
 						key: name !== null ? name : shift ? key2 : key,
 						code: code,
 						keyCode: code,
-						bubbles: true,
-						cancelable: true
 					});
-					(document.activeElement || document.body).dispatchEvent(event);
 				} else {
 					switchto(nextId);
 				}
