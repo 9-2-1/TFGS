@@ -45,15 +45,15 @@
 	<div class="tfgsJoystickGamepad"></div>
 </div>`;
 
-		wdiv.ontouchstart = function(e) {
+		wdiv.onmousedown = wdiv.ontouchstart = function(e) {
 			e.preventDefault();
 			e.stopPropagation();
 		};
-		wdiv.ontouchmove = function(e) {
+		wdiv.onmousemove = wdiv.ontouchmove = function(e) {
 			e.preventDefault();
 			e.stopPropagation();
 		};
-		wdiv.ontouchend = function(e) {
+		wdiv.onmouseup = wdiv.ontouchend = function(e) {
 			e.preventDefault();
 			e.stopPropagation();
 		};
@@ -243,9 +243,9 @@
 	<span class="tfgsJoystickMouseSwitch">⌨</span>
 </span>`;
 
-		jMous.children[0].ontouchstart = synctouch;
-		jMous.children[0].ontouchmove = synctouch;
-		jMous.children[0].ontouchend = synctouch;
+		jMous.children[0].onmousedown = jMous.children[0].ontouchstart = synctouch;
+		jMous.children[0].onmousemove = jMous.children[0].ontouchmove = synctouch;
+		jMous.children[0].onmouseup = jMous.children[0].ontouchend = synctouch;
 
 		bindbutton(jMous.children[1].children[0], 0);
 		bindbutton(jMous.children[1].children[1], 1);
@@ -253,13 +253,11 @@
 		bindwheel(jMous.children[1].children[3], -120);
 		bindwheel(jMous.children[1].children[4], 120);
 
-		jMous.children[1].children[5].ontouchstart = function(e) {
+		jMous.children[1].children[5].onmousedown = jMous.children[1].children[5].ontouchstart = function(e) {
 			this.style.background = "grey";
 		};
 
-		jMous.children[1].children[5].ontouchmove = function(e) {};
-
-		jMous.children[1].children[5].ontouchend = function(e) {
+		jMous.children[1].children[5].onmouseup = jMous.children[1].children[5].ontouchend = function(e) {
 			this.style.background = "inherit";
 			switchto(0);
 		};
@@ -282,7 +280,7 @@
 				(document.elementFromPoint(mousex, mousey) || document.body).dispatchEvent(event);
 			};
 
-			elem.ontouchstart = function(e) {
+			elem.onmousedown = elem.ontouchstart = function(e) {
 				if (interval !== -1) {
 					clearInterval(interval);
 				}
@@ -291,7 +289,7 @@
 				this.style.background = "grey";
 			};
 
-			elem.ontouchend = function(e) {
+			elem.onmouseup = elem.ontouchend = function(e) {
 				if (interval !== -1) {
 					clearInterval(interval);
 				}
@@ -300,7 +298,7 @@
 		}
 
 		function bindbutton(elem, button) {
-			elem.ontouchstart = function(e) {
+			elem.onmousedown = elem.ontouchstart = function(e) {
 				const event = new MouseEvent('mousedown', {
 					view: window,
 					button: button,
@@ -316,7 +314,7 @@
 				(document.elementFromPoint(mousex, mousey) || document.body).dispatchEvent(event);
 			};
 
-			elem.ontouchend = function(e) {
+			elem.onmouseup = elem.ontouchend = function(e) {
 				const event = new MouseEvent('mouseup', {
 					view: window,
 					button: button,
@@ -473,7 +471,7 @@
 			} else {
 				x.innerText = key + (key !== key2 ? " " + key2 : "");
 			}
-			x.ontouchstart = function(e) {
+			x.onmousedown = x.ontouchstart = function(e) {
 				if (name !== "tfgsSwitch") {
 					if (interval !== -1) {
 						clearInterval(interval);
@@ -492,7 +490,7 @@
 				}
 				x.style.background = "grey";
 			};
-			x.ontouchend = function(e) {
+			x.onmouseup = x.ontouchend = function(e) {
 				if (name !== "tfgsSwitch") {
 					if (interval !== -1) {
 						clearInterval(interval);
