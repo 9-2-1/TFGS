@@ -41,6 +41,11 @@
 		wdiv.innerHTML = `
 <div class="tfgsJoystick">
 	<div class="tfgsJoystickKeyBoard"></div>
+	<div class="tfgsJoystickKeyBoard"></div>
+	<div class="tfgsJoystickKeyBoard"></div>
+	<div class="tfgsJoystickKeyBoard"></div>
+	<div class="tfgsJoystickKeyBoard"></div>
+	<div class="tfgsJoystickKeyBoard"></div>
 	<div class="tfgsJoystickMouse"></div>
 	<div class="tfgsJoystickGamepad"></div>
 </div>`;
@@ -58,9 +63,9 @@
 			e.stopPropagation();
 		};
 
-		let jKeyB = wdiv.children[0].children[0];
-		let jMous = wdiv.children[0].children[1];
-		let jJoys = wdiv.children[0].children[2];
+		let jKeyBs = wdiv.children[0].children;
+		let jMous = wdiv.children[0].children[6];
+		let jJoys = wdiv.children[0].children[7];
 
 		function switchto(x) {
 			for (let i = 0; i < wdiv.children[0].children.length; i++) {
@@ -76,77 +81,111 @@
 		// let char1 = "~1234567890-=⌫\n⇄QWERTYUIOP[]\\\n ASDFGHJKL';↵\n⇧ZXCVBNM,./ \n⌃⌥␣←↑↓→⌬".split('\n');
 		// let char2 = "`!@#$%^&*()_+⌫\n⇄QWERTYUIOP{}|\n ASDFGHJKL\":↵\n⇧ZXCVBNM<>? \n⌃⌥␣←↑↓→⌬".split('\n');
 
-		let char1 = "1234567890\nQWERTYUIOP\nASDFGHJKL\nZXCVBNM↑↵\n⌬␣←↓→".split('\n');
-		let char2 = "1234567890\nQWERTYUIOP\nASDFGHJKL\nZXCVBNM↑↵\n⌬␣←↓→".split('\n');
+		let keybsets = [
+			[
+				"~1234567890-=⌫\n⇄QWERTYUIOP[]\\\n ASDFGHJKL';↵\n⇧ZXCVBNM,./ \n⌃⌥␣←↑↓→⌬",
+				"`!@#$%^&*()_+⌫\n⇄QWERTYUIOP{}|\n ASDFGHJKL\":↵\n⇧ZXCVBNM<>? \n⌃⌥␣←↑↓→⌬"
+			],
+			[
+				"1234567890\nQWERTYUIOP\nASDFGHJKL\nZXCVBNM↑↵\n⌬␣←↓→",
+				"1234567890\nQWERTYUIOP\nASDFGHJKL\nZXCVBNM↑↵\n⌬␣←↓→"
+			],
+			[
+				"QWEUIO\nASDJKL\n←↑↓→␣⌬",
+				"QWEUIO\nASDJKL\n←↑↓→␣⌬"
+			],
+			[
+				"1↑2CR\n←↓→ZX\n⌬␣↵",
+				"1↑2CR\n←↓→ZX\n⌬␣↵"
+			],
+			[
+				"↑W\n←↓→ASD\nZXCJKL\n⌬",
+				"↑W\n←↓→ASD\nZXCJKL\n⌬"
+			],
+			[
+				"SDFJKL\n←↑↓→↵\n␣⌬",
+				"SDFJKL\n←↑↓→↵\n␣⌬"
+			],
+		];
+		for (let i = 0; i < 6; i++) {
+			setKeyboard(jKeyBs[i],
+				keybsets[i][0],
+				keybsets[i][1],
+				i + 1);
+		}
 
-		for (let i in char1) {
-			let line1 = char1[i].split('');
-			let line2 = char2[i].split('');
-			line = tfgs.element.create("span");
-			for (let j in line1) {
-				let char1 = line1[j];
-				let char2 = line2[j];
-				let ccode, cname;
-				switch (char1) {
-					case "⌫":
-						ccode = 8;
-						cname = "Backspace";
-						break;
-					case "⇄":
-						ccode = 9;
-						cname = "Tab";
-						break;
-					case "␣":
-						ccode = 32;
-						cname = " ";
-						break;
-					case "↵":
-						ccode = 13;
-						cname = "Enter";
-						break;
-					case "⇧":
-						ccode = 0;
-						cname = "Shift";
-						break;
-					case "⌥":
-						ccode = 0;
-						cname = "Alt";
-						break;
-					case "⌃":
-						ccode = 0;
-						cname = "Control";
-						break;
-					case "←":
-						ccode = 37;
-						cname = "ArrowLeft";
-						break;
-					case "↑":
-						ccode = 38;
-						cname = "ArrowUp";
-						break;
-					case "→":
-						ccode = 39;
-						cname = "ArrowRight";
-						break;
-					case "↓":
-						ccode = 40;
-						cname = "ArrowDown";
-						break;
-					case " ":
-						ccode = 0;
-						cname = "Unidentified";
-						break;
-					case "⌬":
-						ccode = 0;
-						cname = "tfgsSwitch";
-						break;
-					default:
-						ccode = char1.codePointAt(0);
-						cname = null;
+		function setKeyboard(jKeyB, char1, char2, nextId) {
+			char1 = char1.split('\n');
+			char2 = char2.split('\n');
+			for (let i in char1) {
+				let line1 = char1[i].split('');
+				let line2 = char2[i].split('');
+				line = tfgs.element.create("span");
+				for (let j in line1) {
+					let char1 = line1[j];
+					let char2 = line2[j];
+					let ccode, cname;
+					switch (char1) {
+						case "⌫":
+							ccode = 8;
+							cname = "Backspace";
+							break;
+						case "⇄":
+							ccode = 9;
+							cname = "Tab";
+							break;
+						case "␣":
+							ccode = 32;
+							cname = " ";
+							break;
+						case "↵":
+							ccode = 13;
+							cname = "Enter";
+							break;
+						case "⇧":
+							ccode = 0;
+							cname = "Shift";
+							break;
+						case "⌥":
+							ccode = 0;
+							cname = "Alt";
+							break;
+						case "⌃":
+							ccode = 0;
+							cname = "Control";
+							break;
+						case "←":
+							ccode = 37;
+							cname = "ArrowLeft";
+							break;
+						case "↑":
+							ccode = 38;
+							cname = "ArrowUp";
+							break;
+						case "→":
+							ccode = 39;
+							cname = "ArrowRight";
+							break;
+						case "↓":
+							ccode = 40;
+							cname = "ArrowDown";
+							break;
+						case " ":
+							ccode = 0;
+							cname = "Unidentified";
+							break;
+						case "⌬":
+							ccode = 0;
+							cname = "tfgsSwitch";
+							break;
+						default:
+							ccode = char1.codePointAt(0);
+							cname = null;
+					}
+					line.appendChild(createKey(char1, char2, ccode, cname, nextId));
 				}
-				line.appendChild(createKey(char1, char2, ccode, cname));
+				jKeyB.appendChild(line);
 			}
-			jKeyB.appendChild(line);
 		}
 
 		// 1: mouse
@@ -243,9 +282,10 @@
 	<span class="tfgsJoystickMouseSwitch">⌨</span>
 </span>`;
 
+		let realmousedown = false;
 		jMous.children[0].onmousedown = jMous.children[0].ontouchstart = synctouch;
 		jMous.children[0].onmousemove = jMous.children[0].ontouchmove = synctouch;
-		jMous.children[0].onmouseup = jMous.children[0].ontouchend = synctouch;
+		jMous.children[0].onmouseleave = jMous.children[0].onmouseup = jMous.children[0].ontouchend = synctouch;
 
 		bindbutton(jMous.children[1].children[0], 0);
 		bindbutton(jMous.children[1].children[1], 1);
@@ -332,7 +372,35 @@
 		}
 
 		function synctouch(e) {
-			let tlist = e.targetTouches;
+			let tlist;
+			switch (e.type) {
+				case "mousedown":
+					realmousedown = true;
+					this.style.background = "grey";
+					tlist = [{
+						clientX: e.clientX,
+						clientY: e.clientY
+					}];
+					break;
+				case "mousemove":
+					if (realmousedown) {
+						tlist = [{
+							clientX: e.clientX,
+							clientY: e.clientY
+						}]
+					} else {
+						tlist = [];
+					};
+					break;
+				case "mouseup":
+				case "mouseleave":
+					realmousedown = false;
+					this.style.background = "inherit";
+					tlist = [];
+					break;
+				default:
+					tlist = e.targetTouches;
+			}
 			let touchnewx = 0,
 				touchnewy = 0;
 			for (let i = 0; i < tlist.length; i++) {
@@ -360,7 +428,7 @@
 			cursordiv.style.left = mousex - 1 + "px";
 			cursordiv.style.top = mousey - 1 + "px";
 
-			if (e.type === "touchmove") {
+			if (e.type === "touchmove" || e.type === "mousemove" && realmousedown) {
 				touchnewx /= tlist.length;
 				touchnewy /= tlist.length;
 				let deltax = touchnewx - touchx;
@@ -426,7 +494,7 @@
 			}
 		}
 
-		function createKey(key, key2, code, name) {
+		function createKey(key, key2, code, name, nextId) {
 			let x = tfgs.element.create("span");
 			let interval = -1;
 			let timeout = -1;
@@ -448,7 +516,7 @@
 				(document.activeElement || document.body).dispatchEvent(event);
 			};
 			if (name === "tfgsSwitch") {
-				x.innerHTML = `<svg width=20 height=30>
+				x.innerHTML = nextId === 6 ? `<svg width=20 height=30>
 	<path d="
 		M 1 10
 		A 9 9 0 0 1 19 10
@@ -467,7 +535,7 @@
 		M 10 11
 		L 10 15
 	" stroke=black stroke-width=1 fill=none />
-</svg>`;
+</svg>` : "⌨";
 			} else {
 				x.innerText = key + (key !== key2 ? " " + key2 : "");
 			}
@@ -516,7 +584,7 @@
 					});
 					(document.activeElement || document.body).dispatchEvent(event);
 				} else {
-					switchto(1);
+					switchto(nextId);
 				}
 				x.style.background = "inherit";
 			};
