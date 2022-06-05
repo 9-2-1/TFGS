@@ -320,7 +320,7 @@
 				this.style.background = "grey";
 			};
 
-			elem.onmouseup = elem.ontouchend = function(e) {
+			elem.onmouseleave = elem.onmouseup = elem.ontouchend = function(e) {
 				if (interval !== -1) {
 					clearInterval(interval);
 				}
@@ -336,7 +336,7 @@
 				this.style.background = "grey";
 			};
 
-			elem.onmouseup = elem.ontouchend = function(e) {
+			elem.onmouseleave = elem.onmouseup = elem.ontouchend = function(e) {
 				sendMouseEvent(mousex, mousey, "mouseup", {});
 				this.style.background = "inherit";
 			};
@@ -558,7 +558,7 @@
 				}
 				x.style.background = "grey";
 			};
-			x.onmouseup = x.ontouchend = function(e) {
+			x.onmouseleave = x.onmouseup = x.ontouchend = function(e) {
 				if (name !== "tfgsSwitch") {
 					if (interval !== -1) {
 						clearInterval(interval);
