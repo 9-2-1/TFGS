@@ -47,6 +47,7 @@
 </div>`;
 
 		wdiv.onmousedown = wdiv.ontouchstart = function(e) {
+			win.movetotop();
 			e.preventDefault();
 			e.stopPropagation();
 		};
