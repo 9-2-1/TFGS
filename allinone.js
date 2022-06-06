@@ -4,22 +4,26 @@ let Cleancss = require("clean-css");
 
 function randomkey(num) {
 	let key = "";
+	let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_0123456789";
 	for (let i = 0; i < num; i++)
-		key += String.fromCharCode(32 + Math.floor((127 - 32) * Math.random()));
+		key += chars[Math.floor(Math.random() * chars.length)];
 	return key;
 }
 
 let tfgskey = JSON.stringify("__TFGS$" + randomkey(10));
 
 let allinone = `/* (allinone.js) */
-let tfgs = {};
 
 try {
+	let tfgs;
+
 	if (${tfgskey} in window) {
 		throw new Error("TFGS 已经安装");
 	} else {
-		window[${tfgskey}] = "tfgs_installed";
+		window[${tfgskey}] = {};
 	}
+
+	tfgs = window.tfgs = {};
 
 	function _tfgsAddCSS(css) {
 		let style = document.createElement("style");
