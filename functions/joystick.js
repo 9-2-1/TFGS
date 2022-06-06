@@ -13,6 +13,7 @@
 		cursordiv = null;
 	let globalKeyInterval = -1,
 		globalKeyTimeout = -1;
+		let realmousedown = false;
 
 	function monitorkey(event) {
 		control = event.ctrlKey;
@@ -98,85 +99,7 @@
 		];
 
 		let i = foption.fullkey ? 0 : 1;
-		setKeyboard(jKeyb,
-			keybsets[i][0],
-			keybsets[i][1],
-			1);
-
-		function setKeyboard(jKeyb, char1, char2, nextId) {
-			jKeyb.innerHTML = "";
-			char1 = char1.split('\n');
-			char2 = char2.split('\n');
-			for (let i in char1) {
-				let line1 = char1[i].split('');
-				let line2 = char2[i].split('');
-				line = tfgs.element.create("span");
-				for (let j in line1) {
-					let char1 = line1[j];
-					let char2 = line2[j];
-					let ccode, cname;
-					switch (char1) {
-						case "⌫":
-							ccode = 8;
-							cname = "Backspace";
-							break;
-						case "⇄":
-							ccode = 9;
-							cname = "Tab";
-							break;
-						case "␣":
-							ccode = 32;
-							cname = " ";
-							break;
-						case "↵":
-							ccode = 13;
-							cname = "Enter";
-							break;
-						case "⇧":
-							ccode = 0;
-							cname = "Shift";
-							break;
-						case "⌥":
-							ccode = 0;
-							cname = "Alt";
-							break;
-						case "⌃":
-							ccode = 0;
-							cname = "Control";
-							break;
-						case "←":
-							ccode = 37;
-							cname = "ArrowLeft";
-							break;
-						case "↑":
-							ccode = 38;
-							cname = "ArrowUp";
-							break;
-						case "→":
-							ccode = 39;
-							cname = "ArrowRight";
-							break;
-						case "↓":
-							ccode = 40;
-							cname = "ArrowDown";
-							break;
-						case " ":
-							ccode = 0;
-							cname = "Unidentified";
-							break;
-						case "⌬":
-							ccode = 0;
-							cname = "tfgsSwitch";
-							break;
-						default:
-							ccode = char1.codePointAt(0);
-							cname = null;
-					}
-					line.appendChild(createKey(char1, char2, ccode, cname, nextId));
-				}
-				jKeyb.appendChild(line);
-			}
-		}
+		setKeyboard(jKeyb, keybsets[i][0], keybsets[i][1], 1);
 
 		// 1: mouse
 
@@ -272,7 +195,6 @@
 	<span class="tfgsJoystickMouseSwitch">⌨</span>
 </span>`;
 
-		let realmousedown = false;
 		jMous.children[0].onmousedown = jMous.children[0].ontouchstart = synctouch;
 		jMous.children[0].onmousemove = jMous.children[0].ontouchmove = synctouch;
 		jMous.children[0].onmouseleave = jMous.children[0].onmouseup = jMous.children[0].ontouchend = synctouch;
@@ -297,90 +219,92 @@
 			switchto(0);
 		};
 
-		function bindwheel(elem, delta) {
-			let interval = -1;
-			let step = function() {
-				sendWheelEvent(mousex, mousey, "wheel", {
-					deltaY: delta / 4,
-					wheelDelta: -delta,
-				});
-			};
+	}
 
-			elem.onmousedown = elem.ontouchstart = function(e) {
-				if (interval !== -1) {
-					clearInterval(interval);
-				}
-				step();
-				interval = setInterval(step, 50);
+	function bindwheel(elem, delta) {
+		let interval = -1;
+		let step = function() {
+			sendWheelEvent(mousex, mousey, "wheel", {
+				deltaY: delta / 4,
+				wheelDelta: -delta,
+			});
+		};
+
+		elem.onmousedown = elem.ontouchstart = function(e) {
+			if (interval !== -1) {
+				clearInterval(interval);
+			}
+			step();
+			interval = setInterval(step, 50);
+			this.style.background = "grey";
+		};
+
+		elem.onmouseleave = elem.onmouseup = elem.ontouchend = function(e) {
+			if (interval !== -1) {
+				clearInterval(interval);
+			}
+			this.style.background = "inherit";
+		};
+	}
+
+	function bindbutton(elem, button) {
+		elem.onmousedown = elem.ontouchstart = function(e) {
+			sendMouseEvent(mousex, mousey, "mousedown", {
+				button: button
+			});
+			this.style.background = "grey";
+		};
+
+		elem.onmouseleave = elem.onmouseup = elem.ontouchend = function(e) {
+			sendMouseEvent(mousex, mousey, "mouseup", {
+				button: button
+			});
+			this.style.background = "inherit";
+		};
+	}
+
+	function synctouch(e) {
+		let tlist;
+		switch (e.type) {
+			case "mousedown":
+				realmousedown = true;
 				this.style.background = "grey";
-			};
-
-			elem.onmouseleave = elem.onmouseup = elem.ontouchend = function(e) {
-				if (interval !== -1) {
-					clearInterval(interval);
-				}
-				this.style.background = "inherit";
-			};
-		}
-
-		function bindbutton(elem, button) {
-			elem.onmousedown = elem.ontouchstart = function(e) {
-				sendMouseEvent(mousex, mousey, "mousedown", {
-					button: button
-				});
-				this.style.background = "grey";
-			};
-
-			elem.onmouseleave = elem.onmouseup = elem.ontouchend = function(e) {
-				sendMouseEvent(mousex, mousey, "mouseup", {
-					button: button
-				});
-				this.style.background = "inherit";
-			};
-		}
-
-		function synctouch(e) {
-			let tlist;
-			switch (e.type) {
-				case "mousedown":
-					realmousedown = true;
-					this.style.background = "grey";
+				tlist = [{
+					clientX: e.clientX,
+					clientY: e.clientY
+				}];
+				break;
+			case "mousemove":
+				if (realmousedown) {
 					tlist = [{
 						clientX: e.clientX,
 						clientY: e.clientY
-					}];
-					break;
-				case "mousemove":
-					if (realmousedown) {
-						tlist = [{
-							clientX: e.clientX,
-							clientY: e.clientY
-						}]
-					} else {
-						tlist = [];
-					};
-					break;
-				case "mouseup":
-				case "mouseleave":
-					realmousedown = false;
-					this.style.background = "inherit";
+					}]
+				} else {
 					tlist = [];
-					break;
-				default:
-					tlist = e.targetTouches;
-			}
-			let touchnewx = 0,
-				touchnewy = 0,
-				touchnewt=new Date().getTime();
-			for (let i = 0; i < tlist.length; i++) {
-				touchnewx += tlist[i].clientX;
-				touchnewy += tlist[i].clientY;
-			}
+				}
+				break;
+			case "mouseup":
+			case "mouseleave":
+				realmousedown = false;
+				this.style.background = "inherit";
+				tlist = [];
+				break;
+			default:
+				tlist = e.targetTouches;
+		}
+		let touchnewx = 0,
+			touchnewy = 0,
+			touchnewt = new Date().getTime();
+		for (let i = 0; i < tlist.length; i++) {
+			touchnewx += tlist[i].clientX;
+			touchnewy += tlist[i].clientY;
+		}
 
-			if (cursordiv === null) {
-				cursordiv = tfgs.element.create("span", "tfgsJoystickCursor");
-				document.body.appendChild(cursordiv);
-				cursordiv.innerHTML = `<svg>
+		if (cursordiv === null) {
+			cursordiv = tfgs.element.create("span", "tfgsJoystickCursor");
+			document.body.appendChild(cursordiv);
+			cursordiv.innerHTML = `<svg>
 	<defs>
 		<filter id="fl" x="0" y="0" width="100" height="100">
 			<feGaussianBlur in="SourceAlpha" stdDeviation="1" result="blur"/>
@@ -399,130 +323,130 @@
 		Z
 	" stroke=black stroke-width=1 fill=white filter="url(#fl)" />
 </svg>`;
-			}
-
-			if (e.type === "touchmove" || e.type === "mousemove" && realmousedown) {
-				touchnewx /= tlist.length;
-				touchnewy /= tlist.length;
-				let deltax = touchnewx - touchx;
-				let deltay = touchnewy - touchy;
-				let deltat = touchnewt - toucht;
-				let k = foption.mousespeed * Math.pow(foption.mouseaccer, Math.sqrt(deltax * deltax + deltay * deltay) / deltat * 40);
-				mousex += deltax * k;
-				mousey += deltay * k;
-				if (mousex < 0) mousex = 0;
-				if (mousey < 0) mousey = 0;
-				if (mousex > window.innerWidth - 1) mousex = window.innerWidth - 1;
-				if (mousey > window.innerHeight - 1) mousey = window.innerHeight - 1;
-				touchx = touchnewx;
-				touchy = touchnewy;
-				toucht = touchnewt;
-				sendMouseEvent(mousex, mousey, "mousemove", {});
-			} else {
-				if (foption.mouse2click && tlist.length > 1) {
-					if (!moused) {
-						sendMouseEvent(mousex, mousey, "mousedown", {});
-						this.style.background = "grey";
-					}
-					moused = true;
-				} else {
-					if (moused) {
-						sendMouseEvent(mousex, mousey, "mouseup", {});
-						this.style.background = "inherit";
-					}
-					moused = false;
-				}
-				if (tlist.length > 0) {
-					touchx = touchnewx / tlist.length;
-					touchy = touchnewy / tlist.length;
-					toucht = touchnewt;
-				}
-			}
-
-			cursordiv.style.left = mousex - 1 + "px";
-			cursordiv.style.top = mousey - 1 + "px";
 		}
 
-		function sendKeyEvent(type, data) {
-			const event = new KeyboardEvent(type, Object.assign({
-				view: window,
-				ctrlKey: control,
-				altKey: alt,
-				shiftKey: shift,
-				bubbles: true,
-				cancelable: true
-			}, data));
-			let elem = document.activeElement;
-			if (elem === null) elem = window;
+		if (e.type === "touchmove" || e.type === "mousemove" && realmousedown) {
+			touchnewx /= tlist.length;
+			touchnewy /= tlist.length;
+			let deltax = touchnewx - touchx;
+			let deltay = touchnewy - touchy;
+			let deltat = touchnewt - toucht;
+			let k = foption.mousespeed * Math.pow(foption.mouseaccer, Math.sqrt(deltax * deltax + deltay * deltay) / deltat * 40);
+			mousex += deltax * k;
+			mousey += deltay * k;
+			if (mousex < 0) mousex = 0;
+			if (mousey < 0) mousey = 0;
+			if (mousex > window.innerWidth - 1) mousex = window.innerWidth - 1;
+			if (mousey > window.innerHeight - 1) mousey = window.innerHeight - 1;
+			touchx = touchnewx;
+			touchy = touchnewy;
+			toucht = touchnewt;
+			sendMouseEvent(mousex, mousey, "mousemove", {});
+		} else {
+			if (foption.mouse2click && tlist.length > 1) {
+				if (!moused) {
+					sendMouseEvent(mousex, mousey, "mousedown", {});
+					this.style.background = "grey";
+				}
+				moused = true;
+			} else {
+				if (moused) {
+					sendMouseEvent(mousex, mousey, "mouseup", {});
+					this.style.background = "inherit";
+				}
+				moused = false;
+			}
+			if (tlist.length > 0) {
+				touchx = touchnewx / tlist.length;
+				touchy = touchnewy / tlist.length;
+				toucht = touchnewt;
+			}
+		}
+
+		cursordiv.style.left = mousex - 1 + "px";
+		cursordiv.style.top = mousey - 1 + "px";
+	}
+
+	function sendKeyEvent(type, data) {
+		const event = new KeyboardEvent(type, Object.assign({
+			view: window,
+			ctrlKey: control,
+			altKey: alt,
+			shiftKey: shift,
+			bubbles: true,
+			cancelable: true
+		}, data));
+		let elem = document.activeElement;
+		if (elem === null) elem = window;
+		elem.dispatchEvent(event);
+	}
+
+	function sendMouseLikeEvent(btype, mousex, mousey, type, data) {
+		const event = new btype(type, Object.assign({
+			view: window,
+			ctrlKey: control,
+			altKey: alt,
+			shiftKey: shift,
+			clientX: mousex,
+			clientY: mousey,
+			bubbles: true,
+			cancelable: true
+		}, data));
+		let elem = document.elementFromPoint(mousex, mousey);
+		let eventx = event.clientX,
+			eventy = event.clientY;
+		if (elem !== null) {
+			while (true) {
+				let next = null;
+				if (elem.tagName.toLowerCase() === "iframe") {
+					let offs = elem.getBoundingClientRect();
+					eventx -= offs.left;
+					eventy -= offs.top;
+					next = elem.contentWindow.document.elementFromPoint(eventx, eventy);
+				} else if (type === "mousedown" && elem.shadowRoot !== null && elem.shadowRoot !== undefined) {
+					next = elem.shadowRoot.elementFromPoint(eventx, eventy);
+				}
+				if (next === null) {
+					break;
+				} else {
+					elem = next;
+				}
+			}
+		}
+		if (elem === null) elem = window;
+		let pare = elem;
+		while (pare !== null && pare !== win.windowDiv) {
+			pare = pare.parentElement;
+		}
+		if (pare === null) {
+			event.clientX = eventx;
+			event.clientY = eventy;
 			elem.dispatchEvent(event);
 		}
+	}
 
-		function sendMouseLikeEvent(btype, mousex, mousey, type, data) {
-			const event = new btype(type, Object.assign({
-				view: window,
-				ctrlKey: control,
-				altKey: alt,
-				shiftKey: shift,
-				clientX: mousex,
-				clientY: mousey,
-				bubbles: true,
-				cancelable: true
-			}, data));
-			let elem = document.elementFromPoint(mousex, mousey);
-			let eventx = event.clientX,
-				eventy = event.clientY;
-			if (elem !== null) {
-				while (true) {
-					let next = null;
-					if (elem.tagName.toLowerCase() === "iframe") {
-						let offs = elem.getBoundingClientRect();
-						eventx -= offs.left;
-						eventy -= offs.top;
-						next = elem.contentWindow.document.elementFromPoint(eventx, eventy);
-					} else if (type === "mousedown" && elem.shadowRoot !== null && elem.shadowRoot !== undefined) {
-						next = elem.shadowRoot.elementFromPoint(eventx, eventy);
-					}
-					if (next === null) {
-						break;
-					} else {
-						elem = next;
-					}
-				}
-			}
-			if (elem === null) elem = window;
-			let pare = elem;
-			while (pare !== null && pare !== win.windowDiv) {
-				pare = pare.parentElement;
-			}
-			if (pare === null) {
-				event.clientX = eventx;
-				event.clientY = eventy;
-				elem.dispatchEvent(event);
-			}
-		}
+	function sendMouseEvent(mousex, mousey, type, data) {
+		sendMouseLikeEvent(MouseEvent, mousex, mousey, type, data);
+	}
 
-		function sendMouseEvent(mousex, mousey, type, data) {
-			sendMouseLikeEvent(MouseEvent, mousex, mousey, type, data);
-		}
+	function sendWheelEvent(mousex, mousey, type, data) {
+		sendMouseLikeEvent(WheelEvent, mousex, mousey, type, data);
+	}
 
-		function sendWheelEvent(mousex, mousey, type, data) {
-			sendMouseLikeEvent(WheelEvent, mousex, mousey, type, data);
-		}
-
-		function createKey(key, key2, code, name, nextId) {
-			let x = tfgs.element.create("span");
-			let step = function() {
-				if (name === "Control") control = true;
-				if (name === "Alt") alt = true;
-				if (name === "Shift") shift = true;
-				sendKeyEvent("keydown", {
-					key: name !== null ? name : shift ? key2 : key,
-					code: code,
-					keyCode: code,
-				});
-			};
-			if (name === "tfgsSwitch") {
-				x.innerHTML = `<svg width=20 height=30>
+	function createKey(key, key2, code, name, nextId) {
+		let x = tfgs.element.create("span");
+		let step = function() {
+			if (name === "Control") control = true;
+			if (name === "Alt") alt = true;
+			if (name === "Shift") shift = true;
+			sendKeyEvent("keydown", {
+				key: name !== null ? name : shift ? key2 : key,
+				code: code,
+				keyCode: code,
+			});
+		};
+		if (name === "tfgsSwitch") {
+			x.innerHTML = `<svg width=20 height=30>
 	<path d="
 		M 1 10
 		A 9 9 0 0 1 19 10
@@ -542,63 +466,137 @@
 		L 10 15
 	" stroke=black stroke-width=1 fill=none />
 </svg>`;
-			} else {
-				x.innerText = key + (key.toLowerCase() !== key2.toLowerCase() ? " " + key2 : "");
+		} else {
+			x.innerText = key + (key.toLowerCase() !== key2.toLowerCase() ? " " + key2 : "");
+		}
+		x.onmousedown = x.ontouchstart = function(e) {
+			if (name !== "tfgsSwitch") {
+				if (globalKeyInterval !== -1) {
+					clearInterval(globalKeyInterval);
+				}
+				if (globalKeyTimeout !== -1) {
+					clearTimeout(globalKeyTimeout);
+				}
+				globalKeyInterval = -1;
+				globalKeyTimeout = -1;
+				step();
+				if (
+					name !== "Shift" &&
+					name !== "Alt" &&
+					name !== "Control"
+				) {
+					globalKeyTimeout = setTimeout(function() {
+						globalKeyTimeout = -1;
+						step();
+						globalKeyInterval = setInterval(step, foption.keyInterval);
+					}, foption.keyTimeout);
+				}
 			}
-			x.onmousedown = x.ontouchstart = function(e) {
-				if (name !== "tfgsSwitch") {
-					if (globalKeyInterval !== -1) {
-						clearInterval(globalKeyInterval);
-					}
-					if (globalKeyTimeout !== -1) {
-						clearTimeout(globalKeyTimeout);
-					}
-					globalKeyInterval = -1;
-					globalKeyTimeout = -1;
-					step();
-					if (
-						name !== "Shift" &&
-						name !== "Alt" &&
-						name !== "Control"
-					) {
-						globalKeyTimeout = setTimeout(function() {
-							globalKeyTimeout = -1;
-							step();
-							globalKeyInterval = setInterval(step, foption.keyInterval);
-						}, foption.keyTimeout);
-					}
+			x.style.background = "grey";
+		};
+		x.onmouseleave = x.onmouseup = x.ontouchend = function(e) {
+			if (name !== "tfgsSwitch") {
+				if (globalKeyInterval !== -1) {
+					clearInterval(globalKeyInterval);
 				}
-				x.style.background = "grey";
-			};
-			x.onmouseleave = x.onmouseup = x.ontouchend = function(e) {
-				if (name !== "tfgsSwitch") {
-					if (globalKeyInterval !== -1) {
-						clearInterval(globalKeyInterval);
-					}
-					if (globalKeyTimeout !== -1) {
-						clearTimeout(globalKeyTimeout);
-					}
-					globalKeyInterval = -1;
-					globalKeyTimeout = -1;
-					if (name === "Control") control = false;
-					if (name === "Alt") alt = false;
-					if (name === "Shift") shift = false;
-					sendKeyEvent("keyup", {
-						key: name !== null ? name : shift ? key2 : key,
-						code: code,
-						keyCode: code,
-					});
-				} else {
-					switchto(nextId);
+				if (globalKeyTimeout !== -1) {
+					clearTimeout(globalKeyTimeout);
 				}
-				x.style.background = "inherit";
-			};
-			if (name === "Unidentified") x.style.flexGrow = 1.5;
-			if (name === "Shift") x.style.flexGrow = 2;
-			if (name === "Control") x.style.flexGrow = 2;
-			if (name === "Enter") x.style.flexGrow = 1.5;
-			if (name === " ") x.style.flexGrow = 4;
-			return x;
+				globalKeyInterval = -1;
+				globalKeyTimeout = -1;
+				if (name === "Control") control = false;
+				if (name === "Alt") alt = false;
+				if (name === "Shift") shift = false;
+				sendKeyEvent("keyup", {
+					key: name !== null ? name : shift ? key2 : key,
+					code: code,
+					keyCode: code,
+				});
+			} else {
+				switchto(nextId);
+			}
+			x.style.background = "inherit";
+		};
+		if (name === "Unidentified") x.style.flexGrow = 1.5;
+		if (name === "Shift") x.style.flexGrow = 2;
+		if (name === "Control") x.style.flexGrow = 2;
+		if (name === "Enter") x.style.flexGrow = 1.5;
+		if (name === " ") x.style.flexGrow = 4;
+		return x;
+	}
+
+	function setKeyboard(jKeyb, char1, char2, nextId) {
+		jKeyb.innerHTML = "";
+		char1 = char1.split('\n');
+		char2 = char2.split('\n');
+		for (let i in char1) {
+			let line1 = char1[i].split('');
+			let line2 = char2[i].split('');
+			let line = tfgs.element.create("span");
+			for (let j in line1) {
+				let char1 = line1[j];
+				let char2 = line2[j];
+				let ccode, cname;
+				switch (char1) {
+					case "⌫":
+						ccode = 8;
+						cname = "Backspace";
+						break;
+					case "⇄":
+						ccode = 9;
+						cname = "Tab";
+						break;
+					case "␣":
+						ccode = 32;
+						cname = " ";
+						break;
+					case "↵":
+						ccode = 13;
+						cname = "Enter";
+						break;
+					case "⇧":
+						ccode = 0;
+						cname = "Shift";
+						break;
+					case "⌥":
+						ccode = 0;
+						cname = "Alt";
+						break;
+					case "⌃":
+						ccode = 0;
+						cname = "Control";
+						break;
+					case "←":
+						ccode = 37;
+						cname = "ArrowLeft";
+						break;
+					case "↑":
+						ccode = 38;
+						cname = "ArrowUp";
+						break;
+					case "→":
+						ccode = 39;
+						cname = "ArrowRight";
+						break;
+					case "↓":
+						ccode = 40;
+						cname = "ArrowDown";
+						break;
+					case " ":
+						ccode = 0;
+						cname = "Unidentified";
+						break;
+					case "⌬":
+						ccode = 0;
+						cname = "tfgsSwitch";
+						break;
+					default:
+						ccode = char1.codePointAt(0);
+						cname = null;
+				}
+				line.appendChild(createKey(char1, char2, ccode, cname, nextId));
+			}
+			jKeyb.appendChild(line);
 		}
 	}
 
