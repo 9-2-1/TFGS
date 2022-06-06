@@ -10,6 +10,8 @@
 		touchx = 0,
 		touchy = 0,
 		cursordiv = null;
+	let globalKeyInterval = -1,
+		globalKeyTimeout = -1;
 
 	function monitorkey(event) {
 		control = event.ctrlKey;
@@ -30,7 +32,8 @@
 		touchx = 0;
 		touchy = 0;
 		cursordiv = null;
-
+		globalKeyInterval = -1;
+		globalKeyTimeout = -1;
 
 		win = tfgs.window.create({
 			title: "JoyStick",
@@ -500,8 +503,6 @@
 
 		function createKey(key, key2, code, name, nextId) {
 			let x = tfgs.element.create("span");
-			let interval = -1;
-			let timeout = -1;
 			let step = function() {
 				if (name === "Control") control = true;
 				if (name === "Alt") alt = true;
@@ -538,33 +539,39 @@
 			}
 			x.onmousedown = x.ontouchstart = function(e) {
 				if (name !== "tfgsSwitch") {
-					if (interval !== -1) {
-						clearInterval(interval);
+					if (globalKeyInterval !== -1) {
+						clearInterval(globalKeyInterval);
 					}
-					if (timeout !== -1) {
-						clearTimeout(timeout);
+					if (globalKeyTimeout !== -1) {
+						clearTimeout(globalKeyTimeout);
 					}
-					interval = -1;
-					timeout = -1;
+					globalKeyInterval = -1;
+					globalKeyTimeout = -1;
 					step();
-					timeout = setTimeout(function() {
-						timeout = -1;
-						step();
-						interval = setInterval(step, 50);
-					}, 600);
+					if (
+						name !== "Shift" &&
+						name !== "Alt" &&
+						name !== "Control"
+					) {
+						globalKeyTimeout = setTimeout(function() {
+							globalKeyTimeout = -1;
+							step();
+							globalKeyInterval = setInterval(step, foption.keyInterval);
+						}, foption.keyTimeout);
+					}
 				}
 				x.style.background = "grey";
 			};
 			x.onmouseleave = x.onmouseup = x.ontouchend = function(e) {
 				if (name !== "tfgsSwitch") {
-					if (interval !== -1) {
-						clearInterval(interval);
+					if (globalKeyInterval !== -1) {
+						clearInterval(globalKeyInterval);
 					}
-					if (timeout !== -1) {
-						clearTimeout(timeout);
+					if (globalKeyTimeout !== -1) {
+						clearTimeout(globalKeyTimeout);
 					}
-					interval = -1;
-					timeout = -1;
+					globalKeyInterval = -1;
+					globalKeyTimeout = -1;
 					if (name === "Control") control = false;
 					if (name === "Alt") alt = false;
 					if (name === "Shift") shift = false;
@@ -617,6 +624,20 @@
 				type: "check",
 				name: "键盘显示更多按键",
 				default: false
+			},
+			keyTimeout: {
+				type: "number",
+				name: "长按到自动连续按键的时间(毫秒)",
+				min: 50,
+				max: 5000,
+				default: 600
+			},
+			keyInterval: {
+				type: "number",
+				name: "自动连续按键间隔(毫秒)",
+				min: 5,
+				max: 5000,
+				default: 50
 			},
 			mousespeed: {
 				type: "number",
