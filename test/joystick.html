@@ -10,11 +10,17 @@
 </head>
 
 <body>
-	<div onmousedown="this.innerText='被点了'">测试点击</div>
+	<div onmousedown="this.innerText='被点了 @ ' + new Date() + '.' + new Date().getMilliseconds();">测试点击</div>
 	<div id="testKeyB">测试键盘</div>
 	<script>
-		window.onkeydown = function() {
-			document.getElementById("testKeyB").innerText = '按下 ' + event.key;
+		window.onkeydown = function(event) {
+			document.getElementById("testKeyB").innerText = '按下 `' +
+				(event.ctrlKey ? "Ctrl+" : "") +
+				(event.shiftKey ? "Shift+" : "") +
+				(event.altKey ? "Alt+" : "") +
+				event.key +
+				"' @ " + new Date() +
+				"." + new Date().getMilliseconds();
 		}
 		window.onerror = function() {
 			alert(Array.apply(Array, arguments).toString());
