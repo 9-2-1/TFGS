@@ -86,11 +86,11 @@
 
 		let keybsets = [
 			[
-				"~1234567890-=⌫\n⇄QWERTYUIOP[]\\\n ASDFGHJKL';↵\n⇧ZXCVBNM,./ \n⌃⌥␣←↑↓→⌬",
+				"~1234567890-=⌫\n⇄qwertyuiop[]\\\n asdfghjkl';↵\n⇧zxcvbnm,./ \n⌃⌥␣←↑↓→⌬",
 				"`!@#$%^&*()_+⌫\n⇄QWERTYUIOP{}|\n ASDFGHJKL\":↵\n⇧ZXCVBNM<>? \n⌃⌥␣←↑↓→⌬"
 			],
 			[
-				"1234567890\nQWERTYUIOP\nASDFGHJKL\nZXCVBNM↑↵\n⌬␣←↓→",
+				"1234567890\nqwertyuiop\nasdfghjkl\nzxcvbnm↑↵\n⌬␣←↓→",
 				"1234567890\nQWERTYUIOP\nASDFGHJKL\nZXCVBNM↑↵\n⌬␣←↓→"
 			]
 		];
@@ -535,7 +535,7 @@
 	" stroke=black stroke-width=1 fill=none />
 </svg>`;
 			} else {
-				x.innerText = key + (key !== key2 ? " " + key2 : "");
+				x.innerText = key + (key.toLowerCase() !== key2.toLowerCase() ? " " + key2 : "");
 			}
 			x.onmousedown = x.ontouchstart = function(e) {
 				if (name !== "tfgsSwitch") {
