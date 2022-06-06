@@ -467,7 +467,7 @@
 	" stroke=black stroke-width=1 fill=none />
 </svg>`;
 		} else {
-			x.innerText = key + (key.toLowerCase() !== key2.toLowerCase() ? " " + key2 : "");
+			x.innerText = key + (key.toLowerCase() !== key2.toLowerCase() ? "\n" + key2 : "");
 		}
 		x.onmousedown = x.ontouchstart = function(e) {
 			if (name !== "tfgsSwitch") {
