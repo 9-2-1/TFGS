@@ -9,6 +9,7 @@
 		moused = false,
 		touchx = 0,
 		touchy = 0,
+		toucht = 0,
 		cursordiv = null;
 	let globalKeyInterval = -1,
 		globalKeyTimeout = -1;
@@ -31,6 +32,7 @@
 		moused = false;
 		touchx = 0;
 		touchy = 0;
+		toucht = 0;
 		cursordiv = null;
 		globalKeyInterval = -1;
 		globalKeyTimeout = -1;
@@ -330,7 +332,9 @@
 			};
 
 			elem.onmouseleave = elem.onmouseup = elem.ontouchend = function(e) {
-				sendMouseEvent(mousex, mousey, "mouseup", {});
+				sendMouseEvent(mousex, mousey, "mouseup", {
+					button: button
+				});
 				this.style.background = "inherit";
 			};
 		}
@@ -366,7 +370,8 @@
 					tlist = e.targetTouches;
 			}
 			let touchnewx = 0,
-				touchnewy = 0;
+				touchnewy = 0,
+				touchnewt=new Date().getTime();
 			for (let i = 0; i < tlist.length; i++) {
 				touchnewx += tlist[i].clientX;
 				touchnewy += tlist[i].clientY;
@@ -401,7 +406,8 @@
 				touchnewy /= tlist.length;
 				let deltax = touchnewx - touchx;
 				let deltay = touchnewy - touchy;
-				let k = foption.mousespeed * Math.pow(Math.sqrt(deltax * deltax + deltay * deltay), foption.mouseaccer);
+				let deltat = touchnewt - toucht;
+				let k = foption.mousespeed * Math.pow(foption.mouseaccer, Math.sqrt(deltax * deltax + deltay * deltay) / deltat * 40);
 				mousex += deltax * k;
 				mousey += deltay * k;
 				if (mousex < 0) mousex = 0;
@@ -410,6 +416,7 @@
 				if (mousey > window.innerHeight - 1) mousey = window.innerHeight - 1;
 				touchx = touchnewx;
 				touchy = touchnewy;
+				toucht = touchnewt;
 				sendMouseEvent(mousex, mousey, "mousemove", {});
 			} else {
 				if (foption.mouse2click && tlist.length > 1) {
@@ -428,6 +435,7 @@
 				if (tlist.length > 0) {
 					touchx = touchnewx / tlist.length;
 					touchy = touchnewy / tlist.length;
+					toucht = touchnewt;
 				}
 			}
 
@@ -642,16 +650,16 @@
 			mousespeed: {
 				type: "number",
 				name: "鼠标指针速度",
-				min: 0.2,
-				max: 10,
-				default: 3
+				min: 0.05,
+				max: 20,
+				default: 1
 			},
 			mouseaccer: {
 				type: "number",
 				name: "鼠标指针加速",
-				min: 0,
-				max: 2,
-				default: 1
+				min: 1,
+				max: 3,
+				default: 1.3
 			},
 			mouse2click: {
 				type: "check",
