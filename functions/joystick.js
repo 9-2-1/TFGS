@@ -1,4 +1,5 @@
 ! function() {
+	let foption = {};
 	let api, win = null;
 	let shift = false,
 		control = false,
@@ -41,11 +42,6 @@
 		wdiv.innerHTML = `
 <div class="tfgsJoystick">
 	<div class="tfgsJoystickKeyBoard"></div>
-	<div class="tfgsJoystickKeyBoard"></div>
-	<div class="tfgsJoystickKeyBoard"></div>
-	<div class="tfgsJoystickKeyBoard"></div>
-	<div class="tfgsJoystickKeyBoard"></div>
-	<div class="tfgsJoystickKeyBoard"></div>
 	<div class="tfgsJoystickMouse"></div>
 	<div class="tfgsJoystickGamepad"></div>
 </div>`;
@@ -63,23 +59,26 @@
 			e.stopPropagation();
 		};
 
-		let jKeyBs = wdiv.children[0].children;
-		let jMous = wdiv.children[0].children[6];
-		let jJoys = wdiv.children[0].children[7];
+		switchto(foption.start);
 
-		function switchto(x) {
-			for (let i = 0; i < wdiv.children[0].children.length; i++) {
-				let elem = wdiv.children[0].children[i];
-				elem.style.display = x === i ? "flex" : "none";
-			}
+		_refresh();
+	}
+
+	function switchto(x) {
+		let wchild = win.innerDiv.children[0].children;
+		for (let i = 0; i < wchild.length; i++) {
+			let elem = wchild[i];
+			elem.style.display = x === i ? "flex" : "none";
 		}
+	}
 
-		switchto(6);
+	function _refresh() {
+		let wchild = win.innerDiv.children[0].children;
+		let jKeyb = wchild[0];
+		let jMous = wchild[1];
+		let jJoys = wchild[2];
 
 		// 0: keyBoard
-
-		// let char1 = "~1234567890-=⌫\n⇄QWERTYUIOP[]\\\n ASDFGHJKL';↵\n⇧ZXCVBNM,./ \n⌃⌥␣←↑↓→⌬".split('\n');
-		// let char2 = "`!@#$%^&*()_+⌫\n⇄QWERTYUIOP{}|\n ASDFGHJKL\":↵\n⇧ZXCVBNM<>? \n⌃⌥␣←↑↓→⌬".split('\n');
 
 		let keybsets = [
 			[
@@ -89,32 +88,17 @@
 			[
 				"1234567890\nQWERTYUIOP\nASDFGHJKL\nZXCVBNM↑↵\n⌬␣←↓→",
 				"1234567890\nQWERTYUIOP\nASDFGHJKL\nZXCVBNM↑↵\n⌬␣←↓→"
-			],
-			[
-				"QWEUIO\nASDJKL\n←↑↓→␣⌬",
-				"QWEUIO\nASDJKL\n←↑↓→␣⌬"
-			],
-			[
-				"1↑2CR\n←↓→ZX\n⌬␣↵",
-				"1↑2CR\n←↓→ZX\n⌬␣↵"
-			],
-			[
-				"↑W\n←↓→ASD\nZXCJKL\n⌬",
-				"↑W\n←↓→ASD\nZXCJKL\n⌬"
-			],
-			[
-				"SDFJKL\n←↑↓→↵\n␣⌬",
-				"SDFJKL\n←↑↓→↵\n␣⌬"
-			],
+			]
 		];
-		for (let i = 0; i < 6; i++) {
-			setKeyboard(jKeyBs[i],
-				keybsets[i][0],
-				keybsets[i][1],
-				i + 1);
-		}
 
-		function setKeyboard(jKeyB, char1, char2, nextId) {
+		let i = foption.fullkey ? 0 : 1;
+		setKeyboard(jKeyb,
+			keybsets[i][0],
+			keybsets[i][1],
+			1);
+
+		function setKeyboard(jKeyb, char1, char2, nextId) {
+			jKeyb.innerHTML = "";
 			char1 = char1.split('\n');
 			char2 = char2.split('\n');
 			for (let i in char1) {
@@ -184,7 +168,7 @@
 					}
 					line.appendChild(createKey(char1, char2, ccode, cname, nextId));
 				}
-				jKeyB.appendChild(line);
+				jKeyb.appendChild(line);
 			}
 		}
 
@@ -288,8 +272,13 @@
 		jMous.children[0].onmouseleave = jMous.children[0].onmouseup = jMous.children[0].ontouchend = synctouch;
 
 		bindbutton(jMous.children[1].children[0], 0);
-		bindbutton(jMous.children[1].children[1], 1);
-		bindbutton(jMous.children[1].children[2], 2);
+		if (foption.mousebuttons) {
+			bindbutton(jMous.children[1].children[1], 1);
+			bindbutton(jMous.children[1].children[2], 2);
+		} else {
+			jMous.children[1].children[1].style.display = "none";
+			jMous.children[1].children[2].style.display = "none";
+		}
 		bindwheel(jMous.children[1].children[3], -120);
 		bindwheel(jMous.children[1].children[4], 120);
 
@@ -408,7 +397,7 @@
 				touchnewy /= tlist.length;
 				let deltax = touchnewx - touchx;
 				let deltay = touchnewy - touchy;
-				let k = 1 * Math.pow(Math.sqrt(deltax * deltax + deltay * deltay), 0.5);
+				let k = foption.mousespeed * Math.pow(Math.sqrt(deltax * deltax + deltay * deltay), foption.mouseaccer);
 				mousex += deltax * k;
 				mousey += deltay * k;
 				if (mousex < 0) mousex = 0;
@@ -419,7 +408,7 @@
 				touchy = touchnewy;
 				sendMouseEvent(mousex, mousey, "mousemove", {});
 			} else {
-				if (tlist.length > 1) {
+				if (foption.mouse2click && tlist.length > 1) {
 					if (!moused) {
 						sendMouseEvent(mousex, mousey, "mousedown", {});
 						this.style.background = "grey";
@@ -523,7 +512,7 @@
 				});
 			};
 			if (name === "tfgsSwitch") {
-				x.innerHTML = nextId === 6 ? `<svg width=20 height=30>
+				x.innerHTML = `<svg width=20 height=30>
 	<path d="
 		M 1 10
 		A 9 9 0 0 1 19 10
@@ -542,7 +531,7 @@
 		M 10 11
 		L 10 15
 	" stroke=black stroke-width=1 fill=none />
-</svg>` : "⌨";
+</svg>`;
 			} else {
 				x.innerText = key + (key !== key2 ? " " + key2 : "");
 			}
@@ -615,15 +604,120 @@
 		name: "虚拟摇杆",
 		info: "显示自定义虚拟摇杆",
 		default: false,
-		options: {},
+		option: {
+			start: {
+				type: "menu",
+				name: "默认模式",
+				menu: ["键盘", "鼠标", "游戏手柄"],
+				value: [0, 1, 2],
+				default: 2
+			},
+			fullkey: {
+				type: "check",
+				name: "键盘显示更多按键",
+				default: false
+			},
+			mousespeed: {
+				type: "number",
+				name: "鼠标指针速度",
+				min: 0.2,
+				max: 10,
+				default: 3
+			},
+			mouseaccer: {
+				type: "number",
+				name: "鼠标指针加速",
+				min: 0,
+				max: 2,
+				default: 1
+			},
+			mouse2click: {
+				type: "check",
+				name: "放置两根手指模拟点击",
+				default: true
+			},
+			mousebuttons: {
+				type: "check",
+				name: "鼠标显示中键和右键",
+				default: false
+			},
+			joyleft: {
+				type: "menu",
+				name: "游戏手柄左侧布局",
+				menu: [
+					"摇杆(上下左右)",
+					"摇杆(WSAD)",
+					"摇杆(IKJL)",
+					"摇杆(自定义)",
+					"键盘(FCZX)",
+					"键盘(EQRF)",
+					"键盘(RQJK)",
+					"键盘(LOJK)",
+					"键盘(UIOJKL)",
+					"键盘(1-6)",
+					"键盘(0-9)",
+					"键盘(自定义)",
+					"鼠标",
+					"鼠标+键盘(自定义)"
+
+				],
+				value: [10, 11, 12, 13, 20, 21, 22, 23, 24, 25, 26, 30, 31],
+				default: 10
+			},
+			joyright: {
+				type: "menu",
+				name: "游戏手柄右侧布局",
+				menu: [
+					"摇杆(上下左右)",
+					"摇杆(WSAD)",
+					"摇杆(IKJL)",
+					"摇杆(自定义)",
+					"键盘(FCZX)",
+					"键盘(EQRF)",
+					"键盘(RQJK)",
+					"键盘(LOJK)",
+					"键盘(UIOJKL)",
+					"键盘(1-6)",
+					"键盘(0-9)",
+					"键盘(自定义)",
+					"鼠标",
+					"鼠标+键盘(自定义)"
+
+				],
+				value: [10, 11, 12, 13, 20, 21, 22, 23, 24, 25, 26, 30, 31],
+				default: 20
+			},
+			joyleftcustom: {
+				type: "text",
+				name: "左侧自定义",
+				default: "WSAD"
+			},
+			joyrightcustom: {
+				type: "text",
+				name: "右侧自定义",
+				default: "IKJL"
+			}
+		},
 		onenable: function(_api) {
 			api = _api;
+			foption = api.getoption();
 			opencontrol();
-			// add a button
 		},
 		ondisable: function() {
 			closecontrol();
 		},
-		onoption: function() {}
+		onoption: function() {
+			let noption = api.getoption();
+			if (
+				noption.fullkey !== foption.fullkey ||
+				noption.mouse2click !== foption.mouse2click ||
+				noption.mousebuttons !== foption.mousebuttons
+			) {
+				foption = noption;
+				_refresh();
+			} else {
+				foption = noption;
+			}
+		}
 	});
 }();
