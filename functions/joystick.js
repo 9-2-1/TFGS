@@ -602,6 +602,11 @@
 		window.removeEventListener("keyup", monitorkey);
 		if (win !== null) {
 			win.close();
+			win = null;
+		}
+		if (cursordiv !== null) {
+			document.body.removeChild(cursordiv);
+			cursordiv = null;
 		}
 	}
 
