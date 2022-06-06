@@ -383,6 +383,13 @@
 				cursordiv = tfgs.element.create("span", "tfgsJoystickCursor");
 				document.body.appendChild(cursordiv);
 				cursordiv.innerHTML = `<svg>
+	<defs>
+		<filter id="fl" x="0" y="0" width="100" height="100">
+			<feGaussianBlur in="SourceAlpha" stdDeviation="1" result="blur"/>
+			<feOffset in="blur" dx="1" dy="1" result="offsetBlur"/>
+			<feBlend in="SourceGraphic" in2="offsetBlur" mode="normal">
+		</filter>
+	</defs>
 	<path d="
 		M 0 0
 		L 15 20
@@ -392,7 +399,7 @@
 		L 5 23.33
 		L 0 25
 		Z
-	" stroke=black stroke-width=1 fill=white />
+	" stroke=black stroke-width=1 fill=white filter="url(#fl)" />
 </svg>`;
 			}
 
