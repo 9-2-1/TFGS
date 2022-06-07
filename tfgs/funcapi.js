@@ -77,7 +77,11 @@ tfgs.funcapi.prompt = function(name, text, defau) {
 /* ---------- 获取Scratch相关内容 ---------- */
 
 tfgs.funcapi.blockly = function(name) {
-	return window.Blockly;
+	if ("Blockly" in window)
+		return window.Blockly;
+	else if ("ClipCCExtension" in window)
+		return window.ClipCCExtension.getBlockInstance();
+	else return undefined;
 };
 
 // 积木区相关
@@ -108,17 +112,22 @@ tfgs.funcapi.selcss = function(name, classname, element) {
 };
 
 // 获取元素的__reactInternalInstance$xxx
+// ClipCC用了react17，__reactFiber$
 tfgs.funcapi.reactInternal = function(name, element) {
 	let internal = "__reactInternalInstance$";
+	let internal2 = "__reactFiber$";
 	let fullname = null;
 	Object.keys(element).forEach(function(a) {
 		if (a.slice(0, internal.length) === internal)
+			fullname = a;
+		if (a.slice(0, internal2.length) === internal2)
 			fullname = a;
 	});
 	return fullname === null ? undefined : element[fullname];
 };
 
 // 获取 redux store, 里面有vm和绘画参数
+// ClipCC 目前不可用，因为react17的变化
 tfgs.funcapi.store = function(name) {
 	return tfgs.funcapi.reactInternal(
 		name, tfgs.funcapi.selele(name, "gui_page-wrapper_")
@@ -127,12 +136,51 @@ tfgs.funcapi.store = function(name) {
 
 // vm 对象
 tfgs.funcapi.vm = function(name) {
-	return tfgs.funcapi.store().getState().scratchGui.vm;
+	let errors = [];
+	try {
+		// 用 ClipCC 的 api
+		return window.ClipCCExtension.api.getVmInstance();
+	} catch (e) {
+		errors.push(e);
+		try {
+			// 获取VM方法1
+			return tfs.funcapi.selele(name, "gui_page-wrapper_")
+				.return.return.return.return
+				.return.return.return.return
+				.stateNode.props.vm;
+		} catch (e) {
+			errors.push(e);
+			try {
+				// 获取VM方法2
+				return tfgs.funcapi.reactInternal(name,
+						tfgs.funcapi.selele("stage-wrapper_")
+					)
+					.return.return.return.return
+					.return.return.return.return
+					.return.return
+					.stateNode.props.vm;
+			} catch (e) {
+				errors.push(e);
+				try {
+					// 获取VM方法3
+					return tfgs.funcapi.store(name).getState().scratchGui.vm;
+				} catch (e) {
+					errors.push(e);
+					for (let i in e) {
+						tfgs.funcapi.error(name, `funcapi: 方法${i+1}错误:`);
+						tfgs.funcapi.onerror(name, e);
+					}
+					throw new Error("tfgs.funcapi.vm: cannot find vm");
+				}
+			}
+		}
+	}
 };
 
 // 绘画状态
+// ClipCC 目前不可用
 tfgs.funcapi.paint = function(name) {
-	return tfgs.funcapi.store().getState().scratchPaint;
+	return tfgs.funcapi.store(name).getState().scratchPaint;
 };
 
 /* ---------- 为指定name的拓展定制api对象 ---------- */

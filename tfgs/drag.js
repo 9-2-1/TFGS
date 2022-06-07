@@ -64,13 +64,16 @@ tfgs.drag.setdrag = function(elem, options) {
 		mode = "click";
 
 		window.addEventListener("mousemove", handleDragMove);
+		elem.addEventListener("mousemove", handleDragMove);
 		window.addEventListener("mouseup", handleDragEnd);
+		elem.addEventListener("mouseup", handleDragEnd);
 		window.addEventListener("mouseleave", handleDragEnd);
 		window.addEventListener("blur", handleDragEnd);
 		elem.addEventListener("touchmove", handleDragMove);
 		elem.addEventListener("touchend", handleDragEnd);
 
 		event.preventDefault();
+		event.stopPropagation();
 		event.cancelBubble = true;
 		return false;
 	};
@@ -81,16 +84,27 @@ tfgs.drag.setdrag = function(elem, options) {
 			lastxy = xy;
 			mode = "drag";
 		}
+		event.preventDefault();
+		event.stopPropagation();
+		event.cancelBubble = true;
+		return false;
 	};
 	let handleDragEnd = function(event) {
 		options.onEnd(mode, event);
 
 		window.removeEventListener("mousemove", handleDragMove);
+		elem.removeEventListener("mousemove", handleDragMove);
 		window.removeEventListener("mouseup", handleDragEnd);
+		elem.removeEventListener("mouseup", handleDragEnd);
 		window.removeEventListener("mouseleave", handleDragEnd);
 		window.removeEventListener("blur", handleDragEnd);
 		elem.removeEventListener("touchmove", handleDragMove);
 		elem.removeEventListener("touchend", handleDragEnd);
+
+		event.preventDefault();
+		event.stopPropagation();
+		event.cancelBubble = true;
+		return false;
 	};
 
 	elem.addEventListener("mousedown", handleDragStart);
