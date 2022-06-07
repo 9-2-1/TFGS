@@ -331,7 +331,8 @@
 			let deltax = touchnewx - touchx;
 			let deltay = touchnewy - touchy;
 			let deltat = touchnewt - toucht;
-			let k = foption.mousespeed * Math.pow(foption.mouseaccer, Math.sqrt(deltax * deltax + deltay * deltay) / deltat * 40);
+			let speed = Math.sqrt(deltax * deltax + deltay * deltay) / (deltat / 1000) //像素每秒
+			let k = foption.mousespeed * (speed / (speed + foption.mouseaccer));
 			mousex += deltax * k;
 			mousey += deltay * k;
 			if (mousex < 0) mousex = 0;
@@ -654,10 +655,10 @@
 			},
 			mouseaccer: {
 				type: "number",
-				name: "鼠标指针加速",
-				min: 1,
-				max: 3,
-				default: 1.3
+				name: "鼠标指针减速",
+				min: 0,
+				max: 10000,
+				default: 500
 			},
 			mouse2click: {
 				type: "check",
