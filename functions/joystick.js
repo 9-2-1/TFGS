@@ -88,18 +88,12 @@
 		// 0: keyBoard
 
 		let keybsets = [
-			[
-				"~1234567890-=⌫\n⇄qwertyuiop[]\\\n asdfghjkl';↵\n⇧zxcvbnm,./ \n⌃⌥␣←↑↓→⌬",
-				"`!@#$%^&*()_+⌫\n⇄QWERTYUIOP{}|\n ASDFGHJKL\":↵\n⇧ZXCVBNM<>? \n⌃⌥␣←↑↓→⌬"
-			],
-			[
-				"1234567890\nqwertyuiop\nasdfghjkl\nzxcvbnm↑↵\n⌬␣←↓→",
-				"1234567890\nQWERTYUIOP\nASDFGHJKL\nZXCVBNM↑↵\n⌬␣←↓→"
-			]
+			"`1234567890-=⌫\n⇄qwertyuiop[]\\\n asdfghjkl';↵\n⇧zxcvbnm,./ \n⌃⌥␣←↑↓→⌬",
+			"1234567890\nqwertyuiop\nasdfghjkl\nzxcvbnm↑↵\n⌬␣←↓→"
 		];
 
 		let i = foption.fullkey ? 0 : 1;
-		setKeyboard(jKeyb, keybsets[i][0], keybsets[i][1], 1);
+		setKeyboard(jKeyb, keybsets[i], 1);
 
 		// 1: mouse
 
@@ -368,6 +362,15 @@
 		cursordiv.style.top = mousey - 1 + "px";
 	}
 
+	function sendKey(type, char1) {
+		let detail = getKeyDetail(char1, shift);
+		sendKeyEvent(type, {
+			key: detail.cname,
+			code: detail.ccode,
+			keyCode: detail.ccode
+		});
+	}
+
 	function sendKeyEvent(type, data) {
 		const event = new KeyboardEvent(type, Object.assign({
 			view: window,
@@ -434,17 +437,17 @@
 		sendMouseLikeEvent(WheelEvent, mousex, mousey, type, data);
 	}
 
-	function createKey(key, key2, code, name, nextId) {
+	function createKey(key, nextId) {
 		let x = tfgs.element.create("span");
+		let detail = getKeyDetail(key, false);
+		let shdetail = getKeyDetail(key, true);
+		let name = detail.cname;
+		let shname = shdetail.cname;
 		let step = function() {
 			if (name === "Control") control = true;
 			if (name === "Alt") alt = true;
 			if (name === "Shift") shift = true;
-			sendKeyEvent("keydown", {
-				key: name !== null ? name : shift ? key2 : key,
-				code: code,
-				keyCode: code,
-			});
+			sendKey("keydown", key);
 		};
 		if (name === "tfgsSwitch") {
 			x.innerHTML = `<svg width=20 height=30>
@@ -468,7 +471,7 @@
 	" stroke=black stroke-width=1 fill=none />
 </svg>`;
 		} else {
-			x.innerText = key + (key.toLowerCase() !== key2.toLowerCase() ? "\n" + key2 : "");
+			x.innerText = key + (name.toLowerCase() !== shname.toLowerCase() ? "\n" + shname : "");
 		}
 		x.onmousedown = x.ontouchstart = function(e) {
 			if (name !== "tfgsSwitch") {
@@ -508,11 +511,7 @@
 				if (name === "Control") control = false;
 				if (name === "Alt") alt = false;
 				if (name === "Shift") shift = false;
-				sendKeyEvent("keyup", {
-					key: name !== null ? name : shift ? key2 : key,
-					code: code,
-					keyCode: code,
-				});
+				sendKey("keyup", key);
 			} else {
 				switchto(nextId);
 			}
@@ -526,79 +525,92 @@
 		return x;
 	}
 
-	function setKeyboard(jKeyb, char1, char2, nextId) {
-		jKeyb.innerHTML = "";
+	function setKeyboard(elem, char1, nextId) {
+		elem.innerHTML = "";
 		char1 = char1.split('\n');
-		char2 = char2.split('\n');
 		for (let i in char1) {
 			let line1 = char1[i].split('');
-			let line2 = char2[i].split('');
 			let line = tfgs.element.create("span");
 			for (let j in line1) {
 				let char1 = line1[j];
-				let char2 = line2[j];
-				let ccode, cname;
-				switch (char1) {
-					case "⌫":
-						ccode = 8;
-						cname = "Backspace";
-						break;
-					case "⇄":
-						ccode = 9;
-						cname = "Tab";
-						break;
-					case "␣":
-						ccode = 32;
-						cname = " ";
-						break;
-					case "↵":
-						ccode = 13;
-						cname = "Enter";
-						break;
-					case "⇧":
-						ccode = 0;
-						cname = "Shift";
-						break;
-					case "⌥":
-						ccode = 0;
-						cname = "Alt";
-						break;
-					case "⌃":
-						ccode = 0;
-						cname = "Control";
-						break;
-					case "←":
-						ccode = 37;
-						cname = "ArrowLeft";
-						break;
-					case "↑":
-						ccode = 38;
-						cname = "ArrowUp";
-						break;
-					case "→":
-						ccode = 39;
-						cname = "ArrowRight";
-						break;
-					case "↓":
-						ccode = 40;
-						cname = "ArrowDown";
-						break;
-					case " ":
-						ccode = 0;
-						cname = "Unidentified";
-						break;
-					case "⌬":
-						ccode = 0;
-						cname = "tfgsSwitch";
-						break;
-					default:
-						ccode = char1.codePointAt(0);
-						cname = null;
-				}
-				line.appendChild(createKey(char1, char2, ccode, cname, nextId));
+				line.appendChild(createKey(char1, nextId));
 			}
-			jKeyb.appendChild(line);
+			elem.appendChild(line);
 		}
+	}
+
+	function getKeyDetail(char1, isShift) {
+		switch (char1) {
+			case "⌫":
+				ccode = 8;
+				cname = "Backspace";
+				break;
+			case "⇄":
+				ccode = 9;
+				cname = "Tab";
+				break;
+			case "␣":
+				ccode = 32;
+				cname = " ";
+				break;
+			case "↵":
+				ccode = 13;
+				cname = "Enter";
+				break;
+			case "⇧":
+				ccode = 0;
+				cname = "Shift";
+				break;
+			case "⌥":
+				ccode = 0;
+				cname = "Alt";
+				break;
+			case "⌃":
+				ccode = 0;
+				cname = "Control";
+				break;
+			case "←":
+				ccode = 37;
+				cname = "ArrowLeft";
+				break;
+			case "↑":
+				ccode = 38;
+				cname = "ArrowUp";
+				break;
+			case "→":
+				ccode = 39;
+				cname = "ArrowRight";
+				break;
+			case "↓":
+				ccode = 40;
+				cname = "ArrowDown";
+				break;
+			case " ":
+				ccode = 0;
+				cname = "Unidentified";
+				break;
+			case "⌬":
+				ccode = 0;
+				cname = "tfgsSwitch";
+				break;
+			default:
+				ccode = char1.toUpperCase().codePointAt(0);
+				if (isShift) {
+					let before = "`1234567890-=[]\\';.,/";
+					let after_ = "~!@#$%^&*()_+{}|\":<>?";
+					if (before.includes(char1)) {
+						cname = after_[before.indexOf(char1)];
+					} else {
+						cname = char1.toUpperCase();
+					}
+				} else {
+					cname = char1.toLowerCase();
+				}
+		}
+		return {
+			ccode: ccode,
+			cname: cname
+		};
 	}
 
 	function closecontrol() {
