@@ -115,7 +115,10 @@ if (res.error) console.error(res.error);
 allinonemin = res.code;
 
 fs.writeFileSync("allinone/TFGS.min.js", allinonemin);
-fs.writeFileSync("allinone/TFGS.txt", "avascript:" + allinonemin.replace(/\n/g, "\\n"));
+
+let url1 = "avascript:" + allinonemin.replace(/[\r\n]/g, "\\n").replace(/%/g, "%25");
+
+fs.writeFileSync("allinone/TFGS.txt", url1);
 fs.writeFileSync("allinone/TFGS.html", `<!doctype HTML>
 <html>
 	<head>
@@ -144,7 +147,7 @@ fs.writeFileSync("allinone/TFGS.html", `<!doctype HTML>
 		</center>
 		<script>
 			var x;
-			document.getElementById("copymee").value = x = "avascript:" + ${JSON.stringify(allinonemin.replace(/\n/g,"\\n"))};
+			document.getElementById("copymee").value = x = ${JSON.stringify(url1)};
 			document.getElementById("copyme").href = "j" + x;
 			document.getElementById("copymee").onfocus = function (e) {
 				document.getElementById("copymee").select();
@@ -152,11 +155,11 @@ fs.writeFileSync("allinone/TFGS.html", `<!doctype HTML>
 			document.getElementById("copymee").oncut = p;
 			document.getElementById("copymee").onpaste = p;
 			document.getElementById("copymee").oninput = p;
-			document.getElementById("copyme").onclick = function (e) {
+			document.getElementById("copyme").onclick = function(e) {
 				alert("请右键点击后选择加入到书签");
 				e.preventDefault();
 			};
-			function p (e) {
+			function p(e) {
 				document.getElementById("copymee").value = x;
 				e.preventDefault();
 			};
