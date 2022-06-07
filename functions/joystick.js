@@ -13,7 +13,8 @@
 		cursordiv = null;
 	let globalKeyInterval = -1,
 		globalKeyTimeout = -1;
-		let realmousedown = false;
+	let realmousedown = false;
+	let switchpage = -1;
 
 	function monitorkey(event) {
 		control = event.ctrlKey;
@@ -41,7 +42,17 @@
 		win = tfgs.window.create({
 			title: "JoyStick",
 			canClose: false,
-			canMaximize: false
+			canMaximize: false,
+			onResize: function() {
+				if (switchpage === 2) {
+					let wchild = win.innerDiv.children[0].children;
+					let parts = wchild[2].children;
+					if (parts.length !== 0) {
+						setJoystick(parts[0], foption.joyleft, foption.joyleftcustom);
+						setJoystick(parts[1], foption.joyright, foption.joyrightcustom);
+					}
+				}
+			}
 		});
 
 		let wdiv = win.innerDiv;
@@ -76,6 +87,14 @@
 		for (let i = 0; i < wchild.length; i++) {
 			let elem = wchild[i];
 			elem.style.display = x === i ? "flex" : "none";
+		}
+		switchpage = x;
+		if (x === 2) {
+			let parts = wchild[2].children;
+			if (parts.length !== 0) {
+				setJoystick(parts[0], foption.joyleft, foption.joyleftcustom);
+				setJoystick(parts[1], foption.joyright, foption.joyrightcustom);
+			}
 		}
 	}
 
@@ -186,7 +205,7 @@
 	</span>
 	<span class="tfgsJoystickMouseClick">▲</span>
 	<span class="tfgsJoystickMouseClick">▼</span>
-	<span class="tfgsJoystickMouseSwitch">⌨</span>
+	<span class="tfgsJoystickMouseSwitch">◎∷</span>
 </span>`;
 
 		jMous.children[0].onmousedown = jMous.children[0].ontouchstart = synctouch;
@@ -210,9 +229,25 @@
 
 		jMous.children[1].children[5].onmouseup = jMous.children[1].children[5].ontouchend = function(e) {
 			this.style.background = "inherit";
+			switchto(2);
+		};
+
+		// 2: joystick
+
+		jJoys.innerHTML = `<span></span><span></span><span class="tfgsJoystickSwitch">⌨</span>`;
+		let parts = jJoys.children;
+
+		parts[2].onmousedown = parts[2].ontouchstart = function() {
+			this.style.background = "grey";
+		};
+
+		parts[2].onmouseup = parts[2].ontouchend = function() {
+			this.style.background = "inherit";
 			switchto(0);
 		};
 
+		setJoystick(parts[0], foption.joyleft, foption.joyleftcustom);
+		setJoystick(parts[1], foption.joyright, foption.joyrightcustom);
 	}
 
 	function bindwheel(elem, delta) {
@@ -626,6 +661,132 @@
 		}
 	}
 
+	function setJoystick(elem, mode, custom) {
+		custom = custom.replace(/\|/g, "\n").replace(/\{[^}]+\}/g, function(str) {
+			let repl = {
+				"{space}": "␣",
+				"{enter}": "↵",
+				"{left}": "←",
+				"{up}": "↑",
+				"{down}": "↓",
+				"{right}": "→",
+				"{control}": "⌃",
+				"{shift}": "⇧",
+				"{alt}": "⌥",
+				"{tab}": "⇄",
+				"{backspace}": "⌫",
+				"{leftcurly}": "{",
+				"{rightcurly}": "}",
+				"{switch}": "⌬"
+			}
+			if (str in repl) return repl[str];
+			return " ";
+		});
+
+		switch (Math.floor(mode / 10)) {
+			case 1: {
+				let presets = [
+					"↑↓←→",
+					"WSAD",
+					"IKJL",
+					custom
+				][mode % 10];
+				elem.innerHTML = `<span class="tfgsJoystickJoystick"><span><span></span></span></span>`;
+
+				let elemrect = elem.getBoundingClientRect();
+				let r = Math.min(elemrect.right - elemrect.left, elemrect.bottom - elemrect.top) * 0.8;
+				elem.children[0].style.setProperty("--size", r + "px");
+
+				let circle = elem.children[0].children[0];
+				let button = circle.children[0];
+				let handleDrag = function(circle, event) {
+					let rect = circle.getBoundingClientRect();
+					let x0 = (rect.left + rect.right) / 2;
+					let y0 = (rect.top + rect.bottom) / 2;
+					if ("targetTouches" in event)
+						event = event.targetTouches[0];
+					let x = event.clientX - x0;
+					let y = event.clientY - y0;
+					let d = Math.sqrt(x * x + y * y);
+					let dmax = (rect.right - rect.left) / 2 / 2;
+					if (d > dmax) {
+						x /= d;
+						y /= d;
+					} else {
+						x /= dmax;
+						y /= dmax;
+					}
+					// api.log(event.type+"|:"+d+","+dmax+","+x+","+y);
+					if (y < -0.38) {
+						sendKey("keydown", presets[0]);
+					} else {
+						sendKey("keyup", presets[0]);
+					}
+					if (y > 0.38) {
+						sendKey("keydown", presets[1]);
+					} else {
+						sendKey("keyup", presets[1]);
+					}
+					if (x < -0.38) {
+						sendKey("keydown", presets[2]);
+					} else {
+						sendKey("keyup", presets[2]);
+					}
+					if (x > 0.38) {
+						sendKey("keydown", presets[3]);
+					} else {
+						sendKey("keyup", presets[3]);
+					}
+					button.style.left = x * dmax + "px";
+					button.style.top = y * dmax + "px";
+				};
+
+				tfgs.drag.setdrag(circle, {
+					onStart: function(event) {
+						handleDrag(circle, event);
+						return {
+							x: 0,
+							y: 0
+						};
+					},
+					onMove: function(x, y, event) {
+						handleDrag(circle, event);
+					},
+					onEnd: function(event) {
+						for (let i = 0; i < 4; i++) {
+							sendKey("keyup", presets[i]);
+						}
+						button.style.left = "0px";
+						button.style.top = "0px";
+					}
+				});
+				break;
+			}
+			case 2: {
+				let presets = [
+					"FC\nZX",
+					"EQ\nR␣",
+					"UIO\nJKL",
+					"123\n456",
+					"⌃⇧\n⌥␣",
+					"↑↓{\n←→}",
+					custom
+				][mode % 10];
+				elem.classList.add("tfgsJoystickJoystickKeyBoard");
+				setKeyboard(elem, presets, 0);
+				break;
+			}
+			case 3: {
+				elem.innerHTML = `<span class="tfgsJoystickJoystickMouse"></span>`;
+				elem = elem.children[0];
+				elem.onmousedown = elem.ontouchstart = synctouch;
+				elem.onmousemove = elem.ontouchmove = synctouch;
+				elem.onmouseleave = elem.onmouseup = elem.ontouchend = synctouch;
+				break;
+			}
+		}
+	}
+
 	tfgs.func.add({
 		id: "joystick",
 		name: "虚拟摇杆",
@@ -690,19 +851,16 @@
 					"摇杆(WSAD)",
 					"摇杆(IKJL)",
 					"摇杆(自定义)",
-					"键盘(FCZX)",
-					"键盘(EQRF)",
-					"键盘(RQJK)",
-					"键盘(LOJK)",
-					"键盘(UIOJKL)",
-					"键盘(1-6)",
-					"键盘(0-9)",
+					"键盘(FC|ZX)",
+					"键盘(EQ|R{space})",
+					"键盘(UIO|JKL)",
+					"键盘(123|456)",
+					"键盘({ctrl}{shift}|{alt}{space})",
+					"键盘({up}{down}{leftcurly}|{left}{right}{rightcurly})",
 					"键盘(自定义)",
-					"鼠标",
-					"鼠标+键盘(自定义)"
-
+					"鼠标"
 				],
-				value: [10, 11, 12, 13, 20, 21, 22, 23, 24, 25, 26, 30, 31],
+				value: [10, 11, 12, 13, 20, 21, 22, 23, 24, 25, 26, 30],
 				default: 10
 			},
 			joyright: {
@@ -713,19 +871,16 @@
 					"摇杆(WSAD)",
 					"摇杆(IKJL)",
 					"摇杆(自定义)",
-					"键盘(FCZX)",
-					"键盘(EQRF)",
-					"键盘(RQJK)",
-					"键盘(LOJK)",
-					"键盘(UIOJKL)",
-					"键盘(1-6)",
-					"键盘(0-9)",
+					"键盘(FC|ZX)",
+					"键盘(EQ|R{space})",
+					"键盘(UIO|JKL)",
+					"键盘(123|456)",
+					"键盘({ctrl}{shift}|{alt}{space})",
+					"键盘({up}{down}{leftcurly}|{left}{right}{rightcurly})",
 					"键盘(自定义)",
-					"鼠标",
-					"鼠标+键盘(自定义)"
-
+					"鼠标"
 				],
-				value: [10, 11, 12, 13, 20, 21, 22, 23, 24, 25, 26, 30, 31],
+				value: [10, 11, 12, 13, 20, 21, 22, 23, 24, 25, 26, 30],
 				default: 20
 			},
 			joyleftcustom: {
@@ -752,7 +907,11 @@
 			if (
 				noption.fullkey !== foption.fullkey ||
 				noption.mouse2click !== foption.mouse2click ||
-				noption.mousebuttons !== foption.mousebuttons
+				noption.mousebuttons !== foption.mousebuttons ||
+				noption.joyleft !== foption.joyleft ||
+				noption.joyright !== foption.joyright ||
+				noption.joyleftcustom !== foption.joyleftcustom ||
+				noption.joyrightcustom !== foption.joyrightcustom
 			) {
 				foption = noption;
 				_refresh();

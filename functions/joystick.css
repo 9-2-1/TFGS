@@ -76,3 +76,89 @@
 	pointer-events: none;
 	font-size: 30px;
 }
+
+.tfgsJoystickGamepad {
+	display: flex;
+	flex-flow: row nowrap;
+	width: calc(100% - 4px);
+}
+
+.tfgsJoystickGamepad>span {
+	border: 1px solid black;
+	flex: 1 1 0;
+	overflow: hidden;
+}
+
+.tfgsJoystickJoystick {
+	display: flex;
+	width: 100%;
+	height: 100%;
+	align-items: center;
+	justify-content: center;
+}
+
+.tfgsJoystickJoystick>span {
+	display: flex;
+	position: relative;
+	width: var(--size);
+	height: var(--size);
+	border: 1px solid black;
+	border-radius: 1000px;
+	align-items: center;
+	justify-content: center;
+}
+
+.tfgsJoystickJoystick>span>span {
+	position: relative;
+	width: 50%;
+	height: 50%;
+	border: 1px solid black;
+	border-radius: 1000px;
+}
+
+.tfgsJoystickJoystickKeyBoard {
+	display: flex;
+	height: calc(100% - 4px);
+	flex-flow: column nowrap;
+	border: 1px solid black;
+	font-size: 20px;
+	padding: 1px;
+}
+
+.tfgsJoystickJoystickKeyBoard>span {
+	display: flex;
+	flex: 1 1 0;
+	flex-flow: row nowrap;
+	overflow: hidden;
+}
+
+.tfgsJoystickJoystickKeyBoard>span>span {
+	flex: 1 1 0;
+	margin: 5px;
+	text-align: center;
+	border: 1px solid black;
+	font-size: 20px;
+	box-sizing: border-box;
+	white-space: pre;
+	overflow: hidden;
+	border-radius: 1000px;
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+}
+
+.tfgsJoystickJoystickMouse {
+	display: inline-block;
+	height: 100%;
+	width: 100%;
+}
+
+.tfgsJoystickSwitch {
+	position: absolute;
+	right: 2px;
+	bottom: 2px;
+	height: 30px;
+	width: 30px;
+	background-color: white !important;
+}
