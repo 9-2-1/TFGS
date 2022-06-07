@@ -112,7 +112,7 @@
 		];
 
 		let i = foption.fullkey ? 0 : 1;
-		setKeyboard(jKeyb, keybsets[i], 1);
+		setKeyboard(jKeyb, keybsets[i], 1, true);
 
 		// 1: mouse
 
@@ -472,7 +472,7 @@
 		sendMouseLikeEvent(WheelEvent, mousex, mousey, type, data);
 	}
 
-	function createKey(key, nextId) {
+	function createKey(key, nextId, autoSize) {
 		let x = tfgs.element.create("span");
 		let detail = getKeyDetail(key, false);
 		let shdetail = getKeyDetail(key, true);
@@ -506,7 +506,7 @@
 	" stroke=black stroke-width=1 fill=none />
 </svg>`;
 		} else {
-			x.innerText = key + (name.toLowerCase() !== shname.toLowerCase() ? "\n" + shname : "");
+			x.innerText = key + (name.toLowerCase() !== shname.toLowerCase() && autoSize ? "\n" + shname : "");
 		}
 		x.onmousedown = x.ontouchstart = function(e) {
 			if (name !== "tfgsSwitch") {
@@ -552,15 +552,18 @@
 			}
 			x.style.background = "inherit";
 		};
-		if (name === "Unidentified") x.style.flexGrow = 1.5;
-		if (name === "Shift") x.style.flexGrow = 2;
-		if (name === "Control") x.style.flexGrow = 2;
-		if (name === "Enter") x.style.flexGrow = 1.5;
-		if (name === " ") x.style.flexGrow = 4;
+		if (autoSize) {
+			if (name === "Unidentified") x.style.flexGrow = 1.5;
+			if (name === "Shift") x.style.flexGrow = 2;
+			if (name === "Control") x.style.flexGrow = 2;
+			if (name === "Enter") x.style.flexGrow = 1.5;
+			if (name === " ") x.style.flexGrow = 4;
+		}
+		if (name === "Unidentified") x.style.visibility = "hidden";
 		return x;
 	}
 
-	function setKeyboard(elem, char1, nextId) {
+	function setKeyboard(elem, char1, nextId, autoSize) {
 		elem.innerHTML = "";
 		char1 = char1.split('\n');
 		for (let i in char1) {
@@ -568,7 +571,7 @@
 			let line = tfgs.element.create("span");
 			for (let j in line1) {
 				let char1 = line1[j];
-				line.appendChild(createKey(char1, nextId));
+				line.appendChild(createKey(char1, nextId, autoSize));
 			}
 			elem.appendChild(line);
 		}
@@ -675,6 +678,8 @@
 				"{alt}": "⌥",
 				"{tab}": "⇄",
 				"{backspace}": "⌫",
+				"{bar}": "|",
+				"{empty}": " ",
 				"{leftcurly}": "{",
 				"{rightcurly}": "}",
 				"{switch}": "⌬"
@@ -769,11 +774,11 @@
 					"UIO\nJKL",
 					"123\n456",
 					"⌃⇧\n⌥␣",
-					"↑↓{\n←→}",
+					"↑↓{\n←→}\n| ",
 					custom
 				][mode % 10];
 				elem.classList.add("tfgsJoystickJoystickKeyBoard");
-				setKeyboard(elem, presets, 0);
+				setKeyboard(elem, presets, 0, false);
 				break;
 			}
 			case 3: {
@@ -876,7 +881,7 @@
 					"键盘(UIO|JKL)",
 					"键盘(123|456)",
 					"键盘({ctrl}{shift}|{alt}{space})",
-					"键盘({up}{down}{leftcurly}|{left}{right}{rightcurly})",
+					"键盘({up}{down}{leftcurly}|{left}{right}{rightcurly}|{bar}{empty})",
 					"键盘(自定义)",
 					"鼠标"
 				],
