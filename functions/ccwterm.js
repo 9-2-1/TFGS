@@ -9,7 +9,7 @@
 
 	function getready() {
 		if (readyt === -1) {
-			readyt = setInterval(getready, 100);
+			readyt = setInterval(getready, 1000);
 			return;
 		}
 		if (win === null) {
