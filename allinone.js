@@ -45,8 +45,9 @@ for (let i in flist) {
 	switch (ext) {
 		case "js": {
 			let content = `/* ${fname} */
+	! function (){
 ${fs.readFileSync(fname).toString()}
-
+	}();
 `;
 			allinone += content;
 			allinonemin += content;
@@ -59,7 +60,7 @@ ${fs.readFileSync(fname).toString()}
 				.replace(RegExp("`", "g"), "\\`")
 				.replace(/\\/g, "\\\\");
 			allinone += `/* ${fname} */
-_tfgsAddCSS(\`${text}\`);
+	_tfgsAddCSS(\`${text}\`);
 `;
 			allcssmin += text;
 			break;
