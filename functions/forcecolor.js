@@ -1,4 +1,3 @@
-! function() {
 	let api = null;
 	let interval = -1;
 	let winob = null;
@@ -115,4 +114,3 @@
 		},
 		onoption: function() {}
 	});
-}();

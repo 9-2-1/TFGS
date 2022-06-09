@@ -1,4 +1,3 @@
-! function() {
 	let foption = {};
 	let api, win = null;
 	let shift = false,
@@ -925,4 +924,3 @@
 			}
 		}
 	});
-}();

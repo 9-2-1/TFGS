@@ -1,4 +1,3 @@
-! function() {
 	let api;
 	let interval = -1;
 
@@ -323,4 +322,3 @@
 			foption = api.getoption();
 		}
 	});
-}();

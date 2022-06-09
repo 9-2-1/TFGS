@@ -1,4 +1,3 @@
-! function() {
 	let api;
 	// 左边是积木区，右边是积木拖出区
 	let workspace, flyoutWorkspace;
@@ -267,4 +266,3 @@
 		ondisable: TFGSOFF,
 		onoption: function() {}
 	});
-}();

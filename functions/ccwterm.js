@@ -1,4 +1,3 @@
-! function() {
 	let api, termwin = null,
 		termdiv = null,
 		lastvisi = "?",
@@ -125,4 +124,3 @@
 			}
 		}
 	});
-}();
