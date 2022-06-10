@@ -13,6 +13,7 @@ function getready() {
 	}
 	if (win === null) {
 		termwin = document.getElementById("gandi-terminal");
+		if (termwin === null) return;
 		termdiv = termwin.children[1];
 		let tstyle = window.getComputedStyle(termdiv);
 		let termspan = tfgs.element.create("span", "tfgsCCWtermSpan");
