@@ -664,7 +664,7 @@ function closecontrol() {
 }
 
 function setJoystick(elem, mode, custom) {
-	custom = custom.replace(/\|/g, "\n").replace(/\{[^}]+\}/g, function(str) {
+	custom = custom.replace(/\|/g, "\n").replace(new RegExp("\\{[^}]+\\}", "g"), function(str) {
 		let repl = {
 			"{space}": "␣",
 			"{enter}": "↵",
