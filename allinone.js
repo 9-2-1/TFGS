@@ -20,16 +20,15 @@ try {
 	if (${tfgskey} in window) {
 		throw new Error("TFGS 已经安装");
 	} else {
-		window[${tfgskey}] = {};
+		tfgs = window[${tfgskey}] = {};
 	}
 
-	tfgs = window.tfgs = {};
-
-	function _tfgsAddCSS(css) {
-		let style = document.createElement("style");
-		style.innerHTML = css;
-		document.head.appendChild(style);
-	}
+	! function (){
+		function _tfgsAddCSS(css) {
+			let style = document.createElement("style");
+			style.innerHTML = css;
+			document.head.appendChild(style);
+		}
 `;
 
 let allinonemin = allinone;
@@ -44,10 +43,11 @@ for (let i in flist) {
 	let ext = /(?:\.(.*))?$/.exec(fname)[1];
 	switch (ext) {
 		case "js": {
-			let content = `/* ${fname} */
-	! function (){
+			let content = `		/* ${fname} */
+		! function (){
 ${fs.readFileSync(fname).toString()}
-	}();
+		}();
+
 `;
 			allinone += content;
 			allinonemin += content;
@@ -59,8 +59,9 @@ ${fs.readFileSync(fname).toString()}
 				.replace(/\$/g, "\\$$")
 				.replace(RegExp("`", "g"), "\\`")
 				.replace(/\\/g, "\\\\");
-			allinone += `/* ${fname} */
-	_tfgsAddCSS(\`${text}\`);
+			allinone += `		/* ${fname} */
+		_tfgsAddCSS(\`${text}\`);
+
 `;
 			allcssmin += text;
 			break;
@@ -76,19 +77,22 @@ allcssmin = allcssmin.replace(/\\/g, "\\\\")
 	.replace(/\$/g, "\\$$")
 	.replace(RegExp("`", "g"), "\\`")
 	.replace(/\\/g, "\\\\");
-allinonemin += `/* (allinone.css) */
-_tfgsAddCSS(\`${allcssmin}\`);
+allinonemin += `		/* (allinone.css) */
+		_tfgsAddCSS(\`${allcssmin}\`);
+
 `;
 
-allinone += `/* (allinone.js) */
-	tfgs.data.load().then(tfgs.menu.create).catch(tfgs.error);
+allinone += `		/* (allinone.js) */
+		tfgs.data.load().then(tfgs.menu.create).catch(tfgs.error);
+	}();
 } catch(e) {
 	alert(e.message);
 	console.error(e);
 	throw e;
 }`;
-allinonemin += `/* (allinone.js) */
-	tfgs.data.load().then(tfgs.menu.create).catch(tfgs.error);
+allinonemin += `	/* (allinone.js) */
+		tfgs.data.load().then(tfgs.menu.create).catch(tfgs.error);
+	}();
 } catch(e) {
 	alert(e.message);
 	console.error(e);
