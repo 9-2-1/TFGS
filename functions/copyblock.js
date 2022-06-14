@@ -1,27 +1,33 @@
 let api;
+let api_enabled = false;
 // 左边是积木区，右边是积木拖出区
 let workspace, flyoutWorkspace;
-let injectionDiv;
 // 打开重试计时器
 let opening = -1;
-// 积木菜单检测计时器 *
-let blockMenuTimer = -1;
-let blockMenuTime = 0;
-const blockMenuTimeout = 1200; // ms
+
+let _origcontextmenu = null;
 
 // 打开 tfgs
 function TFGSON(_api, tryCount) {
+	api_enabled = true;
 	api = _api;
 	tryCount = tryCount === undefined ? 0 : tryCount;
 	//部分社区的界面会加载，尝试多次
 	try {
 		workspace = api.workspace();
+		if (typeof workspace !== "object" || workspace === null)
+			throw new Error("Bad workspace");
 		flyoutWorkspace = api.toolbox();
-		injectionDiv = api.selele("injectionDiv");
-		injectionDiv.addEventListener("touchstart", on_blockTouch, true);
-		//injectionDiv.addEventListener("touchmove",on_blockTouch,true);
-		//injectionDiv.addEventListener("touchstop",on_blockTouch,true);
-		document.body.addEventListener("mousedown", on_blockMousedown, true);
+		if (_origcontextmenu === null) {
+			_origcontextmenu = workspace.showContextMenu_;
+			workspace.showContextMenu_ = function(e) {
+				let ret = _origcontextmenu.apply(this, arguments);
+				if (api_enabled) {
+					on_blockMenu(e);
+				}
+				return ret;
+			}
+		}
 		api.log("打开");
 	} catch (err) {
 		api.onerror(err);
@@ -34,70 +40,29 @@ function TFGSON(_api, tryCount) {
 }
 
 function TFGSOFF() {
+	api_enabled = false;
 	// 停止重试
 	if (opening !== -1) {
 		clearTimeout(opening);
 		opening = -1;
 	}
-	// 把事件响应函数卸掉就是关闭了
-	if (injectionDiv) {
-		injectionDiv.removeEventListener("touchstart", on_blockTouch, true);
-	}
-	//injectionDiv.removeEventListener("touchmove",on_blockTouch,true);
-	//injectionDiv.removeEventListener("touchstop",on_blockTouch,true);
-	document.body.removeEventListener("mousedown", on_blockMousedown, true);
 	api.log("关闭");
 }
 
-function on_blockMousedown(event) {
-	if (event.button === 2) { // 右键
-		on_blockMenuPossible(event.clientX, event.clientY);
-	}
-}
-
-function on_blockTouch(event) {
-	if (event.touches.length === 0) {
-		return;
-	}
-	let touch = event.touches[0];
-	on_blockMenuPossible(touch.clientX, touch.clientY);
-}
-
-function on_blockMenuPossible(x, y) {
-	let element = document.elementFromPoint(x, y);
-	let blockBox, blockId;
+function on_blockMenu(event) {
+	let element = event.target;
 	if (element === null) {
 		return;
 	}
-	//api.log(element);
 	let clickSVG = getSVG(element);
 	if (clickSVG === null) {
 		return;
 	}
-	blockBox = clickSVG.classList.contains("blocklyFlyout");
-	blockId = getBlockId(element);
-	if (blockMenuTimer !== -1) {
-		clearInterval(blockMenuTimer);
-		blockMenuTimer = -1;
-	}
-	blockMenuTime = 0;
-	blockMenuTimer = setInterval(function() {
-		let menu = api.selele("blocklyContextMenu");
-		if (menu !== null) {
-			clearInterval(blockMenuTimer);
-			blockMenuTimer = -1;
-			on_blockMenu(blockBox, blockId, menu);
-		} else {
-			blockMenuTime += 10;
-			if (blockMenuTime >= blockMenuTimeout) {
-				clearInterval(blockMenuTimer);
-				blockMenuTimer = -1;
-			}
-		}
-	}, 10);
-}
 
-function on_blockMenu(blockBox, blockId, menu) {
+	let blockBox = clickSVG.classList.contains("blocklyFlyout");
+	let blockId = getBlockId(element);
+	let menu = api.selele("blocklyContextMenu");
+
 	if (blockId !== null) {
 		addToContextMenu("复制这个积木", function() {
 			copyToXML(blockId, false, true);
@@ -146,13 +111,14 @@ function getBlockId(element) {
 }
 
 function addToContextMenu(name, callback, element) {
-	let menuItem = document.createElement("div");
-	menuItem.classList.add("goog-menuitem");
+	let menuItem = tfgs.element.create("div", "goog-menuitem");
 	menuItem.setAttribute("role", "menuitem");
 	menuItem.style.userSelect = "none";
-	menuItem.innerText = name;
+	let menuText = tfgs.element.create("div", "goog-menuitem-content");
+	menuText.innerText = name;
+	menuItem.appendChild(menuText);
 	menuItem.addEventListener("click", callback);
-	element.parentElement.style.height = "4500px";
+	element.parentElement.style.height = "124554066086px";
 
 	element.appendChild(menuItem);
 }
@@ -180,7 +146,7 @@ function pasteFromXML() {
 			}
 		}
 	};
-	if ("clipboard" in navigator) {
+	if ("clipboard" in navigator && "readText" in navigator.clipboard) {
 		navigator.clipboard.readText().then(loaddata).catch(function(err) {
 			api.onerror(err);
 			loaddata(prompt("在下方粘贴:"));
@@ -226,7 +192,7 @@ function copyToXML(blockId, loadPrev, deleNext) {
 			}
 			blockThisXML = "<xml>" + blockly.Xml.domToText(blockThis, workspace) + "</xml>";
 		}
-		if ("clipboard" in navigator) {
+		if ("clipboard" in navigator && "writeText" in navigator.clipboard) {
 			navigator.clipboard.writeText(blockThisXML).then(function() {
 				//alert('复制成功');
 			}).catch(function(err) {

@@ -223,7 +223,7 @@ tfgs.funcapi.paint = function(name) {
 // 当前处于的标签页
 tfgs.funcapi.currenttab = function(name) {
 	let selected = tfgs.funcapi.selele(name, "gui_is-selected_");
-	if(selected === null)
+	if (selected === null)
 		return -1;
 	return Number(selected.id.slice(-1)) / 2;
 };
