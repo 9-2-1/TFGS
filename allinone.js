@@ -141,13 +141,15 @@ fs.writeFileSync("allinone/TFGS.html", `<!doctype HTML>
 		<center>
 			<b>需要注意：在使用类似的方式运行其他人提供的代码或者拓展时要小心，恶意代码或者拓展可能能够通过这种方式危害你的账号，请确保代码的来源可以信任后再运行。</b>
 			<br />
-			<a id="copyme" href="">右键这个链接，选择“加入到书签栏”，在需要使用的页面点击使用</a>
+			右键下面的链接，选择“加入到书签栏”，在需要使用的页面点击使用
 			<br />
-			或者，复制右边的代码（点击自动全选）：
+			<a id="copyme" href="">TFGS 插件</a>
+			<br />
+			或者，复制下边的代码（点击自动全选）：
 			<br />
 			在需要的页面，点击地址栏，全部清空后<b>输入“j”后</b>再粘贴后回车。
 			<br />
-			<textarea id="copymee"></textarea>
+			<textarea readonly id="copymee"></textarea>
 			<br />
 		</center>
 		<script>
@@ -157,15 +159,8 @@ fs.writeFileSync("allinone/TFGS.html", `<!doctype HTML>
 			document.getElementById("copymee").onfocus = function (e) {
 				document.getElementById("copymee").select();
 			};
-			document.getElementById("copymee").oncut = p;
-			document.getElementById("copymee").onpaste = p;
-			document.getElementById("copymee").oninput = p;
 			document.getElementById("copyme").onclick = function(e) {
-				alert("请右键点击后选择加入到书签");
-				e.preventDefault();
-			};
-			function p(e) {
-				document.getElementById("copymee").value = x;
+				alert("请右键点击后选择加入到书签，或者拖到书签栏");
 				e.preventDefault();
 			};
 		</script>
