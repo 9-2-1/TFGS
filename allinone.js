@@ -121,7 +121,7 @@ allinonemin = res.code;
 
 fs.writeFileSync("allinone/TFGS.min.js", allinonemin);
 
-let url1 = "avascript:" + allinonemin.replace(/[\r\n]/g, "\\n").replace(/%/g, "%25");
+let url1 = "avascript:void function(){" + allinonemin.replace(/[\r\n]/g, "\\n").replace(/%/g, "%25") + "}()";
 
 fs.writeFileSync("allinone/TFGS.txt", url1);
 fs.writeFileSync("allinone/TFGS.html", `<!doctype HTML>
