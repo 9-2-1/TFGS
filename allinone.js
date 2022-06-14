@@ -133,7 +133,7 @@ fs.writeFileSync("allinone/TFGS.html", `<!doctype HTML>
 		<style>
 			textarea {
 				width: 80%;
-				height: 80%;
+				height: 300px;
 			}
 		</style>
 	</head>
