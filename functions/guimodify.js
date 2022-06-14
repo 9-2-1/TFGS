@@ -138,11 +138,13 @@ function updateStatus() {
 			targetcss: "gui_editor-wrapper_",
 			cssname: "tfgsGuimodifyFullscreen",
 			onadd: function(button) {
-				document.body.requestFullscreen()
+				if (document.fullscreenElement === null)
+					document.body.requestFullscreen()
 					.catch(api.onerror);
 			},
 			onremove: function(button) {
-				document.exitFullscreen()
+				if (document.fullscreenElement !== null)
+					document.exitFullscreen()
 					.catch(api.onerror);
 			}
 		});
