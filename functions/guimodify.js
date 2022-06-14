@@ -81,15 +81,6 @@ function configButton(options) {
 
 function updateStatus() {
 	try {
-		let sel = api.selele("sprite-selector_scroll-wrapper_");
-		if (sel !== null)
-			if (foption.foldspriteinfo ||
-				foption.foldstagebutton ||
-				foption.foldthestage)
-				sel.style.position = "relative";
-			else
-				sel.style.position = "inherit";
-
 		if (foption.expand100) {
 			if (!document.body.classList.contains("tfgsGuimodifyExpand100")) {
 				document.body.classList.add("tfgsGuimodifyExpand100");
