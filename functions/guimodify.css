@@ -1,8 +1,13 @@
 span.tfgsGuimodifyButton {
 	position: absolute;
 	color: grey;
+	background: white;
 	font-size: 1em;
-	line-height: 1em;
+	line-height: 30px;
+	width: 30px;
+	height: 30px;
+	border-radius: 2px;
+	border: 1px solid grey;
 	text-align: center;
 }
 

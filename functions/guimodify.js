@@ -36,8 +36,6 @@ function configButton(options) {
 				return;
 			}
 			let button = document.createElement("span");
-			button.classList.add(api.selcss("button_outlined-button_"));
-			button.classList.add(api.selcss("stage-header_stage-button_"));
 			button.classList.add("tfgsGuimodifyButton");
 			for (let i in styles)
 				button.style[i] = styles[i];
