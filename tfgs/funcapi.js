@@ -77,36 +77,37 @@ tfgs.funcapi.prompt = function(name, text, defau) {
 /* ---------- 获取Scratch相关内容 ---------- */
 
 tfgs.funcapi.blockly = function(name) {
-	if ("Blockly" in window)
-		return window.Blockly;
-	else if ("ClipCCExtension" in window)
-		return window.ClipCCExtension.getBlockInstance();
-	else return undefined;
+	return tfgs.funcapi.vm(name).runtime.scratchBlocks;
 };
 
 // 积木区相关
 tfgs.funcapi.workspace = function(name) {
-	return tfgs.funcapi.blockly().getMainWorkspace();
+	return tfgs.funcapi.blockly(name).getMainWorkspace();
 };
 
 // 积木盒相关
 tfgs.funcapi.toolbox = function(name) {
-	return tfgs.funcapi.workspace().getFlyout().getWorkspace();
+	return tfgs.funcapi.workspace(name).getFlyout().getWorkspace();
 };
 
-// 获取class以classname开头的元素
+// 获取class包含classname的元素
 tfgs.funcapi.selele = function(name, classname, element) {
-	return (element === undefined ? document : element).querySelector(`*[class^="${classname}"], *[class*=" ${classname}"]`);
+	return (element === undefined ? document : element).querySelector(`[class*="${classname}"]`);
 };
 
-// 获取元素中以classname开头的类型名
+// 获取class包含classname的所有元素
+tfgs.funcapi.selall = function(name, classname, element) {
+	return (element === undefined ? document : element).querySelectorAll(`[class*="${classname}"]`);
+};
+
+// 获取元素中包含classname的类型名
 tfgs.funcapi.selcss = function(name, classname, element) {
 	let elem = tfgs.funcapi.selele(name, classname, element);
 	if (elem === null)
 		return null;
 	let csslist = elem.classList;
-	for (let i in csslist)
-		if (classname === csslist[i].slice(0, classname.length))
+	for (let i = 0; i < csslist.length; i++)
+		if (csslist[i].includes(classname))
 			return csslist[i];
 	return null;
 };
@@ -134,6 +135,51 @@ tfgs.funcapi.store = function(name) {
 	).child.stateNode.store;
 };
 
+// gui 对象
+tfgs.funcapi.gui = function(name) {
+	let errors = [];
+	try {
+		// 用 ClipCC 的 api
+		return window.ClipCCExtension.api.getGuiInstance();
+	} catch (e) {
+		errors.push(e);
+		try {
+			// 获取Gui方法1
+			let gui = tfgs.funcapi.reactInternal(name,
+					tfgs.funcapi.selele(name, "gui_page-wrapper_")
+				)
+				.return.return.return.return
+				.return.return.return.return
+				.stateNode;
+			if (typeof gui.props !== "object" || gui.props === null || !("vm" in gui.props))
+				throw new Error("Invaild gui");
+			return gui;
+		} catch (e) {
+			errors.push(e);
+			try {
+				// 获取Gui方法2
+				let gui = tfgs.funcapi.reactInternal(name,
+						tfgs.funcapi.selele(name, "stage-wrapper_")
+					)
+					.return.return.return.return
+					.return.return.return.return
+					.return.return
+					.stateNode;
+				if (typeof gui.props !== "object" || gui.props === null || !("vm" in gui.props))
+					throw new Error("Invaild gui");
+				return gui;
+			} catch (e) {
+				errors.push(e);
+				for (let i in e) {
+					tfgs.funcapi.error(name, `funcapi: 方法${i+1}错误:`);
+					tfgs.funcapi.onerror(name, e);
+				}
+				throw new Error("tfgs.funcapi.gui: cannot find gui");
+			}
+		}
+	}
+};
+
 // vm 对象
 tfgs.funcapi.vm = function(name) {
 	let errors = [];
@@ -144,34 +190,25 @@ tfgs.funcapi.vm = function(name) {
 		errors.push(e);
 		try {
 			// 获取VM方法1
-			return tfs.funcapi.selele(name, "gui_page-wrapper_")
-				.return.return.return.return
-				.return.return.return.return
-				.stateNode.props.vm;
+			let vm = tfgs.funcapi.gui(name).props.vm;
+			if (typeof vm !== "object" || vm === null || !("runtime" in vm))
+				throw new Error("Invaild vm");
+			return vm;
 		} catch (e) {
 			errors.push(e);
 			try {
 				// 获取VM方法2
-				return tfgs.funcapi.reactInternal(name,
-						tfgs.funcapi.selele("stage-wrapper_")
-					)
-					.return.return.return.return
-					.return.return.return.return
-					.return.return
-					.stateNode.props.vm;
+				let vm = tfgs.funcapi.store(name).getState().scratchGui.vm;
+				if (typeof vm !== "object" || vm === null || !("runtime" in vm))
+					throw new Error("Invaild vm");
+				return vm;
 			} catch (e) {
 				errors.push(e);
-				try {
-					// 获取VM方法3
-					return tfgs.funcapi.store(name).getState().scratchGui.vm;
-				} catch (e) {
-					errors.push(e);
-					for (let i in e) {
-						tfgs.funcapi.error(name, `funcapi: 方法${i+1}错误:`);
-						tfgs.funcapi.onerror(name, e);
-					}
-					throw new Error("tfgs.funcapi.vm: cannot find vm");
+				for (let i in e) {
+					tfgs.funcapi.error(name, `funcapi: 方法${i+1}错误:`);
+					tfgs.funcapi.onerror(name, e);
 				}
+				throw new Error("tfgs.funcapi.vm: cannot find vm");
 			}
 		}
 	}
@@ -181,6 +218,14 @@ tfgs.funcapi.vm = function(name) {
 // ClipCC 目前不可用
 tfgs.funcapi.paint = function(name) {
 	return tfgs.funcapi.store(name).getState().scratchPaint;
+};
+
+// 当前处于的标签页
+tfgs.funcapi.currenttab = function(name) {
+	let selected = tfgs.funcapi.selele(name, "gui_is-selected_");
+	if(selected === null)
+		return -1;
+	return Number(selected.id.slice(-1)) / 2;
 };
 
 /* ---------- 为指定name的拓展定制api对象 ---------- */
