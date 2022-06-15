@@ -165,7 +165,8 @@ tfgs.menu.create = function() {
 			lab.innerText = o.name;
 			switch (o.type) {
 				case "number":
-					inp = tfgs.element.create("input", undefined, "number");
+					// 右边的tel，我之前用的number，但是如果在手机上 chrome 中 sc切换到“造型”标签页的时候一旦展开 TFGS 选项就会网页蓝屏甚至崩溃，原因未知
+					inp = tfgs.element.create("input", undefined, "tel");
 					break;
 				case "text":
 					inp = tfgs.element.create("input");
