@@ -1,11 +1,12 @@
 let api;
 let api_enabled = false;
 // 左边是积木区，右边是积木拖出区
-let workspace, flyoutWorkspace;
+let workspace, flyoutWorkspace, blockly;
 // 打开重试计时器
 let opening = -1;
 
-let _origcontextmenu = null;
+let _origcontextmenu1 = null;
+let _origcontextmenu2 = null;
 
 // 打开 tfgs
 function TFGSON(_api, tryCount) {
@@ -14,14 +15,25 @@ function TFGSON(_api, tryCount) {
 	tryCount = tryCount === undefined ? 0 : tryCount;
 	//部分社区的界面会加载，尝试多次
 	try {
+		blockly = api.blockly();
 		workspace = api.workspace();
 		if (typeof workspace !== "object" || workspace === null)
 			throw new Error("Bad workspace");
 		flyoutWorkspace = api.toolbox();
-		if (_origcontextmenu === null) {
-			_origcontextmenu = workspace.showContextMenu_;
+		if (_origcontextmenu1 === null) {
+			_origcontextmenu1 = workspace.showContextMenu_;
 			workspace.showContextMenu_ = function(e) {
-				let ret = _origcontextmenu.apply(this, arguments);
+				let ret = _origcontextmenu1.apply(this, arguments);
+				if (api_enabled) {
+					on_blockMenu(e);
+				}
+				return ret;
+			}
+		}
+		if (_origcontextmenu2 === null) {
+			_origcontextmenu2 = blockly.BlockSvg.prototype.showContextMenu_;
+			blockly.BlockSvg.prototype.showContextMenu_ = function(e) {
+				let ret = _origcontextmenu2.apply(this, arguments);
 				if (api_enabled) {
 					on_blockMenu(e);
 				}
@@ -118,8 +130,7 @@ function addToContextMenu(name, callback, element) {
 	menuText.innerText = name;
 	menuItem.appendChild(menuText);
 	menuItem.addEventListener("click", callback);
-	element.parentElement.style.height = "124554066086px";
-
+	element.parentElement.style.height = "100000px";
 	element.appendChild(menuItem);
 }
 
