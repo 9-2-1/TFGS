@@ -76,8 +76,43 @@ tfgs.funcapi.prompt = function(name, text, defau) {
 
 /* ---------- 获取Scratch相关内容 ---------- */
 
+// scratchBlocks
 tfgs.funcapi.blockly = function(name) {
-	return tfgs.funcapi.vm(name).runtime.scratchBlocks;
+	let errors = [];
+	try {
+		// 用 ClipCC 的 api
+		return window.ClipCCExtension.api.getBlockInstance();
+	} catch (e) {
+		errors.push(e);
+		try {
+			// 获取Block方法2
+			let block = tfgs.funcapi.vm(name).runtime.scratchBlocks;
+			if (typeof block !== "object" || block === null || !("getMainWorkspace" in block))
+				throw new Error("Invaild block");
+			return block;
+		} catch (e) {
+			errors.push(e);
+			try {
+				// 获取Block方法3
+				let block = tfgs.funcapi.reactInternal(name,
+						tfgs.funcapi.selele(name, "injectionDiv").parentElement
+					)
+					.return.return.return.return
+					.return
+					.stateNode.ScratchBlocks;
+				if (typeof block !== "object" || block === null || !("getMainWorkspace" in block))
+					throw new Error("Invaild block");
+				return block;
+			} catch (e) {
+				errors.push(e);
+				for (let i = 0; i < errors.length; i++) {
+					tfgs.funcapi.error(name, `funcapi: block: 方法${i+1}错误:`);
+					tfgs.funcapi.onerror(name, errors[i]);
+				}
+				throw new Error("tfgs.funcapi.block: cannot find block");
+			}
+		}
+	}
 };
 
 // 积木区相关
