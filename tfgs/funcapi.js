@@ -144,7 +144,7 @@ tfgs.funcapi.gui = function(name) {
 	} catch (e) {
 		errors.push(e);
 		try {
-			// 获取Gui方法1
+			// 获取Gui方法2
 			let gui = tfgs.funcapi.reactInternal(name,
 					tfgs.funcapi.selele(name, "gui_page-wrapper_")
 				)
@@ -157,7 +157,7 @@ tfgs.funcapi.gui = function(name) {
 		} catch (e) {
 			errors.push(e);
 			try {
-				// 获取Gui方法2
+				// 获取Gui方法3
 				let gui = tfgs.funcapi.reactInternal(name,
 						tfgs.funcapi.selele(name, "stage-wrapper_")
 					)
@@ -170,9 +170,9 @@ tfgs.funcapi.gui = function(name) {
 				return gui;
 			} catch (e) {
 				errors.push(e);
-				for (let i in e) {
-					tfgs.funcapi.error(name, `funcapi: 方法${i+1}错误:`);
-					tfgs.funcapi.onerror(name, e);
+				for (let i = 0; i < errors.length; i++) {
+					tfgs.funcapi.error(name, `funcapi: gui: 方法${i+1}错误:`);
+					tfgs.funcapi.onerror(name, errors[i]);
 				}
 				throw new Error("tfgs.funcapi.gui: cannot find gui");
 			}
@@ -189,7 +189,7 @@ tfgs.funcapi.vm = function(name) {
 	} catch (e) {
 		errors.push(e);
 		try {
-			// 获取VM方法1
+			// 获取VM方法2
 			let vm = tfgs.funcapi.gui(name).props.vm;
 			if (typeof vm !== "object" || vm === null || !("runtime" in vm))
 				throw new Error("Invaild vm");
@@ -197,16 +197,16 @@ tfgs.funcapi.vm = function(name) {
 		} catch (e) {
 			errors.push(e);
 			try {
-				// 获取VM方法2
+				// 获取VM方法3
 				let vm = tfgs.funcapi.store(name).getState().scratchGui.vm;
 				if (typeof vm !== "object" || vm === null || !("runtime" in vm))
 					throw new Error("Invaild vm");
 				return vm;
 			} catch (e) {
 				errors.push(e);
-				for (let i in e) {
-					tfgs.funcapi.error(name, `funcapi: 方法${i+1}错误:`);
-					tfgs.funcapi.onerror(name, e);
+				for (let i = 0; i < errors.length; i++) {
+					tfgs.funcapi.error(name, `funcapi: vm: 方法${i+1}错误:`);
+					tfgs.funcapi.onerror(name, errors[i]);
 				}
 				throw new Error("tfgs.funcapi.vm: cannot find vm");
 			}
