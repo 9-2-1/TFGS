@@ -43,7 +43,7 @@ function TFGSON(_api, tryCount) {
 		api.log("打开");
 	} catch (err) {
 		api.onerror(err);
-		api.log("启动失败次数: ", tryCount + 1);
+		api.log("启动失败次数: " + (tryCount + 1));
 		opening = setTimeout(function() {
 			TFGSON(api, tryCount + 1);
 		}, 1000);
