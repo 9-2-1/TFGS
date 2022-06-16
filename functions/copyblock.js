@@ -157,14 +157,7 @@ function pasteFromXML() {
 			}
 		}
 	};
-	if ("clipboard" in navigator && "readText" in navigator.clipboard) {
-		navigator.clipboard.readText().then(loaddata).catch(function(err) {
-			api.onerror(err);
-			loaddata(prompt("在下方粘贴:"));
-		});
-	} else {
-		loaddata(prompt("在下方粘贴:"));
-	}
+	api.paste().then(loaddata);
 }
 
 function copyToXML(blockId, loadPrev, deleNext) {
@@ -203,16 +196,7 @@ function copyToXML(blockId, loadPrev, deleNext) {
 			}
 			blockThisXML = "<xml>" + blockly.Xml.domToText(blockThis, workspace) + "</xml>";
 		}
-		if ("clipboard" in navigator && "writeText" in navigator.clipboard) {
-			navigator.clipboard.writeText(blockThisXML).then(function() {
-				//alert('复制成功');
-			}).catch(function(err) {
-				api.onerror(err);
-				prompt("请复制以下内容", blockThisXML);
-			});
-		} else {
-			prompt("请复制以下内容", blockThisXML);
-		}
+		api.copy(blockThisXML);
 	} catch (e) {
 		api.onerror(e);
 	}

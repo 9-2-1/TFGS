@@ -74,6 +74,38 @@ tfgs.funcapi.prompt = function(name, text, defau) {
 	});
 };
 
+/* ---------- 复制粘贴 ---------- */
+
+tfgs.funcapi.copy = function(name, text) {
+	return Promise((yes, no) => {
+		if ("clipboard" in navigator && "writeText" in navigator.clipboard) {
+			navigator.clipboard.writeText(blockThisXML)
+				.then(yes)
+				.catch(function(err) {
+					tfgs.funcapi.onerror(name, err);
+					prompt("请复制以下内容", text);
+					yes();
+				});
+		} else {
+			prompt("请复制以下内容", text);
+			yes();
+		}
+	});
+};
+
+tfgs.funcapi.paste = function(name, text) {
+	return Promise((yes, no) => {
+		if ("clipboard" in navigator && "readText" in navigator.clipboard) {
+			navigator.clipboard.readText().then(yes).catch(function(err) {
+				tfgs.funcapi.onerror(name, err);
+				yes(prompt("在下方粘贴:"));
+			});
+		} else {
+			yes(prompt("在下方粘贴:"));
+		}
+	});
+};
+
 /* ---------- 获取Scratch相关内容 ---------- */
 
 // scratchBlocks
