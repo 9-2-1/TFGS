@@ -2,6 +2,10 @@ let fs = require("fs");
 let Uglifyjs = require("uglify-js");
 let Cleancss = require("clean-css");
 
+function progress(x) {
+	process.stdout.write("\r" + ("   " + String(Math.floor(x))).slice(-3) + "%");
+}
+
 function randomkey(num) {
 	let key = "";
 	let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_0123456789";
@@ -10,20 +14,22 @@ function randomkey(num) {
 	return key;
 }
 
+progress(0);
+
 let tfgskey = JSON.stringify("__TFGS$" + randomkey(10));
 
 let allinone = `/* (allinone.js) */
 
-try {
-	let tfgs;
+! function (){
+	try {
+		let tfgs;
 
-	if (${tfgskey} in window) {
-		throw new Error("TFGS 已经安装");
-	} else {
-		tfgs = window[${tfgskey}] = {};
-	}
+		if (${tfgskey} in window) {
+			throw new Error("TFGS 已经安装");
+		} else {
+			tfgs = window[${tfgskey}] = {};
+		}
 
-	! function (){
 		function _tfgsAddCSS(css) {
 			let style = document.createElement("style");
 			style.innerHTML = css;
@@ -37,6 +43,8 @@ let flist = [];
 flist = flist.concat(lsSync("tfgs/"));
 flist = flist.concat(lsSync("functions/"));
 let allcssmin = "";
+
+progress(1);
 
 for (let i in flist) {
 	let fname = flist[i];
@@ -67,12 +75,14 @@ ${fs.readFileSync(fname).toString()}
 			break;
 		}
 	}
+	progress(1 + 79 * Number(i) / flist.length);
 }
 
 allcssmin = new Cleancss({
 	inline: ["all"],
 	level: 2
 }).minify(allcssmin).styles;
+progress(85);
 allcssmin = allcssmin.replace(/\\/g, "\\\\")
 	.replace(/\$/g, "\\$$")
 	.replace(RegExp("`", "g"), "\\`")
@@ -84,35 +94,37 @@ allinonemin += `		/* (allinone.css) */
 
 allinone += `		/* (allinone.js) */
 		tfgs.data.load().then(tfgs.menu.create).catch(tfgs.error);
-	}();
-} catch(e) {
-	alert(e.message);
-	console.error(e);
-	throw e;
-}`;
+	} catch(e) {
+		alert(e.message);
+		console.error(e);
+		throw e;
+	}
+}();
+`;
 allinonemin += `	/* (allinone.js) */
 		tfgs.data.load().then(tfgs.menu.create).catch(tfgs.error);
-	}();
-} catch(e) {
-	alert(e.message);
-	console.error(e);
-	throw e;
-}`;
+	} catch(e) {
+		alert(e.message);
+		console.error(e);
+		throw e;
+	}
+}();
+`;
 
 if (!fs.existsSync("allinone")) fs.mkdirSync("allinone");
 fs.writeFileSync("allinone/TFGS.js", allinone);
 
+progress(90);
+
 let res = Uglifyjs.minify(allinonemin, {
 	compress: {
 		passes: 3,
-		toplevel: true
 	},
-	mangle: {
-		toplevel: true
-	},
-	toplevel: true,
+	mangle: {},
 	warnings: true,
 });
+
+progress(95);
 
 if (res.warning) console.error(res.warning);
 if (res.error) console.error(res.error);
@@ -166,6 +178,8 @@ fs.writeFileSync("allinone/TFGS.html", `<!doctype HTML>
 		</script>
 	</body>
 </html>`);
+
+progress(100);
 
 function lsSync(path) {
 	let flist = [];
