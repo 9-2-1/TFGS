@@ -80,7 +80,6 @@ function automodify() {
 		}
 		if (!modimenus.includes(parent)) {
 			extramenus.push(createmenu(parent, "重命名", function() {
-				parent.appendChild(menu);
 				let index = childof(costume_sound, parent) ? 2 : 1;
 				setTimeout(function() {
 					parent.parentElement.children[index].children[0].click()
@@ -216,7 +215,7 @@ function handleRenameInput(e) {
 	input.value = val;
 	input.onblur = function() {
 		if (childof(costume_sound, ob)) {
-			let renameFunc = api.currenttab() === 1 ? "renameCostume" : "renameSound"
+			let renameFunc = api.currenttab() === 1 ? "renameCostume" : "renameSound";
 			let index = Number(ob.children[0].innerText) - 1;
 			if (input.value !== val)
 				vm[renameFunc](index, input.value);
