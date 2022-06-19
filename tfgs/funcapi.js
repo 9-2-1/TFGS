@@ -319,6 +319,27 @@ tfgs.funcapi.currenttab = function(name) {
 	return Number(selected.id.slice(-1)) / 2;
 };
 
+// Respect community limits
+tfgs.funcapi.RESPECTnodownload_DO_NOT_DELETE = function(name) {
+	/****************************************\
+	 *                                      *
+	 *  社区的稳定和拓展的顺利开发很大程度  *
+	 *  都基于用户和官方的相互信任。哪怕是  *
+	 *  作为开源的支持者，也会尊重其他用户  *
+	 *  的决定。                            *
+	 *  如果你知道你在做什么，请不要修改这  *
+	 *  个函数，因为一旦有人使用这个拓展破  *
+	 *  坏规则，这个拓展可能将会被永久性地  *
+	 *  封禁。                              *
+	 *  感谢大家配合。                      *
+	 *                                      *
+	\****************************************/
+	let gui = tfgs.funcapi.gui(name);
+	if ("readOnly" in gui.props && gui.props.readOnly === true) return false;
+	if ("canSaveToLocal" in gui.props && gui.props.canSaveToLocal === false) return false;
+	return true;
+};
+
 /* ---------- 为指定name的拓展定制api对象 ---------- */
 
 tfgs.funcapi._getapi = function(name) {

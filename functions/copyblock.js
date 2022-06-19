@@ -18,8 +18,12 @@ function setup(tryCount) {
 			_origcontextmenu1 = workspace.showContextMenu_;
 			workspace.showContextMenu_ = function(e) {
 				let ret = _origcontextmenu1.apply(this, arguments);
-				if (api_enabled) {
-					on_blockMenu(e);
+				try {
+					if (api_enabled) {
+						on_blockMenu(e);
+					}
+				} catch (e) {
+					api.onerror(e);
 				}
 				return ret;
 			}
@@ -29,8 +33,12 @@ function setup(tryCount) {
 			blockly.BlockSvg.prototype.showContextMenu_ = function(e) {
 				api.log(e);
 				let ret = _origcontextmenu2.apply(this, arguments);
-				if (api_enabled) {
-					on_blockMenu(e);
+				try {
+					if (api_enabled) {
+						on_blockMenu(e);
+					}
+				} catch (e) {
+					api.onerror(e);
 				}
 				return ret;
 			}
@@ -59,7 +67,7 @@ function on_blockMenu(event) {
 	let blockBox = clickSVG.classList.contains("blocklyFlyout");
 	let blockId = getBlockId(element);
 
-	if (!blockBox) {
+	if (!blockBox && !api.RESPECTnodownload_DO_NOT_DELETE()) {
 		if (blockId !== null) {
 			addToContextMenu("复制这个积木", function() {
 				copyToXML(blockId, false, true);
