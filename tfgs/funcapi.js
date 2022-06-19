@@ -195,11 +195,35 @@ tfgs.funcapi.reactInternal = function(name, element) {
 };
 
 // 获取 redux store, 里面有vm和绘画参数
-// ClipCC 目前不可用，因为react17的变化
 tfgs.funcapi.store = function(name) {
-	return tfgs.funcapi.reactInternal(
-		name, tfgs.funcapi.selele(name, "gui_page-wrapper_")
-	).child.stateNode.store;
+	let errors = [];
+	try {
+		// 获取store方法1
+		let store = tfgs.funcapi.reactInternal(
+			name, tfgs.funcapi.selele(name, "gui_page-wrapper_")
+		).child.stateNode.store;
+		if (typeof store !== "object" || store === null || !("dispatch" in store))
+			throw new Error("Invaild store");
+		return store;
+	} catch (e) {
+		errors.push(e);
+		try {
+			// 获取store方法2
+			let store = tfgs.funcapi.reactInternal(
+				name, tfgs.funcapi.selele(name, "blocks_blocks_")
+			).return.return.return.return.pendingProps.value.store;
+			if (typeof store !== "object" || store === null || !("dispatch" in store))
+				throw new Error("Invaild store");
+			return store;
+		} catch (e) {
+			errors.push(e);
+			for (let i = 0; i < errors.length; i++) {
+				tfgs.funcapi.error(name, `funcapi: store: 方法${i+1}错误:`);
+				tfgs.funcapi.onerror(name, errors[i]);
+			}
+			throw new Error("tfgs.funcapi.store: cannot find store");
+		}
+	}
 };
 
 // gui 对象
