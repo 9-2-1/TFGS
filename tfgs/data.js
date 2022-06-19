@@ -9,16 +9,17 @@ tfgs.data.getjson = function() {
 /* 设置全部数据，触发数据改变的触发器 */
 tfgs.data.setjson = function(json) {
 	let data = JSON.parse(json);
+	if (typeof data !== "object" || data === null) data = {};
 	// 按照格式调整data对象
 	let formated = {};
 	for (let fname in tfgs.func.list) {
-		let fdata = typeof data[fname] === "object" ? data[fname] : {};
+		let fdata = typeof data[fname] === "object" || data[fname] === null ? data[fname] : {};
 		let formated1 = formated[fname] = {};
 		formated1.enable = fdata.enable;
 		if (typeof formated1.enable !== "boolean")
 			formated1.enable = undefined;
 		formated1.data = fdata.data;
-		let foption = typeof fdata.option === "object" ? fdata.option : {};
+		let foption = typeof fdata.option === "object" || fdata.option === null ? fdata.option : {};
 		let formated2 = {};
 		for (let oname in tfgs.func.list[fname].option)
 			formated2[oname] = foption[oname];
