@@ -48,17 +48,16 @@ function setup(tryCount) {
 
 function on_blockMenu(event) {
 	let element = event.target;
-	if (element === null) {
-		return;
-	}
+	if (element === null) return;
+
 	let clickSVG = getSVG(element);
-	if (clickSVG === null) {
-		return;
-	}
+	if (clickSVG === null) return;
+
+	let menu = api.selele("blocklyContextMenu");
+	if (menu === null) return;
 
 	let blockBox = clickSVG.classList.contains("blocklyFlyout");
 	let blockId = getBlockId(element);
-	let menu = api.selele("blocklyContextMenu");
 
 	if (!blockBox) {
 		if (blockId !== null) {
