@@ -147,7 +147,34 @@ allinonemin = res.code;
 // 压缩版本
 fs.writeFileSync("allinone/TFGS.min.js", allinonemin);
 
-let url1 = "avascript:void function(){" + allinonemin.replace(/[\r\n]/g, "\\n").replace(/%/g, "%25") + "}()";
+// 二次压缩
+allinonemin = "eval(" + mypacker(allinonemin) + ")";
+fs.writeFileSync("allinone/TFGS.packer.js", allinonemin);
+
+// 浏览器拓展版本
+fs.writeFileSync("allinone/TFGS.extension.js", `/* TFGS injector */
+let tfgsScript = "!" + function(){
+${allinone}
+}.toString() + "()";
+
+// 此时 tfgsScript 包含了以上所有代码。创建新的script标签把它们插入（不能直接运行，因为在拓展域内，要转到网页域内
+let script = document.createElement("script");
+script.src = "data:text/javascript," + encodeURIComponent(tfgsScript);
+document.body.appendChild(script);
+`);
+
+fs.writeFileSync("allinone/manifest.json", JSON.stringify({
+	manifest_version: 2,
+	name: "TFGS",
+	version: "0",
+	content_scripts: [{
+		matches: ["<all_urls>"],
+		js: ["TFGS.extension.js"]
+	}],
+}));
+
+// 去掉了j，浏览器会屏蔽粘贴文本中的“javascript:”
+let url1 = "avascript:void " + allinonemin.replace(/[\r\n]/g, "\\n").replace(/%/g, "%25");
 
 fs.writeFileSync("allinone/TFGS.txt", url1);
 fs.writeFileSync("allinone/TFGS.html", `<!doctype HTML>
@@ -164,24 +191,35 @@ fs.writeFileSync("allinone/TFGS.html", `<!doctype HTML>
 		</style>
 	</head>
 	<body>
-		<center>
-			<b>需要注意：在使用类似的方式运行其他人提供的代码或者拓展时要小心，恶意代码或者拓展可能能够通过这种方式危害你的账号，请确保代码的来源可以信任后再运行。</b>
-			<br />
-			右键下面的链接，选择“加入到书签栏”，在需要使用的页面点击使用
-			<br />
-			<a id="copyme" href="">TFGS 插件</a>
-			<br />
-			或者，复制下边的代码（点击自动全选）：
-			<br />
-			在需要的页面，点击地址栏，全部清空后<b>输入“j”后</b>再粘贴后回车。
-			<br />
-			<textarea readonly id="copymee"></textarea>
-			<br />
-		</center>
+		<b>需要注意：在使用类似的方式运行其他人提供的代码或者拓展时要小心，恶意代码或者拓展可能能够通过这种方式危害你的账号，请确保代码的来源可以信任后再运行。</b>
+		<br />
+		方法1: 右键下面的链接，选择“加入到书签栏”，在需要使用的页面点击使用
+		<br />
+		<a id="copyme" href="">TFGS 插件</a>
+		<br /><br />
+		方法2：复制最下方文本框里的代码（点击自动全选）：
+		<br />
+		在需要的页面，点击地址栏，全部清空后<b>输入“j”后</b>再粘贴后回车。
+		<br /><br />
+		方法3：如果因为链接太长等原因无法加入书签，且复制代码无效，可以分别下载TFGS.extension.js和manifest.json，放在同一文件夹（注意，不要改名）：
+		<br />
+		<a download="TFGS.extension.js" href="TFGS.extension.js">TFGS.extension.js</a>
+		<a download="manifest.json" href="manifest.json">manifest.json</a>
+		<br />
+		然后在浏览器里作为拓展加载
+		<br />
+		Chrome: 地址栏输入 chrome://extensions ，点击右上角“开发者模式”，选择“加载已解压拓展”，选择包含上述两文件的文件夹
+		<br />
+		Firefox: 地址栏输入 about:debugging ，点击左侧“此 Firefox”，选择“加载临时插件”，选择manifest.json
+		<br />
+		之后所有的标签页都会加载此拓展。注意: 不同网站的设置不会同步。
+		<br />
+		<textarea readonly id="copymee"></textarea>
 		<script>
-			var x;
-			document.getElementById("copymee").value = x = ${JSON.stringify(url1)};
-			document.getElementById("copyme").href = "j" + x;
+			var x = ${str(allinonemin)};
+			var url = x.replace(/[\\r\\n]/g, "\\\\n").replace(/%/g, "%25").replace(/#/g, "%23");
+			document.getElementById("copymee").value = "avascript:void " + url;
+			document.getElementById("copyme").href = "javascript:void " + url;
 			document.getElementById("copymee").onfocus = function (e) {
 				document.getElementById("copymee").select();
 			};
@@ -207,4 +245,45 @@ function lsSync(path) {
 	}
 	dir.closeSync();
 	return flist;
+}
+
+// 自己写的packer，只会按照词语的出现频率选择更短的词语替换，不会简化代码消除空白，因此前面要先用uglifyjs之类的处理
+function mypacker(x) {
+	let kwre = /\W*\b(\w+)\b/g;
+	let words = {};
+	let res;
+	//统计词语出现次数并排序
+	while (res = kwre.exec(x), res !== null) {
+		let word = res[1];
+		if (word in words) {
+			words[word]++;
+		} else {
+			words[word] = 1;
+		}
+	}
+	let wordc = [];
+	let numb = 0,
+		wordl = [];
+	for (let i in words)
+		wordc.push([words[i], i]);
+	wordc.sort((a, b) => (-(a[1].length - 1) * (a[0] - 1) + (b[1].length - 1) * (b[0] - 1)));
+	wordc.forEach(v => {
+		if ((v[1].length - numb.toString(36).length) > 0 && (v[0] - 1) > 0) {
+			// 跳过冲突的词语，空白代表跳过
+			while (numb.toString(36) in words) {
+				numb++;
+				wordl.push("");
+			}
+			x = x.replace(RegExp("\\b" + v[1] + "\\b", "g"), numb.toString(36));
+			numb++;
+			wordl.push(v[1]);
+		}
+	});
+	// 这里v.length是为了判断v.length!==0
+	return "((a,b)=>(b.forEach((v,i)=>{v.length&&(a=a.replace(RegExp(\"\\\\b\"+i.toString(36)+\"\\\\b\",\"g\"),v))}),a))(" + str(x) + "," + str(wordl.join("|")) + ".split(\"|\"))";
+}
+
+// 生成单引号字符串
+function str(x) {
+	return "'" + x.replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/'/g, "\\'") + "'";
 }
