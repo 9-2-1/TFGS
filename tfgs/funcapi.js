@@ -335,9 +335,9 @@ tfgs.funcapi.RESPECTnodownload_DO_NOT_DELETE = function(name) {
 	 *                                      *
 	\****************************************/
 	let gui = tfgs.funcapi.gui(name);
-	if ("readOnly" in gui.props && gui.props.readOnly === true) return false;
-	if ("canSaveToLocal" in gui.props && gui.props.canSaveToLocal === false) return false;
-	return true;
+	if ("readOnly" in gui.props && gui.props.readOnly === true) return true;
+	if ("canSaveToLocal" in gui.props && gui.props.canSaveToLocal === false) return true;
+	return false;
 };
 
 /* ---------- 为指定name的拓展定制api对象 ---------- */
