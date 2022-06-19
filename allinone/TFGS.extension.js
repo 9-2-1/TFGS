@@ -1,3 +1,5 @@
+/* TFGS injector */
+let tfgsScript = "!" + function(){
 /* (allinone.js) */
 
 ! function (){
@@ -4665,3 +4667,10 @@ function conti() {
 		throw e;
 	}
 }();
+
+}.toString() + "()";
+
+// 此时 tfgsScript 包含了以上所有代码。创建新的script标签把它们插入（不能直接运行，因为在拓展域内，要转到网页域内
+let script = document.createElement("script");
+script.src = "data:text/javascript," + encodeURIComponent(tfgsScript);
+document.body.appendChild(script);
