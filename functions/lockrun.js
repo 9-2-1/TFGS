@@ -84,6 +84,7 @@ function setup() {
 		// 需要直接在wsdiv上监听鼠标/触摸事件
 		wsdiv.addEventListener("mousedown", traceMouse);
 		wsdiv.addEventListener("touchstart", traceTouch);
+		// 积木盒这里因为奇怪原因必须用捕获
 		tbdiv.addEventListener("mousedown", traceMouse, true);
 		tbdiv.addEventListener("touchstart", traceTouch, true);
 		window.addEventListener("blur", traceReset);
