@@ -826,16 +826,16 @@ tfgs.func.add({
 		mousespeed: {
 			type: "number",
 			name: "鼠标指针速度",
-			min: 0.05,
+			min: 0.5,
 			max: 20,
-			default: 1
+			default: 5
 		},
 		mouseaccer: {
 			type: "number",
 			name: "鼠标指针减速",
 			min: 0,
 			max: 10000,
-			default: 500
+			default: 100
 		},
 		mouse2click: {
 			type: "check",
