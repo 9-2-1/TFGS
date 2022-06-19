@@ -289,8 +289,8 @@ function nomodify() {
 
 tfgs.func.add({
 	id: "resources",
-	name: "点击重命名",
-	info: "点击角色/造型/声音的名字可以直接重命名",
+	name: "角色造型声音右键菜单拓展",
+	info: "重命名、复制md5、导出所有造型和声音",
 	option: {},
 	onenable: function(_api) {
 		api = _api;
