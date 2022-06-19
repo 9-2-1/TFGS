@@ -21,7 +21,7 @@ tfgs.storezip.create = function() {
 
 	// 将字符串转换成Uint8Array
 	function str2uint(x) {
-		return new Uint8Array(Buffer.from(x, "utf-8"));
+		return new Uint8Array(new TextEncoder().encode(x));
 	}
 
 	// 将时间转换成数字
@@ -100,7 +100,7 @@ tfgs.storezip.create = function() {
 	function crc32TableCreate() {
 		let table = [];
 		for (i = 0; i < 256; i++) {
-			crc = i;
+			let crc = i;
 			for (j = 0; j < 8; j++) {
 				if (crc & 1)
 					crc = (crc >>> 1) ^ 0xEDB88320;
@@ -123,10 +123,18 @@ tfgs.storezip.create = function() {
 		if (typeof uint === "string") uint = str2uint(uint);
 		if (cint === undefined || cint === null) cint = [];
 		if (typeof cint === "string") cint = str2uint(cint);
+		if (cint.length > 65535) {
+			tfgs.funcapi.warn(name, "压缩包注释太长(最多65535个字节)");
+			cint = cint.slice(0, 65535);
+		}
 		if (typeof datetime !== "number") datetime = todatetime(datetime);
 		let offs = bin.length;
 		let crc = crc32(uint);
 		let uname = str2uint(name);
+		if (uname.length > 65535) {
+			tfgs.funcapi.error(name, "压缩包文件名太长(最多65535个字节)");
+			throw new Error("File name too long");
+		}
 		append(filehead);
 		num4(datetime); // datetime
 		num4(crc); // crc32
@@ -150,6 +158,7 @@ tfgs.storezip.create = function() {
 	function end(cint) {
 		if (cint === undefined || cint === null) cint = [];
 		if (typeof cint === "string") cint = str2uint(cint);
+		if (cint.length > 65535) cint = cint.slice(0, 65535);
 		let offs = bin.length;
 		files.forEach(v => {
 			append(central);
@@ -189,8 +198,3 @@ tfgs.storezip.create = function() {
 		end
 	};
 };
-
-// let zip = tfgs.storezip.create();
-// zip.begin();
-// zip.addfile("example.txt", "hello, world!");
-// require('fs').writeFileSync('test.zip', Buffer.from(zip.end()));
