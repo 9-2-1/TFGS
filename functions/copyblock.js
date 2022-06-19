@@ -1,7 +1,6 @@
 let api;
 let api_enabled = false;
-// 左边是积木区，右边是积木拖出区
-let workspace, flyoutWorkspace, blockly;
+let workspace, blockly;
 // 打开重试计时器
 let opening = -1;
 
@@ -9,17 +8,12 @@ let _origcontextmenu1 = null;
 let _origcontextmenu2 = null;
 
 // 打开 tfgs
-function TFGSON(_api, tryCount) {
+function setup(tryCount) {
 	api_enabled = true;
-	api = _api;
-	tryCount = tryCount === undefined ? 0 : tryCount;
 	//部分社区的界面会加载，尝试多次
 	try {
 		blockly = api.blockly();
 		workspace = api.workspace();
-		if (typeof workspace !== "object" || workspace === null)
-			throw new Error("Bad workspace");
-		flyoutWorkspace = api.toolbox();
 		if (_origcontextmenu1 === null) {
 			_origcontextmenu1 = workspace.showContextMenu_;
 			workspace.showContextMenu_ = function(e) {
@@ -33,6 +27,7 @@ function TFGSON(_api, tryCount) {
 		if (_origcontextmenu2 === null) {
 			_origcontextmenu2 = blockly.BlockSvg.prototype.showContextMenu_;
 			blockly.BlockSvg.prototype.showContextMenu_ = function(e) {
+				api.log(e);
 				let ret = _origcontextmenu2.apply(this, arguments);
 				if (api_enabled) {
 					on_blockMenu(e);
@@ -45,20 +40,10 @@ function TFGSON(_api, tryCount) {
 		api.onerror(err);
 		api.log("启动失败次数: " + (tryCount + 1));
 		opening = setTimeout(function() {
-			TFGSON(api, tryCount + 1);
-		}, 1000);
+			setup(api, tryCount + 1);
+		}, 500);
 		return;
 	}
-}
-
-function TFGSOFF() {
-	api_enabled = false;
-	// 停止重试
-	if (opening !== -1) {
-		clearTimeout(opening);
-		opening = -1;
-	}
-	api.log("关闭");
 }
 
 function on_blockMenu(event) {
@@ -75,28 +60,30 @@ function on_blockMenu(event) {
 	let blockId = getBlockId(element);
 	let menu = api.selele("blocklyContextMenu");
 
-	if (blockId !== null) {
-		addToContextMenu("复制这个积木", function() {
-			copyToXML(blockId, false, true);
-			menu.remove();
-		}, menu);
-		/*addToContextMenu("复制以下积木", function() {
-			copyToXML(blockId, false, false);
-			menu.remove();
-		}, menu);*/
-		addToContextMenu("复制这组积木", function() {
-			copyToXML(blockId, true, false);
-			menu.remove();
-		}, menu);
-	} else {
-		addToContextMenu("复制全部积木", function() {
-			copyToXML(null, true, false);
-			menu.remove();
-		}, menu);
-		addToContextMenu("粘贴积木文本", function() {
-			pasteFromXML();
-			menu.remove();
-		}, menu);
+	if (!blockBox) {
+		if (blockId !== null) {
+			addToContextMenu("复制这个积木", function() {
+				copyToXML(blockId, false, true);
+				menu.remove();
+			}, menu);
+			/*addToContextMenu("复制以下积木", function() {
+				copyToXML(blockId, false, false);
+				menu.remove();
+			}, menu);*/
+			addToContextMenu("复制这组积木", function() {
+				copyToXML(blockId, true, false);
+				menu.remove();
+			}, menu);
+		} else {
+			addToContextMenu("复制全部积木", function() {
+				copyToXML(null, true, false);
+				menu.remove();
+			}, menu);
+			addToContextMenu("粘贴积木文本", function() {
+				pasteFromXML();
+				menu.remove();
+			}, menu);
+		}
 	}
 }
 
@@ -223,7 +210,18 @@ tfgs.func.add({
 	info: "在右键菜单中添加“复制积木”“粘贴积木”选项，可以跨作品复制，或者粘贴到记事本(是xml格式)",
 	default: false,
 	option: {},
-	onenable: TFGSON,
-	ondisable: TFGSOFF,
+	onenable: function(_api) {
+		api = _api;
+		setup(1);
+	},
+	ondisable: function() {
+		api_enabled = false;
+		// 停止重试
+		if (opening !== -1) {
+			clearTimeout(opening);
+			opening = -1;
+		}
+		api.log("关闭");
+	},
 	onoption: function() {}
 });
