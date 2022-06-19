@@ -77,9 +77,9 @@ tfgs.funcapi.prompt = function(name, text, defau) {
 /* ---------- 复制粘贴 ---------- */
 
 tfgs.funcapi.copy = function(name, text) {
-	return Promise((yes, no) => {
+	return new Promise((yes, no) => {
 		if ("clipboard" in navigator && "writeText" in navigator.clipboard) {
-			navigator.clipboard.writeText(blockThisXML)
+			navigator.clipboard.writeText(text)
 				.then(yes)
 				.catch(function(err) {
 					tfgs.funcapi.onerror(name, err);
@@ -93,8 +93,8 @@ tfgs.funcapi.copy = function(name, text) {
 	});
 };
 
-tfgs.funcapi.paste = function(name, text) {
-	return Promise((yes, no) => {
+tfgs.funcapi.paste = function(name) {
+	return new Promise((yes, no) => {
 		if ("clipboard" in navigator && "readText" in navigator.clipboard) {
 			navigator.clipboard.readText().then(yes).catch(function(err) {
 				tfgs.funcapi.onerror(name, err);
@@ -127,7 +127,7 @@ tfgs.funcapi.blockly = function(name) {
 			try {
 				// 获取Block方法3
 				let block = tfgs.funcapi.reactInternal(name,
-						tfgs.funcapi.selele(name, "injectionDiv").parentElement
+						tfgs.funcapi.selele(name, "blocks_blocks_")
 					)
 					.return.return.return.return
 					.return
