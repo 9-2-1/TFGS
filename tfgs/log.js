@@ -2,8 +2,10 @@ tfgs.log = {};
 
 tfgs.log.list = [];
 
+// 自动更新计时器id
 tfgs.log.dispIntv = null;
 
+// 添加记录，color颜色，name拓展名字，log记录内容
 tfgs.log.add = function(name, color, log) {
 	tfgs.log.list.push({
 		name: name,
@@ -15,11 +17,13 @@ tfgs.log.add = function(name, color, log) {
 	tfgs.log.changed = true;
 };
 
+// 清楚记录
 tfgs.log.clear = function() {
 	tfgs.log.list = [];
 	tfgs.log.changed = true;
 };
 
+// 自动更新，div显示元素，fliter筛选
 tfgs.log.displayInterval = function(div, fliter) {
 	tfgs.log.display(div, fliter);
 	tfgs.log.changed = false;
@@ -38,6 +42,7 @@ tfgs.log.displayInterval = function(div, fliter) {
 	}, 100);
 };
 
+// 更新显示，div显示元素，fliter筛选
 tfgs.log.display = function(div, fliter) {
 	let empty = true;
 	div.classList.add("tfgsLogFormat");
@@ -55,6 +60,7 @@ tfgs.log.display = function(div, fliter) {
 	return !empty;
 };
 
+// 显示窗口
 tfgs.log.create = function(x, y) {
 	try {
 		if (tfgs.log.dispIntv !== null) {

@@ -1,9 +1,11 @@
 tfgs.window = {};
 
+// 窗口初始z-index
 tfgs.window.zIndex = 1e6;
 
+// 创建窗口
 tfgs.window.create = function(options) {
-	let windowobj = {
+	let windowobj = { // 这和options的格式相似
 		/* elements */
 		titleDiv: null,
 		innerDiv: null,
@@ -11,32 +13,32 @@ tfgs.window.create = function(options) {
 		resizeDiv: null,
 
 		/* position */
-		x: NaN,
+		x: NaN, // 左上角位置，默认随机
 		y: NaN,
-		width: 400,
+		width: 400, // 窗口长宽
 		height: 300,
-		minHeight: 0,
+		minHeight: 0, // 正常模式最小高度
 		minWidth: 100, // 正常模式最小宽度
 		minimizeWidth: 100, // 最小化时的宽度
 
 		/* settings */
-		title: "",
+		title: "", // 窗口标题
 
 		/* options */
-		haveLogo: true,
-		canMinimize: true,
+		haveLogo: true, // logo指的是左上角的三个横线
+		canMinimize: true, // 可以最小化，最大化，关闭
 		canMaximize: true,
 		canClose: true,
-		canResize: true,
+		canResize: true, // 可以改变大小，移动
 		canMove: true,
 
 		/* callback */
-		onClose: function() {},
-		onResize: function() {},
+		onClose: function() {}, // 关闭/最大化/移动时回调(没有参数，用this获取窗口对象)
+		onResize: function() {}, // 关闭回调可以返回false阻止关闭
 		onMove: function() {},
 
 		/* status */
-		isMinimize: false,
+		isMinimize: false, // 当前状态
 		isMaximize: false,
 		posRestore: {},
 		flashMode: false,
@@ -51,6 +53,7 @@ tfgs.window.create = function(options) {
 				this.posRestore.height = this.height;
 			}
 		},
+		//最小化
 		minimize: function() {
 			this._rememberPos();
 			this.isMinimize = true;
@@ -59,6 +62,7 @@ tfgs.window.create = function(options) {
 			this.onResize();
 			this.onMove();
 		},
+		//最大化
 		maximize: function() {
 			this._rememberPos();
 			this.isMinimize = false;
@@ -67,6 +71,7 @@ tfgs.window.create = function(options) {
 			this.onResize();
 			this.onMove();
 		},
+		//还原
 		restore: function() {
 			if (this.isMinimize || this.isMaximize) {
 				if (this.isMaximize) {
@@ -82,6 +87,7 @@ tfgs.window.create = function(options) {
 				this.onMove();
 			}
 		},
+		//移到最上层
 		movetotop: function() {
 			this.windowDiv.style.zIndex = ++tfgs.window.zIndex;
 			if (this.flashMode) {
@@ -93,12 +99,14 @@ tfgs.window.create = function(options) {
 				this.flashTimer = -1;
 			}
 		},
+		//关闭(触发回调)
 		close: function() {
 			if (this.onClose() === false) return;
 			this.windowDiv.remove();
 			this.windowDiv = null;
 			window.removeEventListener("resize", windowDiv._resizeCallback);
 		},
+		//改变大小
 		resize: function(w, h) {
 			if (w === this.width && h === this.height) return;
 			this.width = w;
@@ -106,6 +114,7 @@ tfgs.window.create = function(options) {
 			this._refresh();
 			this.onResize();
 		},
+		//移动
 		move: function(x, y) {
 			if (x === this.x && y === this.y) return;
 			this.x = x;
@@ -113,6 +122,7 @@ tfgs.window.create = function(options) {
 			this._refresh();
 			this.onMove();
 		},
+		//闪烁橙色(time闪烁间隔时间,count次数,stay闪完后是否保持橙色
 		flash: function(time, count, stay) {
 			if (this.flashTimer !== -1) {
 				clearInterval(this.flashTimer);
@@ -142,6 +152,7 @@ tfgs.window.create = function(options) {
 				that.flashMode = flash;
 			}, time);
 		},
+		//刷新窗口，修改参数后要调用
 		_refresh: function() {
 			let sX = window.innerWidth,
 				sY = window.innerHeight;

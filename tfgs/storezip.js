@@ -1,3 +1,15 @@
+// 获取storezip对象，用来生成无压缩的zip压缩包
+//
+// 例子:
+// let zip = tfgs.storezip.create();
+// zip.begin();
+// zip.addfile("example.txt", "hello, world!");
+// zip.addfile("timetravel.txt", "查看我的修改时间", "文件注释", "2022-10-10 12:34:56"); // 秒数会取最近的偶数
+// zip.addfile("test.bin", [0x00, 0x05, 0x08, 0x0a]); // 支持字节数组，Uint8Array
+// let zipdata = zip.end("zip 注释"); // 返回Uint8Array
+// // 以下代码Node.js有效
+// require('fs').writeFileSync('test.zip', Buffer.from(zipdata));
+
 tfgs.storezip = {};
 
 tfgs.storezip.create = function() {
@@ -7,10 +19,12 @@ tfgs.storezip.create = function() {
 		x.forEach(v => bin.push(v));
 	}
 
+	// 将字符串转换成Uint8Array
 	function str2uint(x) {
 		return new Uint8Array(Buffer.from(x, "utf-8"));
 	}
 
+	// 将时间转换成数字
 	function todatetime(x) {
 		if (x === undefined || x === null) x = new Date();
 		if (typeof x !== "object") {
@@ -98,10 +112,12 @@ tfgs.storezip.create = function() {
 		return table;
 	}
 
+	// 初始化
 	function begin() {
 		bin = [];
 	}
 
+	// 添加文件（名字、内容、注释、时间）
 	function addfile(name, uint, cint, datetime) {
 		if (uint === undefined || uint === null) uint = [];
 		if (typeof uint === "string") uint = str2uint(uint);
@@ -130,6 +146,7 @@ tfgs.storezip.create = function() {
 		});
 	}
 
+	// 结束并返回zip内容（全文注释）
 	function end(cint) {
 		if (cint === undefined || cint === null) cint = [];
 		if (typeof cint === "string") cint = str2uint(cint);

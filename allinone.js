@@ -1,11 +1,15 @@
 let fs = require("fs");
+
+// 生成尽量小的压缩代码以便复制和放入书签
 let Uglifyjs = require("uglify-js");
 let Cleancss = require("clean-css");
 
+// 显示操作进度
 function progress(x) {
 	process.stdout.write("\r" + ("   " + String(Math.floor(x))).slice(-3) + "%");
 }
 
+// 生成随机变量名
 function randomkey(num) {
 	let key = "";
 	let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_0123456789";
@@ -16,6 +20,7 @@ function randomkey(num) {
 
 progress(0);
 
+// 随机变量名，你在f12的时候能够找到类似 __TFGS$xxxxxxxxxx 的变量，就是tfgs对象
 let tfgskey = JSON.stringify("__TFGS$" + randomkey(10));
 
 let allinone = `/* (allinone.js) */
@@ -24,12 +29,14 @@ let allinone = `/* (allinone.js) */
 	try {
 		let tfgs;
 
+		// 检测 TFGS 是否重复安装
 		if (${tfgskey} in window) {
 			throw new Error("TFGS 已经安装");
 		} else {
 			tfgs = window[${tfgskey}] = {};
 		}
 
+		// 插入 CSS 文件
 		function _tfgsAddCSS(css) {
 			let style = document.createElement("style");
 			style.innerHTML = css;
@@ -39,6 +46,7 @@ let allinone = `/* (allinone.js) */
 
 let allinonemin = allinone;
 
+// 要合并的文件列表
 let flist = [];
 flist = flist.concat(lsSync("tfgs/"));
 flist = flist.concat(lsSync("functions/"));
@@ -71,6 +79,7 @@ ${fs.readFileSync(fname).toString()}
 		_tfgsAddCSS(\`${text}\`);
 
 `;
+			// 在压缩版本中css文件是合并为一个导入的，这意味着不能分开禁用。
 			allcssmin += text;
 			break;
 		}
@@ -78,6 +87,7 @@ ${fs.readFileSync(fname).toString()}
 	progress(1 + 79 * Number(i) / flist.length);
 }
 
+// 压缩css
 allcssmin = new Cleancss({
 	inline: ["all"],
 	level: 2
@@ -92,6 +102,7 @@ allinonemin += `		/* (allinone.css) */
 
 `;
 
+// 错误处理
 allinone += `		/* (allinone.js) */
 		tfgs.data.load().then(tfgs.menu.create).catch(tfgs.error);
 	} catch(e) {
@@ -111,11 +122,13 @@ allinonemin += `	/* (allinone.js) */
 }();
 `;
 
+// 合并版 js
 if (!fs.existsSync("allinone")) fs.mkdirSync("allinone");
 fs.writeFileSync("allinone/TFGS.js", allinone);
 
 progress(90);
 
+// 压缩 js
 let res = Uglifyjs.minify(allinonemin, {
 	compress: {
 		passes: 3,
@@ -131,6 +144,7 @@ if (res.error) console.error(res.error);
 
 allinonemin = res.code;
 
+// 压缩版本
 fs.writeFileSync("allinone/TFGS.min.js", allinonemin);
 
 let url1 = "avascript:void function(){" + allinonemin.replace(/[\r\n]/g, "\\n").replace(/%/g, "%25") + "}()";
@@ -181,6 +195,7 @@ fs.writeFileSync("allinone/TFGS.html", `<!doctype HTML>
 
 progress(100);
 
+// 列出文件夹里的的文件
 function lsSync(path) {
 	let flist = [];
 	let dir = fs.opendirSync(path);
