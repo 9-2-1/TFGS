@@ -4,6 +4,7 @@ tfgs.menu.menuwin = null;
 
 tfgs.menu.modi = false;
 
+// 如果设置被更新，就在离开网站前提示
 window.addEventListener("beforeunload", function(event) {
 	if (tfgs.menu.modi) {
 		event.preventDefault();
@@ -12,20 +13,29 @@ window.addEventListener("beforeunload", function(event) {
 	}
 });
 
+// 设置被修改状态更新
 tfgs.menu.setmodi = function(modi) {
 	if (modi !== tfgs.menu.modi) {
 		let buttons = tfgs.menu.buttons;
 		for (let i in buttons) {
-			let flip = true;
+			let flip;
 			switch (i) {
 				case "edit":
+					// 不影响编辑文本按钮（一直隐藏）
 					continue;
 				case "save":
 				case "cancel":
+					// 保存，取消按钮只有在修改后才显示
 					flip = false;
+					break;
+				default:
+					// 其他按钮在修改前显示
+					flip = true;
+					break;
 			}
 			buttons[i].classList[modi === flip ? "add" : "remove"]("tfgsDisable");
 		}
+		// 改变标题和是否可以最小化
 		tfgs.menu.menuwin.title = modi ? "TFGS 选项 (未保存)" : "TFGS 选项";
 		tfgs.menu.menuwin.canMinimize = !modi;
 		tfgs.menu.menuwin._refresh();
@@ -33,6 +43,7 @@ tfgs.menu.setmodi = function(modi) {
 	}
 };
 
+// 生成设置窗口
 tfgs.menu.create = function() {
 	if (tfgs.menu.menuwin !== null)
 		return;
@@ -51,16 +62,7 @@ tfgs.menu.create = function() {
 	menuwin.minimize();
 	let menudiv = menuwin.innerDiv;
 	menudiv.innerHTML = `
-<div class="tfgsMenuContent">
-	<!--<span class="tfgsMenuFuncSelect">Test</span>
-	<span class="tfgsMenuFuncSelect">Test</span>
-	<span class="tfgsMenuFuncSelect">Test</span>
-	<span class="tfgsMenuFuncSelect">Test</span>
-	<span class="tfgsMenuFuncSelect">Test</span>
-	<span class="tfgsMenuFuncSelect">Test</span>
-	<span class="tfgsMenuFuncSelect">Test</span>
-	<span class="tfgsMenuFuncSelect">Test</span>-->
-</div>
+<div class="tfgsMenuContent"></div>
 <div class="tfgsMenuButtons">
 	<span class="tfgsButton">导出</span>
 	<span class="tfgsButton">导入</span>
@@ -74,6 +76,7 @@ tfgs.menu.create = function() {
 	let buttondiv = tfgs.menu.buttondiv = menudiv.children[1];
 	let buttons = tfgs.menu.buttons = {};
 
+	// 底下的按钮
 	buttons.export = buttondiv.children[0];
 	buttons.import = buttondiv.children[1];
 	buttons.edit = buttondiv.children[2];
@@ -165,7 +168,8 @@ tfgs.menu.create = function() {
 			lab.innerText = o.name;
 			switch (o.type) {
 				case "number":
-					inp = tfgs.element.create("input", undefined, "number");
+					// 右边的tel，我之前用的number，但是问题是手机上在处于造型界面打开菜单的时候会卡死
+					inp = tfgs.element.create("input", undefined, "tel");
 					break;
 				case "text":
 					inp = tfgs.element.create("input");
@@ -211,11 +215,13 @@ tfgs.menu.create = function() {
 	tfgs.menu.load();
 }
 
+// 保存设置到data
 tfgs.menu.save = function() {
 	tfgs.data.setjson(tfgs.menu._json());
 	return tfgs.data.save();
 };
 
+// 获取当前设置代表的json
 tfgs.menu._json = function() {
 	let flist = tfgs.func.list;
 	let mlist = tfgs.menu.list;
@@ -252,6 +258,7 @@ tfgs.menu._json = function() {
 	return JSON.stringify(json);
 };
 
+// 从data加载设置
 tfgs.menu.load = function() {
 	let flist = tfgs.func.list;
 	let dlist = tfgs.data.list;
@@ -287,6 +294,7 @@ tfgs.menu.load = function() {
 	}
 };
 
+// 删除菜单窗口
 tfgs.menu.delete = function() {
 	tfgs.menu.menuwin.canClose = true;
 	tfgs.menu.menuwin.close();

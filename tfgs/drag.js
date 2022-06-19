@@ -1,6 +1,6 @@
 tfgs.drag = {};
 
-// TODO I remenber that the function I have seen in the source code of Scratch. Later I will grep it out.
+// 下面这个来自scratch的源代码
 function getEventXY() {
 	if ("targetTouches" in event) {
 		return {
@@ -14,40 +14,46 @@ function getEventXY() {
 	};
 }
 
-// Example
+// drag.js的使用例子：
+// // 保存移除回调函数的函数
 // let canceldrag = tfgs.drag.setdrag(div, {
 // 	"onStart": function(event) {
 // 		if (draggable) {
+// 			// 如果可以拖动，一定要返回当前的被拖动对象位置
+// 			// 用来计算下次拖动的相对位置
 // 			return {
 // 				offsetX,
 // 				offsetY
 // 			};
 // 		} else {
+// 			// 否则返回null取消
 // 			return null;
 // 		}
 // 	},
 // 	"onDrag": function(x, y, event) {
+// 		// x, y: 根据onStart的返回值计算出的位置，event是触发事件(可以获得原事件的鼠标位置等)
 // 		offsetX = x;
 // 		offsetY = y
-// 		// limits
+// 		// 接着就可以实现拖动范围限制等内容
 // 		if (offsetX < 0)
 // 			offsetX = 0;
-// 		// ...
+// 		// 移动元素等
 // 		updateElement();
 // 	},
 // 	"onEnd": function(mode, event) {
+// 		// mode 有两种选择：click表示没有拖动，只点击，还有move代表拖动了
 // 		if (mode === "click") {
 // 			handleClick();
 // 		}
 // 	}
 // });
-// after you want to disable drag...
+// // 如果你想要移除回调函数，可以运行之前返回的
 // canceldrag();
 
 tfgs.drag.setdrag = function(elem, options) {
 	//elem
 	//options
-	//  onStart [!] MUST return current position/offset or null to stop
+	//  onStart [!] 如果可以拖动，一定要返回当前的被拖动对象位置，否则返回null取消
 	//  onMove
 	//  onEnd
 	let offsetX, offsetY;
