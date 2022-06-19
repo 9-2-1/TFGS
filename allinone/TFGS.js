@@ -1,23 +1,24 @@
 /* (allinone.js) */
 
-try {
-	let tfgs;
+! function (){
+	try {
+		let tfgs;
 
-	if ("__TFGS$nbhyBNaFkY" in window) {
-		throw new Error("TFGS 已经安装");
-	} else {
-		window["__TFGS$nbhyBNaFkY"] = {};
-	}
+		// 检测 TFGS 是否重复安装
+		if ("__TFGS$NRAHUSB4gi" in window) {
+			throw new Error("TFGS 已经安装");
+		} else {
+			tfgs = window["__TFGS$NRAHUSB4gi"] = {};
+		}
 
-	tfgs = window.tfgs = {};
-
-	function _tfgsAddCSS(css) {
-		let style = document.createElement("style");
-		style.innerHTML = css;
-		document.head.appendChild(style);
-	}
-/* tfgs/button.css */
-_tfgsAddCSS(`.tfgsButton {
+		// 插入 CSS 文件
+		function _tfgsAddCSS(css) {
+			let style = document.createElement("style");
+			style.innerHTML = css;
+			document.head.appendChild(style);
+		}
+		/* tfgs/button.css */
+		_tfgsAddCSS(`.tfgsButton {
 	display: inline-block;
 	min-width: 40px;
 	height: 25px;
@@ -44,77 +45,9 @@ _tfgsAddCSS(`.tfgsButton {
 	float: right;
 }
 `);
-/* tfgs/data.js */
-/* 迟早要加注释 */
-function object_format(obj, format) {
-	if (typeof format === "object") {
-		let fmtobj = Array.isArray(format) ? [] : {};
-		for (let x in format) {
-			fmtobj[x] = object_format(obj === null || obj === undefined ? undefined : obj[x], format[x]);
-		}
-		return fmtobj;
-	} else {
-		switch (format) {
-			case "string":
-			case "":
-				return String(obj);
-			case "string!":
-			case "!":
-				return typeof obj === "string" ? obj : "";
-			case "string?":
-			case "?":
-				return typeof obj === "string" ? obj : undefined;
-			case "number":
-			case "0":
-				return Number(obj);
-			case "number!":
-			case "0!":
-				return typeof obj === "number" ? obj : 0;
-			case "number?":
-			case "0?":
-				return typeof obj === "number" ? obj : undefined;
-			case "boolean":
-				return Boolean(obj);
-			case "boolean!":
-			case "false!":
-				return typeof obj === "boolean" ? obj : false;
-			case "boolean?":
-			case "false?":
-				return typeof obj === "boolean" ? obj : undefined;
-			case "array":
-			case "[]": {
-				let fmtobj = [];
-				for (let x in obj) {
-					fmtobj[x] = obj[x];
-				}
-				return fmtobj;
-			}
-			case "array!":
-			case "[]!":
-				return Array.isArray(obj) ? obj : [];
-			case "array?":
-			case "[]?":
-				return Array.isArray(obj) ? obj : undefined;
-			case "object":
-			case "{}": {
-				let fmtobj = {};
-				for (let x in obj) {
-					fmtobj[x] = obj[x];
-				}
-				return fmtobj;
-			}
-			case "object!":
-			case "{}!":
-				return Object.isObject(obj) ? obj : {};
-			case "object?":
-			case "{}?":
-				return Object.isObject(obj) ? obj : undefined;
-			case "any":
-				return obj;
-		}
-	}
-}
 
+		/* tfgs/data.js */
+		! function (){
 tfgs.data = {};
 
 tfgs.data.list = {};
@@ -126,57 +59,32 @@ tfgs.data.getjson = function() {
 /* 设置全部数据，触发数据改变的触发器 */
 tfgs.data.setjson = function(json) {
 	let data = JSON.parse(json);
-	let format = {};
+	// 按照格式调整data对象
+	let formated = {};
 	for (let fname in tfgs.func.list) {
-		let olist = {};
+		let fdata = typeof data[fname] === "object" ? data[fname] : {};
+		let formated1 = formated[fname] = {};
+		formated1.enable = fdata.enable;
+		if (typeof formated1.enable !== "boolean")
+			formated1.enable = undefined;
+		formated1.data = fdata.data;
+		let foption = typeof fdata.option === "object" ? fdata.option : {};
+		let formated2 = {};
 		for (let oname in tfgs.func.list[fname].option)
-			olist[oname] = "any";
-		format[fname] = {
-			enable: "boolean?",
-			data: "any",
-			option: olist
-		}
-		tfgs.data.list = object_format(data, format);
+			formated2[oname] = foption[oname];
+		formated1.option = formated2;
 	}
+	tfgs.data.list = formated;
 	tfgs.func.datachange();
 };
-
-/* 一个留给tfgs.func.default(恢复默认设置)的后门，其实现在就可以删了 */
-/* tfgs.data._default = function(data) {
-	tfgs.data.list = data;
-};*/
 
 /* 异步加载拓展数据,返回Promise */
 /* 优先级：浏览器拓展存储 > localStorage */
 tfgs.data.load = function() {
 	return new Promise(function(resolve, reject) {
-		// 尝试浏览器拓展的存档功能 (chrome.storage, browser.storage)
-		let data = null;
-		let extStorage = null;
-		if ("chrome" in window && "storage" in chrome) {
-			extStorage = chrome.storage;
-		} else if ("browser" in window && "storage" in browser) {
-			extStorage = browser.storage;
-		}
-		if (extStorage !== null) {
-			extStorage.sync.getItem("-tfgs-", function(ret) {
-				data = ret["-tfgs-"];
-				load2();
-			});
-		} else {
-			load2();
-		}
-
-		function load2() {
-			// if (data === null&&"indexedDB"in window) {
-
-			// }
-			if (data === null && "localStorage" in window) {
-				// 不行的话，就用localStorage
-				data = localStorage.getItem("-tfgs-");
-			}
-			resolve(data);
-		}
+		// 这里的Promise是为后面转成indexedDB做准备
+		let data = localStorage.getItem("-tfgs-");
+		resolve(data);
 	}).then(tfgs.data.setjson);
 };
 
@@ -184,33 +92,8 @@ tfgs.data.load = function() {
 /* 浏览器拓展存储 和 localStorage */
 tfgs.data.save = function() {
 	return new Promise(function(resolve, reject) {
-		// 尝试浏览器拓展的存档功能 (chrome.storage, browser.storage)
-		let extStorage = null;
-		if ("chrome" in window && "storage" in chrome) {
-			extStorage = chrome.storage;
-		} else if ("browser" in window && "storage" in browser) {
-			extStorage = browser.storage;
-		}
-		if (extStorage !== null) {
-			extStorage.sync.setItem({
-				"-tfgs-": tfgs.data.getjson()
-			}, function(ret) {
-				save2();
-			});
-		} else {
-			save2();
-		}
-
-		function save2() {
-			// if ("indexedDB"in window) {
-
-			// }
-			// 尝试localStorage
-			if ("localStorage" in window) {
-				localStorage.setItem("-tfgs-", tfgs.data.getjson());
-			}
-			resolve();
-		}
+		localStorage.setItem("-tfgs-", tfgs.data.getjson());
+		resolve();
 	});
 };
 
@@ -253,11 +136,13 @@ tfgs.data.edit = function() {
 		});
 };
 
+		}();
 
-/* tfgs/drag.js */
+		/* tfgs/drag.js */
+		! function (){
 tfgs.drag = {};
 
-// TODO I remenber that the function I have seen in the source code of Scratch. Later I will grep it out.
+// 下面这个来自scratch的源代码
 function getEventXY() {
 	if ("targetTouches" in event) {
 		return {
@@ -271,40 +156,46 @@ function getEventXY() {
 	};
 }
 
-// Example
+// drag.js的使用例子：
+// // 保存移除回调函数的函数
 // let canceldrag = tfgs.drag.setdrag(div, {
 // 	"onStart": function(event) {
 // 		if (draggable) {
+// 			// 如果可以拖动，一定要返回当前的被拖动对象位置
+// 			// 用来计算下次拖动的相对位置
 // 			return {
 // 				offsetX,
 // 				offsetY
 // 			};
 // 		} else {
+// 			// 否则返回null取消
 // 			return null;
 // 		}
 // 	},
 // 	"onDrag": function(x, y, event) {
+// 		// x, y: 根据onStart的返回值计算出的位置，event是触发事件(可以获得原事件的鼠标位置等)
 // 		offsetX = x;
 // 		offsetY = y
-// 		// limits
+// 		// 接着就可以实现拖动范围限制等内容
 // 		if (offsetX < 0)
 // 			offsetX = 0;
-// 		// ...
+// 		// 移动元素等
 // 		updateElement();
 // 	},
 // 	"onEnd": function(mode, event) {
+// 		// mode 有两种选择：click表示没有拖动，只点击，还有move代表拖动了
 // 		if (mode === "click") {
 // 			handleClick();
 // 		}
 // 	}
 // });
-// after you want to disable drag...
+// // 如果你想要移除回调函数，可以运行之前返回的
 // canceldrag();
 
 tfgs.drag.setdrag = function(elem, options) {
 	//elem
 	//options
-	//  onStart [!] MUST return current position/offset or null to stop
+	//  onStart [!] 如果可以拖动，一定要返回当前的被拖动对象位置，否则返回null取消
 	//  onMove
 	//  onEnd
 	let offsetX, offsetY;
@@ -373,16 +264,36 @@ tfgs.drag.setdrag = function(elem, options) {
 	};
 };
 
+		}();
 
-/* tfgs/error.js */
+		/* tfgs/element.js */
+		! function (){
+tfgs.element = {};
+
+// 新建HTML元素, tagName元素类型，className css类型名(可省略), type 输入类型(可省略)（针对<input>）
+tfgs.element.create = function(tagName, className, type) {
+	let ele = document.createElement(tagName);
+	if (className !== undefined) ele.className = className;
+	ele.className = className;
+	if (type !== undefined) ele.type = type;
+	return ele;
+};
+
+		}();
+
+		/* tfgs/error.js */
+		! function (){
+// 出错处理
 tfgs.error = function(e) {
 	alert(e.message);
 	console.error(e);
 	throw e;
 };
 
+		}();
 
-/* tfgs/func.js */
+		/* tfgs/func.js */
+		! function (){
 tfgs.func = {};
 
 /* 功能列表,格式见下funcinfo */
@@ -499,8 +410,10 @@ tfgs.func.fixoption = function() {
 	}
 };
 
+		}();
 
-/* tfgs/funcapi.js */
+		/* tfgs/funcapi.js */
+		! function (){
 tfgs.funcapi = {};
 
 // 以下name指拓展id
@@ -577,39 +490,107 @@ tfgs.funcapi.prompt = function(name, text, defau) {
 	});
 };
 
+/* ---------- 复制粘贴 ---------- */
+
+tfgs.funcapi.copy = function(name, text) {
+	return new Promise((yes, no) => {
+		if ("clipboard" in navigator && "writeText" in navigator.clipboard) {
+			navigator.clipboard.writeText(text)
+				.then(yes)
+				.catch(function(err) {
+					tfgs.funcapi.onerror(name, err);
+					prompt("请复制以下内容", text);
+					yes();
+				});
+		} else {
+			prompt("请复制以下内容", text);
+			yes();
+		}
+	});
+};
+
+tfgs.funcapi.paste = function(name) {
+	return new Promise((yes, no) => {
+		if ("clipboard" in navigator && "readText" in navigator.clipboard) {
+			navigator.clipboard.readText().then(yes).catch(function(err) {
+				tfgs.funcapi.onerror(name, err);
+				yes(prompt("在下方粘贴:"));
+			});
+		} else {
+			yes(prompt("在下方粘贴:"));
+		}
+	});
+};
+
 /* ---------- 获取Scratch相关内容 ---------- */
 
+// scratchBlocks
 tfgs.funcapi.blockly = function(name) {
-	if ("Blockly" in window)
-		return window.Blockly;
-	else if ("ClipCCExtension" in window)
-		return window.ClipCCExtension.getBlockInstance();
-	else return undefined;
+	let errors = [];
+	try {
+		// 用 ClipCC 的 api
+		return window.ClipCCExtension.api.getBlockInstance();
+	} catch (e) {
+		errors.push(e);
+		try {
+			// 获取Block方法2
+			let block = tfgs.funcapi.vm(name).runtime.scratchBlocks;
+			if (typeof block !== "object" || block === null || !("getMainWorkspace" in block))
+				throw new Error("Invaild block");
+			return block;
+		} catch (e) {
+			errors.push(e);
+			try {
+				// 获取Block方法3
+				let block = tfgs.funcapi.reactInternal(name,
+						tfgs.funcapi.selele(name, "blocks_blocks_")
+					)
+					.return.return.return.return
+					.return
+					.stateNode.ScratchBlocks;
+				if (typeof block !== "object" || block === null || !("getMainWorkspace" in block))
+					throw new Error("Invaild block");
+				return block;
+			} catch (e) {
+				errors.push(e);
+				for (let i = 0; i < errors.length; i++) {
+					tfgs.funcapi.error(name, `funcapi: block: 方法${i+1}错误:`);
+					tfgs.funcapi.onerror(name, errors[i]);
+				}
+				throw new Error("tfgs.funcapi.block: cannot find block");
+			}
+		}
+	}
 };
 
 // 积木区相关
 tfgs.funcapi.workspace = function(name) {
-	return tfgs.funcapi.blockly().getMainWorkspace();
+	return tfgs.funcapi.blockly(name).getMainWorkspace();
 };
 
 // 积木盒相关
 tfgs.funcapi.toolbox = function(name) {
-	return tfgs.funcapi.workspace().getFlyout().getWorkspace();
+	return tfgs.funcapi.workspace(name).getFlyout().getWorkspace();
 };
 
-// 获取class以classname开头的元素
+// 获取class包含classname的元素
 tfgs.funcapi.selele = function(name, classname, element) {
-	return (element === undefined ? document : element).querySelector(`*[class^="${classname}"], *[class*=" ${classname}"]`);
+	return (element === undefined ? document : element).querySelector(`[class*="${classname}"]`);
 };
 
-// 获取元素中以classname开头的类型名
+// 获取class包含classname的所有元素
+tfgs.funcapi.selall = function(name, classname, element) {
+	return (element === undefined ? document : element).querySelectorAll(`[class*="${classname}"]`);
+};
+
+// 获取元素中包含classname的类型名
 tfgs.funcapi.selcss = function(name, classname, element) {
 	let elem = tfgs.funcapi.selele(name, classname, element);
 	if (elem === null)
 		return null;
 	let csslist = elem.classList;
-	for (let i in csslist)
-		if (classname === csslist[i].slice(0, classname.length))
+	for (let i = 0; i < csslist.length; i++)
+		if (csslist[i].includes(classname))
 			return csslist[i];
 	return null;
 };
@@ -630,11 +611,80 @@ tfgs.funcapi.reactInternal = function(name, element) {
 };
 
 // 获取 redux store, 里面有vm和绘画参数
-// ClipCC 目前不可用，因为react17的变化
 tfgs.funcapi.store = function(name) {
-	return tfgs.funcapi.reactInternal(
-		name, tfgs.funcapi.selele(name, "gui_page-wrapper_")
-	).child.stateNode.store;
+	let errors = [];
+	try {
+		// 获取store方法1
+		let store = tfgs.funcapi.reactInternal(
+			name, tfgs.funcapi.selele(name, "gui_page-wrapper_")
+		).child.stateNode.store;
+		if (typeof store !== "object" || store === null || !("dispatch" in store))
+			throw new Error("Invaild store");
+		return store;
+	} catch (e) {
+		errors.push(e);
+		try {
+			// 获取store方法2
+			let store = tfgs.funcapi.reactInternal(
+				name, tfgs.funcapi.selele(name, "blocks_blocks_")
+			).return.return.return.return.pendingProps.value.store;
+			if (typeof store !== "object" || store === null || !("dispatch" in store))
+				throw new Error("Invaild store");
+			return store;
+		} catch (e) {
+			errors.push(e);
+			for (let i = 0; i < errors.length; i++) {
+				tfgs.funcapi.error(name, `funcapi: store: 方法${i+1}错误:`);
+				tfgs.funcapi.onerror(name, errors[i]);
+			}
+			throw new Error("tfgs.funcapi.store: cannot find store");
+		}
+	}
+};
+
+// gui 对象
+tfgs.funcapi.gui = function(name) {
+	let errors = [];
+	try {
+		// 用 ClipCC 的 api
+		return window.ClipCCExtension.api.getGuiInstance();
+	} catch (e) {
+		errors.push(e);
+		try {
+			// 获取Gui方法2
+			let gui = tfgs.funcapi.reactInternal(name,
+					tfgs.funcapi.selele(name, "gui_page-wrapper_")
+				)
+				.return.return.return.return
+				.return.return.return.return
+				.stateNode;
+			if (typeof gui.props !== "object" || gui.props === null || !("vm" in gui.props))
+				throw new Error("Invaild gui");
+			return gui;
+		} catch (e) {
+			errors.push(e);
+			try {
+				// 获取Gui方法3
+				let gui = tfgs.funcapi.reactInternal(name,
+						tfgs.funcapi.selele(name, "stage-wrapper_")
+					)
+					.return.return.return.return
+					.return.return.return.return
+					.return.return
+					.stateNode;
+				if (typeof gui.props !== "object" || gui.props === null || !("vm" in gui.props))
+					throw new Error("Invaild gui");
+				return gui;
+			} catch (e) {
+				errors.push(e);
+				for (let i = 0; i < errors.length; i++) {
+					tfgs.funcapi.error(name, `funcapi: gui: 方法${i+1}错误:`);
+					tfgs.funcapi.onerror(name, errors[i]);
+				}
+				throw new Error("tfgs.funcapi.gui: cannot find gui");
+			}
+		}
+	}
 };
 
 // vm 对象
@@ -646,35 +696,26 @@ tfgs.funcapi.vm = function(name) {
 	} catch (e) {
 		errors.push(e);
 		try {
-			// 获取VM方法1
-			return tfs.funcapi.selele(name, "gui_page-wrapper_")
-				.return.return.return.return
-				.return.return.return.return
-				.stateNode.props.vm;
+			// 获取VM方法2
+			let vm = tfgs.funcapi.gui(name).props.vm;
+			if (typeof vm !== "object" || vm === null || !("runtime" in vm))
+				throw new Error("Invaild vm");
+			return vm;
 		} catch (e) {
 			errors.push(e);
 			try {
-				// 获取VM方法2
-				return tfgs.funcapi.reactInternal(name,
-						tfgs.funcapi.selele("stage-wrapper_")
-					)
-					.return.return.return.return
-					.return.return.return.return
-					.return.return
-					.stateNode.props.vm;
+				// 获取VM方法3
+				let vm = tfgs.funcapi.store(name).getState().scratchGui.vm;
+				if (typeof vm !== "object" || vm === null || !("runtime" in vm))
+					throw new Error("Invaild vm");
+				return vm;
 			} catch (e) {
 				errors.push(e);
-				try {
-					// 获取VM方法3
-					return tfgs.funcapi.store(name).getState().scratchGui.vm;
-				} catch (e) {
-					errors.push(e);
-					for (let i in e) {
-						tfgs.funcapi.error(name, `funcapi: 方法${i+1}错误:`);
-						tfgs.funcapi.onerror(name, e);
-					}
-					throw new Error("tfgs.funcapi.vm: cannot find vm");
+				for (let i = 0; i < errors.length; i++) {
+					tfgs.funcapi.error(name, `funcapi: vm: 方法${i+1}错误:`);
+					tfgs.funcapi.onerror(name, errors[i]);
 				}
+				throw new Error("tfgs.funcapi.vm: cannot find vm");
 			}
 		}
 	}
@@ -684,6 +725,35 @@ tfgs.funcapi.vm = function(name) {
 // ClipCC 目前不可用
 tfgs.funcapi.paint = function(name) {
 	return tfgs.funcapi.store(name).getState().scratchPaint;
+};
+
+// 当前处于的标签页
+tfgs.funcapi.currenttab = function(name) {
+	let selected = tfgs.funcapi.selele(name, "gui_is-selected_");
+	if (selected === null)
+		return -1;
+	return Number(selected.id.slice(-1)) / 2;
+};
+
+// Respect community limits
+tfgs.funcapi.RESPECTnodownload_DO_NOT_DELETE = function(name) {
+	/****************************************\
+	 *                                      *
+	 *  社区的稳定和拓展的顺利开发很大程度  *
+	 *  都基于用户和官方的相互信任。哪怕是  *
+	 *  作为开源的支持者，也会尊重其他用户  *
+	 *  的决定。                            *
+	 *  如果你知道你在做什么，请不要修改这  *
+	 *  个函数，因为一旦有人使用这个拓展破  *
+	 *  坏规则，这个拓展可能将会被永久性地  *
+	 *  封禁。                              *
+	 *  感谢大家配合。                      *
+	 *                                      *
+	\****************************************/
+	let gui = tfgs.funcapi.gui(name);
+	if ("readOnly" in gui.props && gui.props.readOnly === true) return true;
+	if ("canSaveToLocal" in gui.props && gui.props.canSaveToLocal === false) return true;
+	return false;
 };
 
 /* ---------- 为指定name的拓展定制api对象 ---------- */
@@ -703,9 +773,10 @@ tfgs.funcapi._getapi = function(name) {
 	return objapi;
 };
 
+		}();
 
-/* tfgs/log.css */
-_tfgsAddCSS(`.tfgsLogFormat {
+		/* tfgs/log.css */
+		_tfgsAddCSS(`.tfgsLogFormat {
 	display: block;
 	white-space: pre-wrap;
 	word-break: break-all;
@@ -732,13 +803,17 @@ _tfgsAddCSS(`.tfgsLogFormat {
 	background: var(--tfgsWindowColor);
 }
 `);
-/* tfgs/log.js */
+
+		/* tfgs/log.js */
+		! function (){
 tfgs.log = {};
 
 tfgs.log.list = [];
 
+// 自动更新计时器id
 tfgs.log.dispIntv = null;
 
+// 添加记录，color颜色，name拓展名字，log记录内容
 tfgs.log.add = function(name, color, log) {
 	tfgs.log.list.push({
 		name: name,
@@ -750,11 +825,13 @@ tfgs.log.add = function(name, color, log) {
 	tfgs.log.changed = true;
 };
 
+// 清楚记录
 tfgs.log.clear = function() {
 	tfgs.log.list = [];
 	tfgs.log.changed = true;
 };
 
+// 自动更新，div显示元素，fliter筛选
 tfgs.log.displayInterval = function(div, fliter) {
 	tfgs.log.display(div, fliter);
 	tfgs.log.changed = false;
@@ -773,6 +850,7 @@ tfgs.log.displayInterval = function(div, fliter) {
 	}, 100);
 };
 
+// 更新显示，div显示元素，fliter筛选
 tfgs.log.display = function(div, fliter) {
 	let empty = true;
 	div.classList.add("tfgsLogFormat");
@@ -790,6 +868,7 @@ tfgs.log.display = function(div, fliter) {
 	return !empty;
 };
 
+// 显示窗口
 tfgs.log.create = function(x, y) {
 	try {
 		if (tfgs.log.dispIntv !== null) {
@@ -834,9 +913,10 @@ tfgs.log.create = function(x, y) {
 	}
 };
 
+		}();
 
-/* tfgs/menu.css */
-_tfgsAddCSS(`.tfgsMenuContent {
+		/* tfgs/menu.css */
+		_tfgsAddCSS(`.tfgsMenuContent {
 	height: calc(100% - 30px);
 	background: #f0f8ff;
 	overflow: auto;
@@ -924,13 +1004,16 @@ _tfgsAddCSS(`.tfgsMenuContent {
 	font-size: 15px;
 }
 `);
-/* tfgs/menu.js */
+
+		/* tfgs/menu.js */
+		! function (){
 tfgs.menu = {};
 
 tfgs.menu.menuwin = null;
 
 tfgs.menu.modi = false;
 
+// 如果设置被更新，就在离开网站前提示
 window.addEventListener("beforeunload", function(event) {
 	if (tfgs.menu.modi) {
 		event.preventDefault();
@@ -939,20 +1022,29 @@ window.addEventListener("beforeunload", function(event) {
 	}
 });
 
+// 设置被修改状态更新
 tfgs.menu.setmodi = function(modi) {
 	if (modi !== tfgs.menu.modi) {
 		let buttons = tfgs.menu.buttons;
 		for (let i in buttons) {
-			let flip = true;
+			let flip;
 			switch (i) {
 				case "edit":
+					// 不影响编辑文本按钮（一直隐藏）
 					continue;
 				case "save":
 				case "cancel":
+					// 保存，取消按钮只有在修改后才显示
 					flip = false;
+					break;
+				default:
+					// 其他按钮在修改前显示
+					flip = true;
+					break;
 			}
 			buttons[i].classList[modi === flip ? "add" : "remove"]("tfgsDisable");
 		}
+		// 改变标题和是否可以最小化
 		tfgs.menu.menuwin.title = modi ? "TFGS 选项 (未保存)" : "TFGS 选项";
 		tfgs.menu.menuwin.canMinimize = !modi;
 		tfgs.menu.menuwin._refresh();
@@ -960,6 +1052,7 @@ tfgs.menu.setmodi = function(modi) {
 	}
 };
 
+// 生成设置窗口
 tfgs.menu.create = function() {
 	if (tfgs.menu.menuwin !== null)
 		return;
@@ -978,16 +1071,7 @@ tfgs.menu.create = function() {
 	menuwin.minimize();
 	let menudiv = menuwin.innerDiv;
 	menudiv.innerHTML = `
-<div class="tfgsMenuContent">
-	<!--<span class="tfgsMenuFuncSelect">Test</span>
-	<span class="tfgsMenuFuncSelect">Test</span>
-	<span class="tfgsMenuFuncSelect">Test</span>
-	<span class="tfgsMenuFuncSelect">Test</span>
-	<span class="tfgsMenuFuncSelect">Test</span>
-	<span class="tfgsMenuFuncSelect">Test</span>
-	<span class="tfgsMenuFuncSelect">Test</span>
-	<span class="tfgsMenuFuncSelect">Test</span>-->
-</div>
+<div class="tfgsMenuContent"></div>
 <div class="tfgsMenuButtons">
 	<span class="tfgsButton">导出</span>
 	<span class="tfgsButton">导入</span>
@@ -1001,6 +1085,7 @@ tfgs.menu.create = function() {
 	let buttondiv = tfgs.menu.buttondiv = menudiv.children[1];
 	let buttons = tfgs.menu.buttons = {};
 
+	// 底下的按钮
 	buttons.export = buttondiv.children[0];
 	buttons.import = buttondiv.children[1];
 	buttons.edit = buttondiv.children[2];
@@ -1092,7 +1177,8 @@ tfgs.menu.create = function() {
 			lab.innerText = o.name;
 			switch (o.type) {
 				case "number":
-					inp = tfgs.element.create("input", undefined, "number");
+					// 右边的tel，我之前用的number，但是问题是手机上在处于造型界面打开菜单的时候会卡死
+					inp = tfgs.element.create("input", undefined, "tel");
 					break;
 				case "text":
 					inp = tfgs.element.create("input");
@@ -1138,11 +1224,13 @@ tfgs.menu.create = function() {
 	tfgs.menu.load();
 }
 
+// 保存设置到data
 tfgs.menu.save = function() {
 	tfgs.data.setjson(tfgs.menu._json());
 	return tfgs.data.save();
 };
 
+// 获取当前设置代表的json
 tfgs.menu._json = function() {
 	let flist = tfgs.func.list;
 	let mlist = tfgs.menu.list;
@@ -1179,6 +1267,7 @@ tfgs.menu._json = function() {
 	return JSON.stringify(json);
 };
 
+// 从data加载设置
 tfgs.menu.load = function() {
 	let flist = tfgs.func.list;
 	let dlist = tfgs.data.list;
@@ -1214,15 +1303,17 @@ tfgs.menu.load = function() {
 	}
 };
 
+// 删除菜单窗口
 tfgs.menu.delete = function() {
 	tfgs.menu.menuwin.canClose = true;
 	tfgs.menu.menuwin.close();
 	tfgs.menu.menuwin = null;
 };
 
+		}();
 
-/* tfgs/window.css */
-_tfgsAddCSS(`.tfgsWindow.tfgsEmergency {
+		/* tfgs/window.css */
+		_tfgsAddCSS(`.tfgsWindow.tfgsEmergency {
 	--tfgsWindowColor: #f80;
 }
 
@@ -1313,13 +1404,17 @@ _tfgsAddCSS(`.tfgsWindow.tfgsEmergency {
 	color: white;
 }
 `);
-/* tfgs/window.js */
+
+		/* tfgs/window.js */
+		! function (){
 tfgs.window = {};
 
+// 窗口初始z-index
 tfgs.window.zIndex = 1e6;
 
+// 创建窗口
 tfgs.window.create = function(options) {
-	let windowobj = {
+	let windowobj = { // 这和options的格式相似
 		/* elements */
 		titleDiv: null,
 		innerDiv: null,
@@ -1327,32 +1422,32 @@ tfgs.window.create = function(options) {
 		resizeDiv: null,
 
 		/* position */
-		x: NaN,
+		x: NaN, // 左上角位置，默认随机
 		y: NaN,
-		width: 400,
+		width: 400, // 窗口长宽
 		height: 300,
-		minHeight: 0,
+		minHeight: 0, // 正常模式最小高度
 		minWidth: 100, // 正常模式最小宽度
 		minimizeWidth: 100, // 最小化时的宽度
 
 		/* settings */
-		title: "",
+		title: "", // 窗口标题
 
 		/* options */
-		haveLogo: true,
-		canMinimize: true,
+		haveLogo: true, // logo指的是左上角的三个横线
+		canMinimize: true, // 可以最小化，最大化，关闭
 		canMaximize: true,
 		canClose: true,
-		canResize: true,
+		canResize: true, // 可以改变大小，移动
 		canMove: true,
 
 		/* callback */
-		onClose: function() {},
-		onResize: function() {},
+		onClose: function() {}, // 关闭/最大化/移动时回调(没有参数，用this获取窗口对象)
+		onResize: function() {}, // 关闭回调可以返回false阻止关闭
 		onMove: function() {},
 
 		/* status */
-		isMinimize: false,
+		isMinimize: false, // 当前状态
 		isMaximize: false,
 		posRestore: {},
 		flashMode: false,
@@ -1367,6 +1462,7 @@ tfgs.window.create = function(options) {
 				this.posRestore.height = this.height;
 			}
 		},
+		//最小化
 		minimize: function() {
 			this._rememberPos();
 			this.isMinimize = true;
@@ -1375,6 +1471,7 @@ tfgs.window.create = function(options) {
 			this.onResize();
 			this.onMove();
 		},
+		//最大化
 		maximize: function() {
 			this._rememberPos();
 			this.isMinimize = false;
@@ -1383,6 +1480,7 @@ tfgs.window.create = function(options) {
 			this.onResize();
 			this.onMove();
 		},
+		//还原
 		restore: function() {
 			if (this.isMinimize || this.isMaximize) {
 				if (this.isMaximize) {
@@ -1398,6 +1496,7 @@ tfgs.window.create = function(options) {
 				this.onMove();
 			}
 		},
+		//移到最上层
 		movetotop: function() {
 			this.windowDiv.style.zIndex = ++tfgs.window.zIndex;
 			if (this.flashMode) {
@@ -1409,12 +1508,14 @@ tfgs.window.create = function(options) {
 				this.flashTimer = -1;
 			}
 		},
+		//关闭(触发回调)
 		close: function() {
 			if (this.onClose() === false) return;
 			this.windowDiv.remove();
 			this.windowDiv = null;
 			window.removeEventListener("resize", windowDiv._resizeCallback);
 		},
+		//改变大小
 		resize: function(w, h) {
 			if (w === this.width && h === this.height) return;
 			this.width = w;
@@ -1422,6 +1523,7 @@ tfgs.window.create = function(options) {
 			this._refresh();
 			this.onResize();
 		},
+		//移动
 		move: function(x, y) {
 			if (x === this.x && y === this.y) return;
 			this.x = x;
@@ -1429,6 +1531,7 @@ tfgs.window.create = function(options) {
 			this._refresh();
 			this.onMove();
 		},
+		//闪烁橙色(time闪烁间隔时间,count次数,stay闪完后是否保持橙色
 		flash: function(time, count, stay) {
 			if (this.flashTimer !== -1) {
 				clearInterval(this.flashTimer);
@@ -1458,6 +1561,7 @@ tfgs.window.create = function(options) {
 				that.flashMode = flash;
 			}, time);
 		},
+		//刷新窗口，修改参数后要调用
 		_refresh: function() {
 			let sX = window.innerWidth,
 				sY = window.innerHeight;
@@ -1629,21 +1733,1190 @@ function showhide(x, show) {
 	x.style.display = show ? "inherit" : "none";
 }
 
+		}();
 
-/* tfgs/element.js */
-tfgs.element = {};
+		/* tfgs/storezip.js */
+		! function (){
+// 获取storezip对象，用来生成无压缩的zip压缩包
+//
+// 例子:
+// let zip = tfgs.storezip.create();
+// zip.begin();
+// zip.addfile("example.txt", "hello, world!");
+// zip.addfile("timetravel.txt", "查看我的修改时间", "文件注释", "2022-10-10 12:34:56"); // 秒数会取最近的偶数
+// zip.addfile("test.bin", [0x00, 0x05, 0x08, 0x0a]); // 支持字节数组，Uint8Array
+// let zipdata = zip.end("zip 注释"); // 返回Uint8Array
+// // 以下代码Node.js有效
+// require('fs').writeFileSync('test.zip', Buffer.from(zipdata));
 
-tfgs.element.create = function(tagName, className, type) {
-	let ele = document.createElement(tagName);
-	if (className !== undefined) ele.className = className;
-	ele.className = className;
-	if (type !== undefined) ele.type = type;
-	return ele;
+tfgs.storezip = {};
+
+tfgs.storezip.create = function() {
+	let bin = [];
+
+	function append(x) {
+		x.forEach(v => bin.push(v));
+	}
+
+	// 将字符串转换成Uint8Array
+	function str2uint(x) {
+		return new Uint8Array(new TextEncoder().encode(x));
+	}
+
+	// 将时间转换成数字
+	function todatetime(x) {
+		if (x === undefined || x === null) x = new Date();
+		if (typeof x !== "object") {
+			let str = x;
+			x = new Date();
+			x.setTime(Date.parse(str));
+		}
+		if (x.constructor.name === "Date") {
+			x = {
+				year: x.getYear() - 80,
+				month: x.getMonth() + 1,
+				date: x.getDate(),
+				hour: x.getHours(),
+				minute: x.getMinutes(),
+				second: x.getSeconds()
+			};
+		}
+		return (x.second >>> 1) & 0b11111 | // 秒数会取最近的偶数
+			(x.minute & 0b111111) << 5 |
+			(x.hour & 0b11111) << 11 |
+			(x.date & 0b11111) << 16 |
+			(x.month & 0b1111) << 21 |
+			(x.year & 0b1111111) << 25;
+	}
+
+	function num2(x) {
+		bin.push(x & 0xff);
+		bin.push((x >>> 8) & 0xff);
+	}
+
+	function num4(x) {
+		bin.push(x & 0xff);
+		bin.push((x >>> 8) & 0xff);
+		bin.push((x >>> 16) & 0xff);
+		bin.push((x >>> 24) & 0xff);
+	}
+
+	let filehead = [
+		0x50, 0x4b, 0x03, 0x04,
+		0x0a, 0x00, //min unzip version
+		0x00, 0x00,
+		0x00, 0x00,
+	];
+
+	let central = [
+		0x50, 0x4b, 0x01, 0x02,
+		0x0a, 0x00, //version
+		0x0a, 0x00, //min unzip version
+		0x00, 0x00,
+		0x00, 0x00,
+	];
+
+	let centralend = [
+		0x50, 0x4b, 0x05, 0x06,
+		0x00, 0x00,
+		0x00, 0x00
+	];
+
+	let files = [];
+
+	let crc32Table = crc32TableCreate();
+
+	function crc32(uint) {
+		if (typeof uint === "string") uint = str2uint(uint);
+		let crc = 0xFFFFFFFF;
+		uint.forEach(v => {
+			crc = (crc >>> 8) ^ crc32Table[(crc ^ v) & 0xFF];
+		});
+		crc ^= 0xFFFFFFFF;
+		return crc < 0 ? crc + 0x100000000 : crc;
+	}
+
+	function crc32TableCreate() {
+		let table = [];
+		for (i = 0; i < 256; i++) {
+			let crc = i;
+			for (j = 0; j < 8; j++) {
+				if (crc & 1)
+					crc = (crc >>> 1) ^ 0xEDB88320;
+				else
+					crc = crc >>> 1;
+			}
+			table.push(crc);
+		}
+		return table;
+	}
+
+	// 初始化
+	function begin() {
+		bin = [];
+	}
+
+	// 添加文件（名字、内容、注释、时间）
+	function addfile(name, uint, cint, datetime) {
+		if (uint === undefined || uint === null) uint = [];
+		if (typeof uint === "string") uint = str2uint(uint);
+		if (cint === undefined || cint === null) cint = [];
+		if (typeof cint === "string") cint = str2uint(cint);
+		if (cint.length > 65535) {
+			tfgs.funcapi.warn(name, "压缩包注释太长(最多65535个字节)");
+			cint = cint.slice(0, 65535);
+		}
+		if (typeof datetime !== "number") datetime = todatetime(datetime);
+		let offs = bin.length;
+		let crc = crc32(uint);
+		let uname = str2uint(name);
+		if (uname.length > 65535) {
+			tfgs.funcapi.error(name, "压缩包文件名太长(最多65535个字节)");
+			throw new Error("File name too long");
+		}
+		append(filehead);
+		num4(datetime); // datetime
+		num4(crc); // crc32
+		num4(uint.length); // old size
+		num4(uint.length); // new size
+		num2(uname.length); // length of filename
+		num2(0); // length of extra data
+		append(uname); // filename
+		append(uint); // data
+		files.push({
+			uname: uname,
+			size: uint.length,
+			offs: offs, // data offset
+			crc: crc,
+			cint: cint, // file comment
+			datetime: datetime,
+		});
+	}
+
+	// 结束并返回zip内容（全文注释）
+	function end(cint) {
+		if (cint === undefined || cint === null) cint = [];
+		if (typeof cint === "string") cint = str2uint(cint);
+		if (cint.length > 65535) cint = cint.slice(0, 65535);
+		let offs = bin.length;
+		files.forEach(v => {
+			append(central);
+			num4(v.datetime); // datetime
+			num4(v.crc); // crc32
+			num4(v.size); // old size
+			num4(v.size); // new size
+			num2(v.uname.length); // length of filename
+			num2(0); // length of extra data
+			num2(v.cint.length); // length of comment
+			num2(0);
+			num2(0); // internal attr
+			num4(0b00100000); // external attr (xlADVSHR)
+			num4(v.offs); // data offset
+			append(v.uname); // filename
+			append(v.cint); // file comment
+		});
+
+		let size = bin.length - offs;
+		append(centralend);
+		num2(files.length); // total files in this part
+		num2(files.length); // total files
+		num4(size); // size of central
+		num4(offs); // cantral offset
+		num2(cint.length); // comment length
+		append(cint); // comment
+
+		return bin;
+	}
+
+	return {
+		crc32,
+		str2uint,
+		todatetime,
+		begin,
+		addfile,
+		end
+	};
 };
 
+		}();
 
-/* functions/joystick.css */
-_tfgsAddCSS(`.tfgsJoystick {
+		/* functions/example.js */
+		! function (){
+let oldtitle;
+tfgs.func.add({
+	id: "example",
+	name: "自定义窗口标题", // 设定功能名字
+	author: "作者名字", // 设定作者(可选)
+	version: "v0.1.0", // 设定版本(可选)
+	info: "让你能够修改窗口的标题", // 设定说明(可选)
+	default: false, // 是否默认启用
+	option: { // 设定选项列表
+		"title": { // 选项变量名
+			"type": "text", // 选项类型，text 文字，number数字，check 复选框(开关)，menu 选项列表
+			"name": "窗口标题", // 选项旁边的文字
+			"maxlength": 16, // 设定文本最大长度
+			// "max": 9, // 数字最大值
+			// "min": 1, // 数字最小值
+			// "menu": ["a", "b", "c"], // 选项列表
+			// "value": [1, 2, 3], // 选项对应的数值
+			"default": "示例标题" // 默认值
+		}
+		// 可以添加更多内容
+	},
+	onenable: function(api) {
+		oldtitle = document.title;
+		document.title = api.getoption().title;
+	},
+	ondisable: function(api) {
+		document.title = oldtitle;
+	},
+	// onoption 只有在功能启用时改选项才触发
+	onoption: function(api) {
+		document.title = api.getoption().title;
+	}
+});
+
+		}();
+
+		/* functions/copyblock.js */
+		! function (){
+let api;
+let api_enabled = false;
+let workspace, blockly;
+// 打开重试计时器
+let opening = -1;
+
+let _origcontextmenu1 = null;
+let _origcontextmenu2 = null;
+
+// 打开 tfgs
+function setup(tryCount) {
+	api_enabled = true;
+	//部分社区的界面会加载，尝试多次
+	try {
+		blockly = api.blockly();
+		workspace = api.workspace();
+		if (_origcontextmenu1 === null) {
+			_origcontextmenu1 = workspace.showContextMenu_;
+			workspace.showContextMenu_ = function(e) {
+				let ret = _origcontextmenu1.apply(this, arguments);
+				try {
+					if (api_enabled) {
+						on_blockMenu(e);
+					}
+				} catch (e) {
+					api.onerror(e);
+				}
+				return ret;
+			}
+		}
+		if (_origcontextmenu2 === null) {
+			_origcontextmenu2 = blockly.BlockSvg.prototype.showContextMenu_;
+			blockly.BlockSvg.prototype.showContextMenu_ = function(e) {
+				api.log(e);
+				let ret = _origcontextmenu2.apply(this, arguments);
+				try {
+					if (api_enabled) {
+						on_blockMenu(e);
+					}
+				} catch (e) {
+					api.onerror(e);
+				}
+				return ret;
+			}
+		}
+		api.log("打开");
+	} catch (err) {
+		api.onerror(err);
+		api.log("启动失败次数: " + (tryCount + 1));
+		opening = setTimeout(function() {
+			setup(api, tryCount + 1);
+		}, 500);
+		return;
+	}
+}
+
+function on_blockMenu(event) {
+	let element = event.target;
+	if (element === null) return;
+
+	let clickSVG = getSVG(element);
+	if (clickSVG === null) return;
+
+	let menu = api.selele("blocklyContextMenu");
+	if (menu === null) return;
+
+	let blockBox = clickSVG.classList.contains("blocklyFlyout");
+	let blockId = getBlockId(element);
+
+	if (!blockBox && !api.RESPECTnodownload_DO_NOT_DELETE()) {
+		if (blockId !== null) {
+			addToContextMenu("复制这个积木", function() {
+				copyToXML(blockId, false, true);
+				menu.remove();
+			}, menu);
+			/*addToContextMenu("复制以下积木", function() {
+				copyToXML(blockId, false, false);
+				menu.remove();
+			}, menu);*/
+			addToContextMenu("复制这组积木", function() {
+				copyToXML(blockId, true, false);
+				menu.remove();
+			}, menu);
+		} else {
+			addToContextMenu("复制全部积木", function() {
+				copyToXML(null, true, false);
+				menu.remove();
+			}, menu);
+			addToContextMenu("粘贴积木文本", function() {
+				pasteFromXML();
+				menu.remove();
+			}, menu);
+		}
+	}
+}
+
+function getSVG(element) {
+	while (element !== null && element.tagName.toLowerCase() !== "svg") {
+		element = element.parentElement;
+	}
+	return element;
+}
+
+function getBlockId(element) {
+	while (element !== null &&
+		element.tagName.toLowerCase() !== "svg"
+	) {
+		if (element.tagName.toLowerCase() === "g") {
+			let id = element.getAttribute("data-id");
+			if (id !== null) {
+				return id;
+			}
+		}
+		element = element.parentElement;
+	}
+	return null;
+}
+
+function addToContextMenu(name, callback, element) {
+	let menuItem = tfgs.element.create("div", "goog-menuitem");
+	menuItem.setAttribute("role", "menuitem");
+	menuItem.style.userSelect = "none";
+	let menuText = tfgs.element.create("div", "goog-menuitem-content");
+	menuText.innerText = name;
+	menuItem.appendChild(menuText);
+	menuItem.addEventListener("click", callback);
+	element.parentElement.style.height = "100000px";
+	element.appendChild(menuItem);
+}
+
+function pasteFromXML() {
+	let loaddata = function(data) {
+		let blockly = api.blockly();
+		let blockXML = blockly.Xml.textToDom(data);
+		let blockIds = blockly.Xml.domToWorkspace(blockXML, workspace);
+		if (blockIds.length === 0) {
+			throw new Error("粘贴失败");
+		}
+		let met = workspace.getMetrics();
+		let posX = met.viewLeft + 15;
+		let posY = met.viewTop + 15;
+		for (let i = 0; i < blockIds.length; i++) {
+			let bl = workspace.getBlockById(blockIds[i]);
+			if (bl.getParent() === null) {
+				let oldpos = bl.getRelativeToSurfaceXY();
+				bl.moveBy(
+					posX / workspace.scale - oldpos.x,
+					posY / workspace.scale - oldpos.y
+				);
+				posY += (bl.getHeightWidth().height + 30) * workspace.scale;
+			}
+		}
+	};
+	api.paste().then(loaddata);
+}
+
+function copyToXML(blockId, loadPrev, deleNext) {
+	try {
+		let blockly = api.blockly();
+		let blockXML = blockly.Xml.workspaceToDom(workspace);
+		let blockThisXML;
+		if (blockId === null) {
+			blockThisXML = blockly.Xml.domToText(blockXML, workspace);
+		} else {
+			let blockThis = findBlock(blockXML, blockId);
+			while (blockThis !== null &&
+				blockThis.tagName.toLowerCase() !== "block"
+			) {
+				blockThis = blockThis.parentElement;
+			}
+			if (blockThis === null) {
+				throw new Error('复制失败:找不到积木');
+			}
+			if (deleNext) {
+				let bc = blockThis.children;
+				for (let i = 0; i < bc.length; i++) {
+					if (bc[i].tagName.toLowerCase() === "next") {
+						bc[i].remove();
+						i--;
+					}
+				}
+			}
+			if (loadPrev) {
+				while (blockThis.parentElement !== null &&
+					(blockThis.parentElement.tagName.toLowerCase() === 'block' ||
+						blockThis.parentElement.tagName.toLowerCase() === 'next')
+				) {
+					blockThis = blockThis.parentElement;
+				}
+			}
+			blockThisXML = "<xml>" + blockly.Xml.domToText(blockThis, workspace) + "</xml>";
+		}
+		api.copy(blockThisXML);
+	} catch (e) {
+		api.onerror(e);
+	}
+}
+
+function findBlock(blockXML, blockId) {
+	if (blockXML.getAttribute('id') === blockId) {
+		return blockXML;
+	} else {
+		let bc = blockXML.children;
+		for (let i = 0; i < bc.length; i++) {
+			let find = findBlock(bc[i], blockId);
+			if (find !== null) {
+				return find;
+			}
+		}
+		return null;
+	}
+}
+
+tfgs.func.add({
+	id: "copyblock",
+	name: "复制积木为文字",
+	info: "在右键菜单中添加“复制积木”“粘贴积木”选项，可以跨作品复制，或者粘贴到记事本(是xml格式)",
+	default: false,
+	option: {},
+	onenable: function(_api) {
+		api = _api;
+		setup(1);
+	},
+	ondisable: function() {
+		api_enabled = false;
+		// 停止重试
+		if (opening !== -1) {
+			clearTimeout(opening);
+			opening = -1;
+		}
+		api.log("关闭");
+	},
+	onoption: function() {}
+});
+
+		}();
+
+		/* functions/forcecolor.js */
+		! function (){
+let api = null;
+let interval = -1;
+let winob = null;
+
+function forcesetcolor(id, data) {
+	// 强行发送颜色更改
+	let div = api.selele("paint-editor_editor-container-top_")
+	//id: 0填充 1轮廓
+	div = div.children[1].children[0].children[id];
+	let stateNode = api.reactInternal(div).return.return.return.stateNode;
+
+	// 找到 stateNode 后，可以访问并执行react回调函数
+	// 经过尝试和查看scratch源代码可以发现这些函数可以修改颜色
+	stateNode.handleChangeGradientType(data.gradientType);
+	// 改左颜色
+	stateNode.props.onChangeColorIndex(0);
+	stateNode.handleChangeColor(data.primary);
+	// 如果需要改右颜色，就改右颜色
+	// 如果在纯色模式下还去改右颜色会变成改左颜色，因此要特判
+	if (data.gradientType !== "SOLID") {
+		stateNode.props.onChangeColorIndex(1);
+		stateNode.handleChangeColor(data.secondary);
+	}
+	// 象征性地
+	stateNode.handleCloseColor();
+	// 更改颜色后，如果有选中的项，它们会改变颜色，调用onUpdateImage提交造型的修改以免丢失。
+	stateNode.props.onUpdateImage();
+
+	// 如果设置的颜色包含透明度，在颜色通过方法一传播到最后的时候会被检查函数拦下，导致当前颜色没有改变（但是选中元素的颜色会正常改变），此时使用方法二
+	let vm = api.vm();
+	let color = tfgs.funcapi.paint().color;
+	// 强行改变color的值，这在redux中很不规范，但是有效
+	let colid = id === 1 ? "strokeColor" : "fillColor";
+	color[colid].gradientType = data.gradientType;
+	color[colid].primary = data.primary;
+	color[colid].secondary = data.secondary;
+	// 关键：调用refreshWorkspace直接刷新工作区，此时当前颜色完美改变。
+	vm.refreshWorkspace();
+}
+
+function showwindow() {
+	if (winob !== null) {
+		return;
+	}
+	winob = tfgs.window.create({
+		title: "forceColor",
+		haveLogo: false,
+		canClose: false,
+		canMaximize: false,
+		x: 100,
+		y: 80,
+		width: 250,
+		height: 160,
+		minWidth: 120,
+		minHeight: 120
+	});
+	let win = tfgs.element.create("div", "tfgsForcecolorWin");
+	win.innerHTML = `
+类型: <select>
+	<option value="0">填充颜色</option>
+	<option value="1">轮廓颜色</option>
+</select><br/>
+颜色1: <input type="text" value="#00ff00"></input><br/>
+颜色2: <input type="text" value="#ff0000"></input><br/>
+混合模式: <select>
+	<option value="SOLID">■</option>
+	<option value="VERTICAL">↓</option>
+	<option value="HORIZONTAL">→</option>
+	<option value="RADIAL">○</option>
+</select><br/>
+<input type="button" value="设置"></input>
+<pre>颜色格式: #RRGGBB 或者 rgb(红色, 绿色, 蓝色)
+透明颜色: #RRGGBBAA 或者 rgba(红色, 绿色, 蓝色, 不透明度)</pre>
+`;
+	let ins = win.children;
+	ins[8].addEventListener("click", function() {
+		try {
+			forcesetcolor(Number(ins[0].value), {
+				primary: ins[2].value,
+				secondary: ins[4].value,
+				gradientType: ins[6].value
+			});
+		} catch (e) {
+			api.onerror(e);
+		}
+	});
+	winob.innerDiv.appendChild(win);
+}
+
+function scanner() {
+	showwindow();
+}
+
+function stopscan() {
+	if (winob !== null) {
+		winob.close();
+		winob = null
+	}
+}
+
+tfgs.func.add({
+	id: "forcecolor",
+	name: "强行设定颜色",
+	onenable: function(_api) {
+		api = _api;
+		if (interval === -1) interval = setInterval(scanner, 100);
+	},
+	ondisable: function() {
+		if (interval !== -1) {
+			clearInterval(interval);
+			interval = -1;
+		}
+		stopscan();
+	},
+	onoption: function() {}
+});
+
+		}();
+
+		/* functions/guimodify.css */
+		_tfgsAddCSS(`span.tfgsGuimodifyButton {
+	position: absolute;
+	color: grey;
+	background: white;
+	font-size: 1em;
+	line-height: 30px;
+	width: 30px;
+	height: 30px;
+	border-radius: 2px;
+	border: 1px solid grey;
+	text-align: center;
+}
+
+body.tfgsGuimodifyMenubarFold div[class*=gui_menu-bar-position_] {
+	top: calc(0px - var(--tfgsGuimodifyMenubarHeight));
+	margin-bottom: calc(0px - var(--tfgsGuimodifyMenubarHeight));
+}
+
+body.tfgsGuimodifyMenubarFold div[class*=gui_body-wrapper_] {
+	height: 100%;
+}
+
+body.tfgsGuimodifyBlocktoolFold .blocklyFlyoutScrollbar,
+body.tfgsGuimodifyBlocktoolFold .blocklyFlyout {
+	left: -250px;
+}
+
+body.tfgsGuimodifyStagetargetFold div[class*=gui_stage-and-target-wrapper_] {
+	display: none;
+}
+
+/* gandi */
+body.tfgsGuimodifySpriteinfoFold div[class*=sprite-info_sprite-info_],
+body.tfgsGuimodifySpriteinfoFold div[class*=target-pane_target-preview_] {
+	max-height: 0px;
+	padding: 0px;
+	overflow: hidden;
+}
+
+body.tfgsGuimodifyStagebuttonFold div[class*=target-pane_stage-selector-wrapper_] {
+	max-width: 0px;
+	padding: 0px;
+	margin-left: 0px;
+	margin-right: 0px;
+	overflow: hidden;
+}
+
+body.tfgsGuimodifyStageFold div[class*=stage-wrapper_stage-canvas-wrapper_] {
+	max-height: 0px;
+	padding: 0px;
+	overflow: hidden;
+}
+
+body.tfgsGuimodifyFullscreen {
+	overflow: scroll;
+}
+
+body.tfgsGuimodifyExpand100 {
+	position: fixed;
+	bottom: 0;
+}
+
+body.tfgsGuimodifyAssetpanelFold [class*=selector_wrapper_] {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	z-index: 2;
+}
+
+body.tfgsGuimodifyAssetpanelFold [class*=selector_list-area_] {
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-content: flex-start;
+}
+
+body.tfgsGuimodifyAssetpanelFold [class*="sprite-selector-item_sprite-selector-item_"] {
+	margin-left: 0.8em;
+}
+
+body.tfgsGuimodifyAssetpanelFold [class*=asset-panel_detail-area_] {
+	padding-left: 45px;
+}
+`);
+
+		/* functions/guimodify.js */
+		! function (){
+let api;
+let interval = -1;
+
+let pbutton = {};
+let foption = {};
+let _fullscreen = false;
+
+function configButton(options) {
+	let buttonid = options.buttonid;
+	let enable = options.enable;
+	let addinner = options.addinner;
+	let removeinner = options.removeinner;
+	let styles = options.styles;
+	let targetcss = options.targetcss;
+	let cssname = options.cssname;
+	let onadd = options.onadd;
+	let onremove = options.onremove;
+	if (enable /*foption.foldmenu*/ ) {
+		/* ------ on ------ */
+		if (pbutton[buttonid] !== undefined) {
+			let target = api.selele(targetcss);
+			if (pbutton[buttonid].parentElement !== target) {
+				pbutton[buttonid].remove();
+				pbutton[buttonid] = undefined;
+				if (cssname !== undefined)
+					document.body.classList.remove(cssname);
+				if (typeof onremove === "function")
+					onremove();
+				api.info(buttonid + ": restart");
+			}
+		}
+		if (pbutton[buttonid] === undefined) {
+			let target = api.selele(targetcss /*"gui_menu-bar-position_"*/ );
+			if (target === null) {
+				// api.warn(buttonid + ": target not found.");
+				return;
+			}
+			let button = document.createElement("span");
+			button.classList.add("tfgsGuimodifyButton");
+			for (let i in styles)
+				button.style[i] = styles[i];
+			button.innerText = addinner;
+			button.checked = false;
+			button.addEventListener("click", function() {
+				if (button.checked) {
+					if (cssname !== undefined)
+						document.body.classList.remove(cssname /*"tfgsGuimodifyMenubarFold"*/ );
+					if (typeof onremove === "function")
+						onremove();
+					button.innerText = addinner;
+				} else {
+					if (cssname !== undefined)
+						document.body.classList.add(cssname);
+					if (typeof onadd === "function")
+						onadd();
+					button.innerText = removeinner;
+				}
+				button.checked ^= true;
+				dispatchEvent(new Event("resize"));
+			});
+			target.appendChild(button);
+			if (options.clickaftercreate)
+				button.click();
+			pbutton[buttonid] = button;
+			api.info(buttonid + ": OK");
+		}
+	} else {
+		/* ------ off ------ */
+		if (pbutton[buttonid] !== undefined) {
+			pbutton[buttonid].remove();
+			pbutton[buttonid] = undefined;
+			if (cssname !== undefined)
+				document.body.classList.remove(cssname);
+			if (typeof onremove === "function")
+				onremove();
+			dispatchEvent(new Event("resize"));
+			api.info(buttonid + ": OFF");
+		}
+	}
+}
+
+function updateStatus() {
+	try {
+		if (foption.expand100) {
+			if (!document.body.classList.contains("tfgsGuimodifyExpand100")) {
+				document.body.classList.add("tfgsGuimodifyExpand100");
+				dispatchEvent(new Event("resize"));
+			}
+		} else {
+			if (document.body.classList.contains("tfgsGuimodifyExpand100")) {
+				document.body.classList.remove("tfgsGuimodifyExpand100");
+				dispatchEvent(new Event("resize"));
+			}
+		}
+
+		if (foption.foldmenu) {
+			if (document.body.style.getPropertyValue("--tfgsGuimodifyMenubarHeight") === "")
+				document.body.style.setProperty("--tfgsGuimodifyMenubarHeight", window.getComputedStyle(api.selele("gui_menu-bar-position_")).height);
+		} else {
+			if (document.body.style.getPropertyValue("--tfgsGuimodifyMenubarHeight") !== "")
+				document.body.style.removeProperty("--tfgsGuimodifyMenubarHeight");
+		}
+
+		configButton({
+			buttonid: "foldmenubar",
+			enable: foption.foldmenu,
+			styles: {
+				left: 0,
+				top: "100%",
+				position: "absolute"
+			},
+			addinner: "▲",
+			removeinner: "▼",
+			targetcss: "gui_menu-bar-position_",
+			cssname: "tfgsGuimodifyMenubarFold",
+			clickaftercreate: true
+		});
+
+		configButton({
+			buttonid: "fullscreen",
+			enable: foption.fullscreen,
+			styles: {
+				right: "calc(2em + 1px)",
+				top: "0.3em",
+				position: "absolute"
+			},
+			addinner: "✠",
+			removeinner: "×",
+			targetcss: "gui_editor-wrapper_",
+			cssname: "tfgsGuimodifyFullscreen",
+			onadd: function(button) {
+				if (document.fullscreenElement === null)
+					document.body.requestFullscreen()
+					.catch(api.onerror);
+			},
+			onremove: function(button) {
+				if (document.fullscreenElement !== null)
+					document.exitFullscreen()
+					.catch(api.onerror);
+			}
+		});
+
+		let _fullscreenchange = function() {
+			let button = pbutton["fullscreen"];
+			if ((document.fullscreenElement === null) !==
+				(button.innerText === "✠"))
+				button.click();
+		}
+
+		if (foption.fullscreen !== _fullscreen) {
+			if (foption.fullscreen)
+				document.addEventListener("fullscreenchange", _fullscreenchange);
+			else
+				document.removeEventListener("fullscreenchange", _fullscreenchange);
+			_fullscreen = foption.fullscreen;
+		}
+
+		configButton({
+			buttonid: "foldstagetarget",
+			enable: foption.foldstagetarget,
+			styles: {
+				right: 0,
+				top: "0.3em",
+				position: "absolute"
+			},
+			addinner: "▶",
+			removeinner: "◀",
+			targetcss: "gui_editor-wrapper_",
+			cssname: "tfgsGuimodifyStagetargetFold"
+		});
+
+		configButton({
+			buttonid: "foldblocktool",
+			enable: foption.foldblocktool,
+			styles: {
+				left: "calc(60px + 0.5em)",
+				top: "0.5em",
+				position: "absolute",
+				zIndex: 2000
+			},
+			addinner: "◀",
+			removeinner: "▶",
+			targetcss: "injectionDiv",
+			cssname: "tfgsGuimodifyBlocktoolFold"
+		});
+
+		configButton({
+			buttonid: "foldspriteinfo",
+			enable: foption.foldspriteinfo,
+			styles: {
+				left: 0,
+				top: 0,
+				position: "absolute"
+			},
+			addinner: "▲",
+			removeinner: "▼",
+			targetcss: "sprite-selector_scroll-wrapper_",
+			cssname: "tfgsGuimodifySpriteinfoFold"
+		});
+
+		configButton({
+			buttonid: "foldstagebutton",
+			enable: foption.foldstagebutton,
+			styles: {
+				right: 0,
+				top: "calc(2em + 1px)",
+				position: "absolute"
+			},
+			addinner: "▶",
+			removeinner: "◀",
+			targetcss: "sprite-selector_scroll-wrapper_",
+			cssname: "tfgsGuimodifyStagebuttonFold"
+		});
+
+		configButton({
+			buttonid: "foldthestage",
+			enable: foption.foldthestage,
+			styles: {
+				right: 0,
+				top: 0,
+				position: "absolute"
+			},
+			addinner: "▲",
+			removeinner: "▼",
+			targetcss: "sprite-selector_scroll-wrapper_",
+			cssname: "tfgsGuimodifyStageFold"
+		});
+
+		configButton({
+			buttonid: "foldassetpanel",
+			enable: foption.foldassetpanel,
+			styles: {
+				right: 0,
+				top: 0,
+				position: "absolute"
+			},
+			addinner: "▶",
+			removeinner: "◀",
+			targetcss: "selector_wrapper_",
+			cssname: "tfgsGuimodifyAssetpanelFold"
+		});
+	} catch (e) {
+		api.error(e);
+	}
+}
+
+tfgs.func.add({
+	id: "guifold",
+	name: "折叠展开按钮",
+	info: "添加可以折叠舞台、角色，展开列表等区域的按钮",
+	option: {
+		foldmenu: {
+			type: "check",
+			name: "折叠菜单",
+			default: true
+		},
+		fullscreen: {
+			type: "check",
+			name: "全屏按钮",
+			default: true
+		},
+		foldblocktool: {
+			type: "check",
+			name: "折叠jimuhe",
+			default: true
+		},
+		foldstagetarget: {
+			type: "check",
+			name: "折叠舞台和角色列表",
+			default: true
+		},
+		foldspriteinfo: {
+			type: "check",
+			name: "折叠角色参数",
+			default: true
+		},
+		foldstagebutton: {
+			type: "check",
+			name: "折叠舞台按钮",
+			default: true
+		},
+		foldthestage: {
+			type: "check",
+			name: "折叠舞台",
+			default: true
+		},
+		foldassetpanel: {
+			type: "check",
+			name: "折叠asset",
+			default: true
+		},
+		expand100: {
+			type: "check",
+			name: "填满屏幕(实验)",
+			default: false
+		}
+	},
+	onenable: function(_api) {
+		api = _api;
+		foption = api.getoption();
+		if (interval === -1)
+			interval = setInterval(updateStatus, 200);
+	},
+	ondisable: function() {
+		if (interval !== -1) {
+			clearInterval(interval);
+			foption = {};
+			updateStatus();
+			interval = -1;
+		}
+	},
+	onoption: function() {
+		foption = api.getoption();
+	}
+});
+
+		}();
+
+		/* functions/ccwterm.css */
+		_tfgsAddCSS(`.tfgsCCWtermSpan {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.tfgsCCWtermSpan>span {
+	display: inline-block;
+	width: calc(var(--termWidth) * var(--scale));
+	height: calc(var(--termHeight) * var(--scale));
+	overflow: hidden;
+}
+
+.tfgsCCWtermSpan>span>div#terminal-container {
+	background: black;
+	transform: scale(var(--scale));
+	transform-origin: -10px -10px;
+}
+`);
+
+		/* functions/ccwterm.js */
+		! function (){
+let api, termwin = null,
+	termdiv = null,
+	lastvisi = "?",
+	win = null,
+	readyt = -1,
+	lastmode = "?",
+	vm;
+
+function getready() {
+	if (readyt === -1) {
+		readyt = setInterval(getready, 1000);
+		return;
+	}
+	if (win === null) {
+		termwin = document.getElementById("gandi-terminal");
+		if (termwin === null) return;
+		termdiv = termwin.children[1];
+		let tstyle = window.getComputedStyle(termdiv);
+		let termspan = tfgs.element.create("span", "tfgsCCWtermSpan");
+		let twidth = Number(tstyle.width.slice(0, -2)) + 20;
+		let theight = Number(tstyle.height.slice(0, -2)) + 20;
+		api.log(tstyle.width);
+		api.log(tstyle.height);
+		win = tfgs.window.create({
+			title: "wterm",
+			canClose: false,
+			width: twidth + 6,
+			height: theight + 26,
+			onResize: function() {
+				let istyle = window.getComputedStyle(this.innerDiv);
+				let iw = Number(istyle.width.slice(0, -2));
+				let ih = Number(istyle.height.slice(0, -2));
+				termspan.style.setProperty("--scale", Math.min(iw / twidth, ih / theight));
+			}
+		});
+		termspan.innerHTML = "<span></span>";
+		termspan.children[0].appendChild(termdiv);
+		termspan.style.setProperty("--termWidth", twidth + "px");
+		termspan.style.setProperty("--termHeight", theight + "px");
+		win.innerDiv.appendChild(termspan);
+		termwin.style.display = "none";
+	}
+	win.title = termwin.children[0].children[0].innerText;
+	win._refresh();
+	if (lastvisi !== termwin.style.visibility) {
+		lastvisi = termwin.style.visibility;
+		api.log(`visibility: ${lastvisi}`);
+		if (termwin.style.visibility !== "visible") {
+			// HIDE
+			switch (api.getoption().mode) {
+				case "respect":
+					win.windowDiv.style.visibility = "hidden";
+					break;
+				case "minmax":
+					win.minimize();
+					break;
+				case "minshow":
+					win.minimize();
+					break;
+				case "ignore":
+					break;
+			}
+		} else {
+			// SHOW
+			win.windowDiv.style.visibility = "visible";
+			win.movetotop();
+			switch (api.getoption().mode) {
+				case "respect":
+					break;
+				case "minmax":
+					win.restore();
+					break;
+				case "minshow":
+					break;
+				case "ignore":
+					break;
+			}
+			win.flash(200, 3, true);
+		}
+	}
+}
+
+function closecontrol() {
+	if (win !== null) {
+		win.close();
+		win = null;
+	}
+	if (termwin !== null) {
+		termwin.style.display = "block";
+		termwin.appendChild(termdiv);
+	}
+}
+
+tfgs.func.add({
+	id: "ccwterm",
+	name: "将ccw控制台放入tfgs窗口",
+	info: "这个东西，我们叫它'Terminal'(终端)，微软叫它'Console'(控制台)，用着xterm又叫它控制台的ccw是",
+	default: false,
+	option: {
+		mode: {
+			type: "menu",
+			name: "响应控制台消息",
+			menu: ["尊重显示和隐藏操作", "将显示/隐藏理解为还原/最小化", "显示时闪烁,隐藏时最小化", "忽略隐藏请求"],
+			value: ["respect", "minmax", "minshow", "ignore"],
+			default: "respect"
+		}
+	},
+	onenable: function(_api) {
+		api = _api;
+		lastvisi = "?";
+		lastmode = api.getoption().mode;
+		getready();
+	},
+	ondisable: function() {
+		if (readyt !== -1) {
+			clearInterval(readyt);
+			readyt = -1;
+		}
+		closecontrol();
+	},
+	onoption: function() {
+		if (api.getoption().mode !== lastmode) {
+			lastvisi = "?";
+			lastmode = api.getoption().mode;
+		}
+	}
+});
+
+		}();
+
+		/* functions/forcecolor.css */
+		_tfgsAddCSS(`.tfgsForcecolorWin {
+	font-size: 16px;
+	text-align: center;
+}
+
+.tfgsForcecolorWin input {
+	width: 150px;
+	border: 1px solid black;
+}
+
+.tfgsForcecolorWin pre {
+	font-size: 8px;
+}
+`);
+
+		/* functions/joystick.css */
+		_tfgsAddCSS(`.tfgsJoystick {
 	display: flex;
 	padding: 2px;
 	height: calc(100% - 4px);
@@ -1803,131 +3076,131 @@ _tfgsAddCSS(`.tfgsJoystick {
 	position: absolute;
 	right: 2px;
 	bottom: 2px;
-	height: 30px;
-	width: 30px;
-	background-color: white !important;
+	height: 10%;
+	width: 10%;
 }
 `);
-/* functions/joystick.js */
-! function() {
-	let foption = {};
-	let api, win = null;
-	let shift = false,
-		control = false,
-		alt = false;
-	let mousex = 0,
-		mousey = 0,
-		moused = false,
-		touchx = 0,
-		touchy = 0,
-		toucht = 0,
-		cursordiv = null;
-	let globalKeyInterval = -1,
-		globalKeyTimeout = -1;
-	let realmousedown = false;
-	let switchpage = -1;
 
-	function monitorkey(event) {
-		control = event.ctrlKey;
-		alt = event.altKey;
-		shift = event.shiftKey;
-	}
+		/* functions/joystick.js */
+		! function (){
+let foption = {};
+let api, win = null;
+let shift = false,
+	control = false,
+	alt = false;
+let mousex = 0,
+	mousey = 0,
+	moused = false,
+	touchx = 0,
+	touchy = 0,
+	toucht = 0,
+	cursordiv = null;
+let globalKeyInterval = -1,
+	globalKeyTimeout = -1;
+let realmousedown = false;
+let switchpage = -1;
 
-	function opencontrol() {
-		window.addEventListener("keydown", monitorkey);
-		window.addEventListener("keyup", monitorkey);
+function monitorkey(event) {
+	control = event.ctrlKey;
+	alt = event.altKey;
+	shift = event.shiftKey;
+}
 
-		shift = false;
-		control = false;
-		alt = false;
-		mousex = 0;
-		mousey = 0;
-		moused = false;
-		touchx = 0;
-		touchy = 0;
-		toucht = 0;
-		cursordiv = null;
-		globalKeyInterval = -1;
-		globalKeyTimeout = -1;
+function opencontrol() {
+	window.addEventListener("keydown", monitorkey);
+	window.addEventListener("keyup", monitorkey);
 
-		win = tfgs.window.create({
-			title: "JoyStick",
-			canClose: false,
-			canMaximize: false,
-			onResize: function() {
-				if (switchpage === 2) {
-					let wchild = win.innerDiv.children[0].children;
-					let parts = wchild[2].children;
-					if (parts.length !== 0) {
-						setJoystick(parts[0], foption.joyleft, foption.joyleftcustom);
-						setJoystick(parts[1], foption.joyright, foption.joyrightcustom);
-					}
+	shift = false;
+	control = false;
+	alt = false;
+	mousex = 0;
+	mousey = 0;
+	moused = false;
+	touchx = 0;
+	touchy = 0;
+	toucht = 0;
+	cursordiv = null;
+	globalKeyInterval = -1;
+	globalKeyTimeout = -1;
+
+	win = tfgs.window.create({
+		title: "JoyStick",
+		canClose: false,
+		canMaximize: false,
+		onResize: function() {
+			if (switchpage === 2) {
+				let wchild = win.innerDiv.children[0].children;
+				let parts = wchild[2].children;
+				if (parts.length !== 0) {
+					setJoystick(parts[0], foption.joyleft, foption.joyleftcustom);
+					setJoystick(parts[1], foption.joyright, foption.joyrightcustom);
 				}
 			}
-		});
+		}
+	});
 
-		let wdiv = win.innerDiv;
-		wdiv.innerHTML = `
+	let wdiv = win.innerDiv;
+	wdiv.innerHTML = `
 <div class="tfgsJoystick">
 	<div class="tfgsJoystickKeyBoard"></div>
 	<div class="tfgsJoystickMouse"></div>
 	<div class="tfgsJoystickGamepad"></div>
 </div>`;
 
-		wdiv.onmousedown = wdiv.ontouchstart = function(e) {
-			win.movetotop();
-			e.preventDefault();
-			e.stopPropagation();
-		};
-		wdiv.onmousemove = wdiv.ontouchmove = function(e) {
-			e.preventDefault();
-			e.stopPropagation();
-		};
-		wdiv.onmouseup = wdiv.ontouchend = function(e) {
-			e.preventDefault();
-			e.stopPropagation();
-		};
+	wdiv.onmousedown = wdiv.ontouchstart = function(e) {
+		win.movetotop();
+		e.preventDefault();
+		e.stopPropagation();
+	};
+	wdiv.onmousemove = wdiv.ontouchmove = function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+	};
+	wdiv.onmouseup = wdiv.ontouchend = function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+	};
 
-		switchto(foption.start);
+	switchto(foption.start);
 
-		_refresh();
+	_refresh();
+}
+
+function switchto(x) {
+	let wchild = win.innerDiv.children[0].children;
+	for (let i = 0; i < wchild.length; i++) {
+		let elem = wchild[i];
+		elem.style.display = x === i ? "flex" : "none";
 	}
-
-	function switchto(x) {
-		let wchild = win.innerDiv.children[0].children;
-		for (let i = 0; i < wchild.length; i++) {
-			let elem = wchild[i];
-			elem.style.display = x === i ? "flex" : "none";
-		}
-		switchpage = x;
-		if (x === 2) {
-			let parts = wchild[2].children;
-			if (parts.length !== 0) {
-				setJoystick(parts[0], foption.joyleft, foption.joyleftcustom);
-				setJoystick(parts[1], foption.joyright, foption.joyrightcustom);
-			}
+	switchpage = x;
+	if (x === 2) {
+		let parts = wchild[2].children;
+		if (parts.length !== 0) {
+			setJoystick(parts[0], foption.joyleft, foption.joyleftcustom);
+			setJoystick(parts[1], foption.joyright, foption.joyrightcustom);
 		}
 	}
+}
 
-	function _refresh() {
-		let wchild = win.innerDiv.children[0].children;
-		let jKeyb = wchild[0];
-		let jMous = wchild[1];
-		let jJoys = wchild[2];
+function _refresh() {
+	let wchild = win.innerDiv.children[0].children;
+	let jKeyb = wchild[0];
+	let jMous = wchild[1];
+	let jJoys = wchild[2];
 
-		// 0: keyBoard
+	// 0: keyBoard
 
-		let keybsets = [
-			"`1234567890-=⌫\n⇄qwertyuiop[]\\\n asdfghjkl';↵\n⇧zxcvbnm,./ \n⌃⌥␣←↑↓→⌬",
-			"1234567890\nqwertyuiop\nasdfghjkl\nzxcvbnm↑↵\n⌬␣←↓→"
-		];
+	let keybsets = [
+		"`1234567890-=⌫\n⇄qwertyuiop[]\\\n asdfghjkl';↵\n⇧zxcvbnm,./ \n⌃⌥␣←↑↓→⌬",
+		"1234567890\nqwertyuiop\nasdfghjkl\nzxcvbnm↑↵\n⌬␣←↓→"
+	];
 
-		let i = foption.fullkey ? 0 : 1;
-		setKeyboard(jKeyb, keybsets[i], 1);
+	let i = foption.fullkey ? 0 : 1;
+	setKeyboard(jKeyb, keybsets[i], 1, true);
 
-		// 1: mouse
+	// 1: mouse
 
-		jMous.innerHTML = `
+	jMous.innerHTML = `
 <span class="tfgsJoystickMouseMove"></span>
 <span>
 	<span class="tfgsJoystickMouseClick">
@@ -2019,132 +3292,132 @@ _tfgsAddCSS(`.tfgsJoystick {
 	<span class="tfgsJoystickMouseSwitch">◎∷</span>
 </span>`;
 
-		jMous.children[0].onmousedown = jMous.children[0].ontouchstart = synctouch;
-		jMous.children[0].onmousemove = jMous.children[0].ontouchmove = synctouch;
-		jMous.children[0].onmouseleave = jMous.children[0].onmouseup = jMous.children[0].ontouchend = synctouch;
+	jMous.children[0].onmousedown = jMous.children[0].ontouchstart = synctouch;
+	jMous.children[0].onmousemove = jMous.children[0].ontouchmove = synctouch;
+	jMous.children[0].onmouseleave = jMous.children[0].onmouseup = jMous.children[0].ontouchend = synctouch;
 
-		bindbutton(jMous.children[1].children[0], 0);
-		if (foption.mousebuttons) {
-			bindbutton(jMous.children[1].children[1], 1);
-			bindbutton(jMous.children[1].children[2], 2);
-		} else {
-			jMous.children[1].children[1].style.display = "none";
-			jMous.children[1].children[2].style.display = "none";
+	bindbutton(jMous.children[1].children[0], 0);
+	if (foption.mousebuttons) {
+		bindbutton(jMous.children[1].children[1], 1);
+		bindbutton(jMous.children[1].children[2], 2);
+	} else {
+		jMous.children[1].children[1].style.display = "none";
+		jMous.children[1].children[2].style.display = "none";
+	}
+	bindwheel(jMous.children[1].children[3], -120);
+	bindwheel(jMous.children[1].children[4], 120);
+
+	jMous.children[1].children[5].onmousedown = jMous.children[1].children[5].ontouchstart = function(e) {
+		this.style.background = "grey";
+	};
+
+	jMous.children[1].children[5].onmouseup = jMous.children[1].children[5].ontouchend = function(e) {
+		this.style.background = "inherit";
+		switchto(2);
+	};
+
+	// 2: joystick
+
+	jJoys.innerHTML = `<span></span><span></span><span class="tfgsJoystickSwitch">⌨</span>`;
+	let parts = jJoys.children;
+
+	parts[2].onmousedown = parts[2].ontouchstart = function() {
+		this.style.background = "grey";
+	};
+
+	parts[2].onmouseup = parts[2].ontouchend = function() {
+		this.style.background = "inherit";
+		switchto(0);
+	};
+
+	setJoystick(parts[0], foption.joyleft, foption.joyleftcustom);
+	setJoystick(parts[1], foption.joyright, foption.joyrightcustom);
+}
+
+function bindwheel(elem, delta) {
+	let interval = -1;
+	let step = function() {
+		sendWheelEvent(mousex, mousey, "wheel", {
+			deltaY: delta / 4,
+			wheelDelta: -delta,
+		});
+	};
+
+	elem.onmousedown = elem.ontouchstart = function(e) {
+		if (interval !== -1) {
+			clearInterval(interval);
 		}
-		bindwheel(jMous.children[1].children[3], -120);
-		bindwheel(jMous.children[1].children[4], 120);
+		step();
+		interval = setInterval(step, 50);
+		this.style.background = "grey";
+	};
 
-		jMous.children[1].children[5].onmousedown = jMous.children[1].children[5].ontouchstart = function(e) {
+	elem.onmouseleave = elem.onmouseup = elem.ontouchend = function(e) {
+		if (interval !== -1) {
+			clearInterval(interval);
+		}
+		this.style.background = "inherit";
+	};
+}
+
+function bindbutton(elem, button) {
+	elem.onmousedown = elem.ontouchstart = function(e) {
+		sendMouseEvent(mousex, mousey, "mousedown", {
+			button: button
+		});
+		this.style.background = "grey";
+	};
+
+	elem.onmouseleave = elem.onmouseup = elem.ontouchend = function(e) {
+		sendMouseEvent(mousex, mousey, "mouseup", {
+			button: button
+		});
+		this.style.background = "inherit";
+	};
+}
+
+function synctouch(e) {
+	let tlist;
+	switch (e.type) {
+		case "mousedown":
+			realmousedown = true;
 			this.style.background = "grey";
-		};
-
-		jMous.children[1].children[5].onmouseup = jMous.children[1].children[5].ontouchend = function(e) {
-			this.style.background = "inherit";
-			switchto(2);
-		};
-
-		// 2: joystick
-
-		jJoys.innerHTML = `<span></span><span></span><span class="tfgsJoystickSwitch">⌨</span>`;
-		let parts = jJoys.children;
-
-		parts[2].onmousedown = parts[2].ontouchstart = function() {
-			this.style.background = "grey";
-		};
-
-		parts[2].onmouseup = parts[2].ontouchend = function() {
-			this.style.background = "inherit";
-			switchto(0);
-		};
-
-		setJoystick(parts[0], foption.joyleft, foption.joyleftcustom);
-		setJoystick(parts[1], foption.joyright, foption.joyrightcustom);
-	}
-
-	function bindwheel(elem, delta) {
-		let interval = -1;
-		let step = function() {
-			sendWheelEvent(mousex, mousey, "wheel", {
-				deltaY: delta / 4,
-				wheelDelta: -delta,
-			});
-		};
-
-		elem.onmousedown = elem.ontouchstart = function(e) {
-			if (interval !== -1) {
-				clearInterval(interval);
-			}
-			step();
-			interval = setInterval(step, 50);
-			this.style.background = "grey";
-		};
-
-		elem.onmouseleave = elem.onmouseup = elem.ontouchend = function(e) {
-			if (interval !== -1) {
-				clearInterval(interval);
-			}
-			this.style.background = "inherit";
-		};
-	}
-
-	function bindbutton(elem, button) {
-		elem.onmousedown = elem.ontouchstart = function(e) {
-			sendMouseEvent(mousex, mousey, "mousedown", {
-				button: button
-			});
-			this.style.background = "grey";
-		};
-
-		elem.onmouseleave = elem.onmouseup = elem.ontouchend = function(e) {
-			sendMouseEvent(mousex, mousey, "mouseup", {
-				button: button
-			});
-			this.style.background = "inherit";
-		};
-	}
-
-	function synctouch(e) {
-		let tlist;
-		switch (e.type) {
-			case "mousedown":
-				realmousedown = true;
-				this.style.background = "grey";
+			tlist = [{
+				clientX: e.clientX,
+				clientY: e.clientY
+			}];
+			break;
+		case "mousemove":
+			if (realmousedown) {
 				tlist = [{
 					clientX: e.clientX,
 					clientY: e.clientY
-				}];
-				break;
-			case "mousemove":
-				if (realmousedown) {
-					tlist = [{
-						clientX: e.clientX,
-						clientY: e.clientY
-					}]
-				} else {
-					tlist = [];
-				}
-				break;
-			case "mouseup":
-			case "mouseleave":
-				realmousedown = false;
-				this.style.background = "inherit";
+				}]
+			} else {
 				tlist = [];
-				break;
-			default:
-				tlist = e.targetTouches;
-		}
-		let touchnewx = 0,
-			touchnewy = 0,
-			touchnewt = new Date().getTime();
-		for (let i = 0; i < tlist.length; i++) {
-			touchnewx += tlist[i].clientX;
-			touchnewy += tlist[i].clientY;
-		}
+			}
+			break;
+		case "mouseup":
+		case "mouseleave":
+			realmousedown = false;
+			this.style.background = "inherit";
+			tlist = [];
+			break;
+		default:
+			tlist = e.targetTouches;
+	}
+	let touchnewx = 0,
+		touchnewy = 0,
+		touchnewt = new Date().getTime();
+	for (let i = 0; i < tlist.length; i++) {
+		touchnewx += tlist[i].clientX;
+		touchnewy += tlist[i].clientY;
+	}
 
-		if (cursordiv === null) {
-			cursordiv = tfgs.element.create("span", "tfgsJoystickCursor");
-			document.body.appendChild(cursordiv);
-			cursordiv.innerHTML = `<svg>
+	if (cursordiv === null) {
+		cursordiv = tfgs.element.create("span", "tfgsJoystickCursor");
+		document.body.appendChild(cursordiv);
+		cursordiv.innerHTML = `<svg>
 	<defs>
 		<filter id="fl" x="0" y="0" width="100" height="100">
 			<feGaussianBlur in="SourceAlpha" stdDeviation="1" result="blur"/>
@@ -2163,140 +3436,140 @@ _tfgsAddCSS(`.tfgsJoystick {
 		Z
 	" stroke=black stroke-width=1 fill=white filter="url(#fl)" />
 </svg>`;
-		}
+	}
 
-		if (e.type === "touchmove" || e.type === "mousemove" && realmousedown) {
-			touchnewx /= tlist.length;
-			touchnewy /= tlist.length;
-			let deltax = touchnewx - touchx;
-			let deltay = touchnewy - touchy;
-			let deltat = touchnewt - toucht;
-			let speed = Math.sqrt(deltax * deltax + deltay * deltay) / (deltat / 1000) //像素每秒
-			let k = foption.mousespeed * (speed / (speed + foption.mouseaccer));
-			mousex += deltax * k;
-			mousey += deltay * k;
-			if (mousex < 0) mousex = 0;
-			if (mousey < 0) mousey = 0;
-			if (mousex > window.innerWidth - 1) mousex = window.innerWidth - 1;
-			if (mousey > window.innerHeight - 1) mousey = window.innerHeight - 1;
-			touchx = touchnewx;
-			touchy = touchnewy;
-			toucht = touchnewt;
-			sendMouseEvent(mousex, mousey, "mousemove", {});
+	if (e.type === "touchmove" || e.type === "mousemove" && realmousedown) {
+		touchnewx /= tlist.length;
+		touchnewy /= tlist.length;
+		let deltax = touchnewx - touchx;
+		let deltay = touchnewy - touchy;
+		let deltat = touchnewt - toucht;
+		let speed = Math.sqrt(deltax * deltax + deltay * deltay) / (deltat / 1000) //像素每秒
+		let k = foption.mousespeed * (speed / (speed + foption.mouseaccer));
+		mousex += deltax * k;
+		mousey += deltay * k;
+		if (mousex < 0) mousex = 0;
+		if (mousey < 0) mousey = 0;
+		if (mousex > window.innerWidth - 1) mousex = window.innerWidth - 1;
+		if (mousey > window.innerHeight - 1) mousey = window.innerHeight - 1;
+		touchx = touchnewx;
+		touchy = touchnewy;
+		toucht = touchnewt;
+		sendMouseEvent(mousex, mousey, "mousemove", {});
+	} else {
+		if (foption.mouse2click && tlist.length > 1) {
+			if (!moused) {
+				sendMouseEvent(mousex, mousey, "mousedown", {});
+				this.style.background = "grey";
+			}
+			moused = true;
 		} else {
-			if (foption.mouse2click && tlist.length > 1) {
-				if (!moused) {
-					sendMouseEvent(mousex, mousey, "mousedown", {});
-					this.style.background = "grey";
-				}
-				moused = true;
-			} else {
-				if (moused) {
-					sendMouseEvent(mousex, mousey, "mouseup", {});
-					this.style.background = "inherit";
-				}
-				moused = false;
+			if (moused) {
+				sendMouseEvent(mousex, mousey, "mouseup", {});
+				this.style.background = "inherit";
 			}
-			if (tlist.length > 0) {
-				touchx = touchnewx / tlist.length;
-				touchy = touchnewy / tlist.length;
-				toucht = touchnewt;
+			moused = false;
+		}
+		if (tlist.length > 0) {
+			touchx = touchnewx / tlist.length;
+			touchy = touchnewy / tlist.length;
+			toucht = touchnewt;
+		}
+	}
+
+	cursordiv.style.left = mousex - 1 + "px";
+	cursordiv.style.top = mousey - 1 + "px";
+}
+
+function sendKey(type, char1) {
+	let detail = getKeyDetail(char1, shift);
+	sendKeyEvent(type, {
+		key: detail.cname,
+		code: detail.ccode,
+		keyCode: detail.ccode
+	});
+}
+
+function sendKeyEvent(type, data) {
+	const event = new KeyboardEvent(type, Object.assign({
+		view: window,
+		ctrlKey: control,
+		altKey: alt,
+		shiftKey: shift,
+		bubbles: true,
+		cancelable: true
+	}, data));
+	let elem = document.activeElement;
+	if (elem === null) elem = window;
+	elem.dispatchEvent(event);
+}
+
+function sendMouseLikeEvent(btype, mousex, mousey, type, data) {
+	const event = new btype(type, Object.assign({
+		view: window,
+		ctrlKey: control,
+		altKey: alt,
+		shiftKey: shift,
+		clientX: mousex,
+		clientY: mousey,
+		bubbles: true,
+		cancelable: true
+	}, data));
+	let elem = document.elementFromPoint(mousex, mousey);
+	let eventx = event.clientX,
+		eventy = event.clientY;
+	if (elem !== null) {
+		while (true) {
+			let next = null;
+			if (elem.tagName.toLowerCase() === "iframe") {
+				let offs = elem.getBoundingClientRect();
+				eventx -= offs.left;
+				eventy -= offs.top;
+				next = elem.contentWindow.document.elementFromPoint(eventx, eventy);
+			} else if (type === "mousedown" && elem.shadowRoot !== null && elem.shadowRoot !== undefined) {
+				next = elem.shadowRoot.elementFromPoint(eventx, eventy);
+			}
+			if (next === null) {
+				break;
+			} else {
+				elem = next;
 			}
 		}
-
-		cursordiv.style.left = mousex - 1 + "px";
-		cursordiv.style.top = mousey - 1 + "px";
 	}
-
-	function sendKey(type, char1) {
-		let detail = getKeyDetail(char1, shift);
-		sendKeyEvent(type, {
-			key: detail.cname,
-			code: detail.ccode,
-			keyCode: detail.ccode
-		});
+	if (elem === null) elem = window;
+	let pare = elem;
+	while (pare !== null && pare !== win.windowDiv) {
+		pare = pare.parentElement;
 	}
-
-	function sendKeyEvent(type, data) {
-		const event = new KeyboardEvent(type, Object.assign({
-			view: window,
-			ctrlKey: control,
-			altKey: alt,
-			shiftKey: shift,
-			bubbles: true,
-			cancelable: true
-		}, data));
-		let elem = document.activeElement;
-		if (elem === null) elem = window;
+	if (pare === null) {
+		event.clientX = eventx;
+		event.clientY = eventy;
 		elem.dispatchEvent(event);
 	}
+}
 
-	function sendMouseLikeEvent(btype, mousex, mousey, type, data) {
-		const event = new btype(type, Object.assign({
-			view: window,
-			ctrlKey: control,
-			altKey: alt,
-			shiftKey: shift,
-			clientX: mousex,
-			clientY: mousey,
-			bubbles: true,
-			cancelable: true
-		}, data));
-		let elem = document.elementFromPoint(mousex, mousey);
-		let eventx = event.clientX,
-			eventy = event.clientY;
-		if (elem !== null) {
-			while (true) {
-				let next = null;
-				if (elem.tagName.toLowerCase() === "iframe") {
-					let offs = elem.getBoundingClientRect();
-					eventx -= offs.left;
-					eventy -= offs.top;
-					next = elem.contentWindow.document.elementFromPoint(eventx, eventy);
-				} else if (type === "mousedown" && elem.shadowRoot !== null && elem.shadowRoot !== undefined) {
-					next = elem.shadowRoot.elementFromPoint(eventx, eventy);
-				}
-				if (next === null) {
-					break;
-				} else {
-					elem = next;
-				}
-			}
-		}
-		if (elem === null) elem = window;
-		let pare = elem;
-		while (pare !== null && pare !== win.windowDiv) {
-			pare = pare.parentElement;
-		}
-		if (pare === null) {
-			event.clientX = eventx;
-			event.clientY = eventy;
-			elem.dispatchEvent(event);
-		}
-	}
+function sendMouseEvent(mousex, mousey, type, data) {
+	sendMouseLikeEvent(MouseEvent, mousex, mousey, type, data);
+}
 
-	function sendMouseEvent(mousex, mousey, type, data) {
-		sendMouseLikeEvent(MouseEvent, mousex, mousey, type, data);
-	}
+function sendWheelEvent(mousex, mousey, type, data) {
+	sendMouseLikeEvent(WheelEvent, mousex, mousey, type, data);
+}
 
-	function sendWheelEvent(mousex, mousey, type, data) {
-		sendMouseLikeEvent(WheelEvent, mousex, mousey, type, data);
-	}
-
-	function createKey(key, nextId) {
-		let x = tfgs.element.create("span");
-		let detail = getKeyDetail(key, false);
-		let shdetail = getKeyDetail(key, true);
-		let name = detail.cname;
-		let shname = shdetail.cname;
-		let step = function() {
-			if (name === "Control") control = true;
-			if (name === "Alt") alt = true;
-			if (name === "Shift") shift = true;
-			sendKey("keydown", key);
-		};
-		if (name === "tfgsSwitch") {
-			x.innerHTML = `<svg width=20 height=30>
+function createKey(key, nextId, autoSize) {
+	let x = tfgs.element.create("span");
+	let detail = getKeyDetail(key, false);
+	let shdetail = getKeyDetail(key, true);
+	let name = detail.cname;
+	let shname = shdetail.cname;
+	let step = function() {
+		if (name === "Control") control = true;
+		if (name === "Alt") alt = true;
+		if (name === "Shift") shift = true;
+		sendKey("keydown", key);
+	};
+	if (name === "tfgsSwitch") {
+		x.innerHTML = `<svg width=20 height=30>
 	<path d="
 		M 1 10
 		A 9 9 0 0 1 19 10
@@ -2316,998 +3589,431 @@ _tfgsAddCSS(`.tfgsJoystick {
 		L 10 15
 	" stroke=black stroke-width=1 fill=none />
 </svg>`;
-		} else {
-			x.innerText = key + (name.toLowerCase() !== shname.toLowerCase() ? "\n" + shname : "");
+	} else {
+		x.innerText = key + (name.toLowerCase() !== shname.toLowerCase() && autoSize ? "\n" + shname : "");
+	}
+	x.onmousedown = x.ontouchstart = function(e) {
+		if (name !== "tfgsSwitch") {
+			if (globalKeyInterval !== -1) {
+				clearInterval(globalKeyInterval);
+			}
+			if (globalKeyTimeout !== -1) {
+				clearTimeout(globalKeyTimeout);
+			}
+			globalKeyInterval = -1;
+			globalKeyTimeout = -1;
+			step();
+			if (
+				name !== "Shift" &&
+				name !== "Alt" &&
+				name !== "Control"
+			) {
+				globalKeyTimeout = setTimeout(function() {
+					globalKeyTimeout = -1;
+					step();
+					globalKeyInterval = setInterval(step, foption.keyInterval);
+				}, foption.keyTimeout);
+			}
 		}
-		x.onmousedown = x.ontouchstart = function(e) {
-			if (name !== "tfgsSwitch") {
-				if (globalKeyInterval !== -1) {
-					clearInterval(globalKeyInterval);
-				}
-				if (globalKeyTimeout !== -1) {
-					clearTimeout(globalKeyTimeout);
-				}
-				globalKeyInterval = -1;
-				globalKeyTimeout = -1;
-				step();
-				if (
-					name !== "Shift" &&
-					name !== "Alt" &&
-					name !== "Control"
-				) {
-					globalKeyTimeout = setTimeout(function() {
-						globalKeyTimeout = -1;
-						step();
-						globalKeyInterval = setInterval(step, foption.keyInterval);
-					}, foption.keyTimeout);
-				}
+		x.style.background = "grey";
+	};
+	x.onmouseleave = x.onmouseup = x.ontouchend = function(e) {
+		if (name !== "tfgsSwitch") {
+			if (globalKeyInterval !== -1) {
+				clearInterval(globalKeyInterval);
 			}
-			x.style.background = "grey";
-		};
-		x.onmouseleave = x.onmouseup = x.ontouchend = function(e) {
-			if (name !== "tfgsSwitch") {
-				if (globalKeyInterval !== -1) {
-					clearInterval(globalKeyInterval);
-				}
-				if (globalKeyTimeout !== -1) {
-					clearTimeout(globalKeyTimeout);
-				}
-				globalKeyInterval = -1;
-				globalKeyTimeout = -1;
-				if (name === "Control") control = false;
-				if (name === "Alt") alt = false;
-				if (name === "Shift") shift = false;
-				sendKey("keyup", key);
-			} else {
-				switchto(nextId);
+			if (globalKeyTimeout !== -1) {
+				clearTimeout(globalKeyTimeout);
 			}
-			x.style.background = "inherit";
-		};
+			globalKeyInterval = -1;
+			globalKeyTimeout = -1;
+			if (name === "Control") control = false;
+			if (name === "Alt") alt = false;
+			if (name === "Shift") shift = false;
+			sendKey("keyup", key);
+		} else {
+			switchto(nextId);
+		}
+		x.style.background = "inherit";
+	};
+	if (autoSize) {
 		if (name === "Unidentified") x.style.flexGrow = 1.5;
 		if (name === "Shift") x.style.flexGrow = 2;
 		if (name === "Control") x.style.flexGrow = 2;
 		if (name === "Enter") x.style.flexGrow = 1.5;
 		if (name === " ") x.style.flexGrow = 4;
-		return x;
 	}
+	if (name === "Unidentified") x.style.visibility = "hidden";
+	return x;
+}
 
-	function setKeyboard(elem, char1, nextId) {
-		elem.innerHTML = "";
-		char1 = char1.split('\n');
-		for (let i in char1) {
-			let line1 = char1[i].split('');
-			let line = tfgs.element.create("span");
-			for (let j in line1) {
-				let char1 = line1[j];
-				line.appendChild(createKey(char1, nextId));
-			}
-			elem.appendChild(line);
+function setKeyboard(elem, char1, nextId, autoSize) {
+	elem.innerHTML = "";
+	char1 = char1.split('\n');
+	for (let i in char1) {
+		let line1 = char1[i].split('');
+		let line = tfgs.element.create("span");
+		for (let j in line1) {
+			let char1 = line1[j];
+			line.appendChild(createKey(char1, nextId, autoSize));
 		}
+		elem.appendChild(line);
 	}
+}
 
-	function getKeyDetail(char1, isShift) {
-		switch (char1) {
-			case "⌫":
-				ccode = 8;
-				cname = "Backspace";
-				break;
-			case "⇄":
-				ccode = 9;
-				cname = "Tab";
-				break;
-			case "␣":
-				ccode = 32;
-				cname = " ";
-				break;
-			case "↵":
-				ccode = 13;
-				cname = "Enter";
-				break;
-			case "⇧":
-				ccode = 0;
-				cname = "Shift";
-				break;
-			case "⌥":
-				ccode = 0;
-				cname = "Alt";
-				break;
-			case "⌃":
-				ccode = 0;
-				cname = "Control";
-				break;
-			case "←":
-				ccode = 37;
-				cname = "ArrowLeft";
-				break;
-			case "↑":
-				ccode = 38;
-				cname = "ArrowUp";
-				break;
-			case "→":
-				ccode = 39;
-				cname = "ArrowRight";
-				break;
-			case "↓":
-				ccode = 40;
-				cname = "ArrowDown";
-				break;
-			case " ":
-				ccode = 0;
-				cname = "Unidentified";
-				break;
-			case "⌬":
-				ccode = 0;
-				cname = "tfgsSwitch";
-				break;
-			default:
-				ccode = char1.toUpperCase().codePointAt(0);
-				if (isShift) {
-					let before = "`1234567890-=[]\\';.,/";
-					let after_ = "~!@#$%^&*()_+{}|\":<>?";
-					if (before.includes(char1)) {
-						cname = after_[before.indexOf(char1)];
-					} else {
-						cname = char1.toUpperCase();
-					}
+function getKeyDetail(char1, isShift) {
+	switch (char1) {
+		case "⌫":
+			ccode = 8;
+			cname = "Backspace";
+			break;
+		case "⇄":
+			ccode = 9;
+			cname = "Tab";
+			break;
+		case "␣":
+			ccode = 32;
+			cname = " ";
+			break;
+		case "↵":
+			ccode = 13;
+			cname = "Enter";
+			break;
+		case "⇧":
+			ccode = 0;
+			cname = "Shift";
+			break;
+		case "⌥":
+			ccode = 0;
+			cname = "Alt";
+			break;
+		case "⌃":
+			ccode = 0;
+			cname = "Control";
+			break;
+		case "←":
+			ccode = 37;
+			cname = "ArrowLeft";
+			break;
+		case "↑":
+			ccode = 38;
+			cname = "ArrowUp";
+			break;
+		case "→":
+			ccode = 39;
+			cname = "ArrowRight";
+			break;
+		case "↓":
+			ccode = 40;
+			cname = "ArrowDown";
+			break;
+		case " ":
+			ccode = 0;
+			cname = "Unidentified";
+			break;
+		case "⌬":
+			ccode = 0;
+			cname = "tfgsSwitch";
+			break;
+		default:
+			ccode = char1.toUpperCase().codePointAt(0);
+			if (isShift) {
+				let before = "`1234567890-=[]\\';.,/";
+				let after_ = "~!@#$%^&*()_+{}|\":<>?";
+				if (before.includes(char1)) {
+					cname = after_[before.indexOf(char1)];
 				} else {
-					cname = char1.toLowerCase();
+					cname = char1.toUpperCase();
 				}
-		}
-		return {
-			ccode: ccode,
-			cname: cname
-		};
-	}
-
-	function closecontrol() {
-		window.removeEventListener("keydown", monitorkey);
-		window.removeEventListener("keyup", monitorkey);
-		if (win !== null) {
-			win.close();
-			win = null;
-		}
-		if (cursordiv !== null) {
-			document.body.removeChild(cursordiv);
-			cursordiv = null;
-		}
-	}
-
-	function setJoystick(elem, mode, custom) {
-		custom = custom.replace(/\|/g, "\n").replace(/\{[^}]+\}/g, function(str) {
-			let repl = {
-				"{space}": "␣",
-				"{enter}": "↵",
-				"{left}": "←",
-				"{up}": "↑",
-				"{down}": "↓",
-				"{right}": "→",
-				"{control}": "⌃",
-				"{shift}": "⇧",
-				"{alt}": "⌥",
-				"{tab}": "⇄",
-				"{backspace}": "⌫",
-				"{leftcurly}": "{",
-				"{rightcurly}": "}",
-				"{switch}": "⌬"
-			}
-			if (str in repl) return repl[str];
-			return " ";
-		});
-
-		switch (Math.floor(mode / 10)) {
-			case 1: {
-				let presets = [
-					"↑↓←→",
-					"WSAD",
-					"IKJL",
-					custom
-				][mode % 10];
-				elem.innerHTML = `<span class="tfgsJoystickJoystick"><span><span></span></span></span>`;
-
-				let elemrect = elem.getBoundingClientRect();
-				let r = Math.min(elemrect.right - elemrect.left, elemrect.bottom - elemrect.top) * 0.8;
-				elem.children[0].style.setProperty("--size", r + "px");
-
-				let circle = elem.children[0].children[0];
-				let button = circle.children[0];
-				let handleDrag = function(circle, event) {
-					let rect = circle.getBoundingClientRect();
-					let x0 = (rect.left + rect.right) / 2;
-					let y0 = (rect.top + rect.bottom) / 2;
-					if ("targetTouches" in event)
-						event = event.targetTouches[0];
-					let x = event.clientX - x0;
-					let y = event.clientY - y0;
-					let d = Math.sqrt(x * x + y * y);
-					let dmax = (rect.right - rect.left) / 2 / 2;
-					if (d > dmax) {
-						x /= d;
-						y /= d;
-					} else {
-						x /= dmax;
-						y /= dmax;
-					}
-					// api.log(event.type+"|:"+d+","+dmax+","+x+","+y);
-					if (y < -0.38) {
-						sendKey("keydown", presets[0]);
-					} else {
-						sendKey("keyup", presets[0]);
-					}
-					if (y > 0.38) {
-						sendKey("keydown", presets[1]);
-					} else {
-						sendKey("keyup", presets[1]);
-					}
-					if (x < -0.38) {
-						sendKey("keydown", presets[2]);
-					} else {
-						sendKey("keyup", presets[2]);
-					}
-					if (x > 0.38) {
-						sendKey("keydown", presets[3]);
-					} else {
-						sendKey("keyup", presets[3]);
-					}
-					button.style.left = x * dmax + "px";
-					button.style.top = y * dmax + "px";
-				};
-
-				tfgs.drag.setdrag(circle, {
-					onStart: function(event) {
-						handleDrag(circle, event);
-						return {
-							x: 0,
-							y: 0
-						};
-					},
-					onMove: function(x, y, event) {
-						handleDrag(circle, event);
-					},
-					onEnd: function(event) {
-						for (let i = 0; i < 4; i++) {
-							sendKey("keyup", presets[i]);
-						}
-						button.style.left = "0px";
-						button.style.top = "0px";
-					}
-				});
-				break;
-			}
-			case 2: {
-				let presets = [
-					"FC\nZX",
-					"EQ\nR␣",
-					"UIO\nJKL",
-					"123\n456",
-					"⌃⇧\n⌥␣",
-					"↑↓{\n←→}",
-					custom
-				][mode % 10];
-				elem.classList.add("tfgsJoystickJoystickKeyBoard");
-				setKeyboard(elem, presets, 0);
-				break;
-			}
-			case 3: {
-				elem.innerHTML = `<span class="tfgsJoystickJoystickMouse"></span>`;
-				elem = elem.children[0];
-				elem.onmousedown = elem.ontouchstart = synctouch;
-				elem.onmousemove = elem.ontouchmove = synctouch;
-				elem.onmouseleave = elem.onmouseup = elem.ontouchend = synctouch;
-				break;
-			}
-		}
-	}
-
-	tfgs.func.add({
-		id: "joystick",
-		name: "虚拟摇杆",
-		info: "显示自定义虚拟摇杆",
-		default: false,
-		option: {
-			start: {
-				type: "menu",
-				name: "默认模式",
-				menu: ["键盘", "鼠标", "游戏手柄"],
-				value: [0, 1, 2],
-				default: 2
-			},
-			fullkey: {
-				type: "check",
-				name: "键盘显示更多按键",
-				default: false
-			},
-			keyTimeout: {
-				type: "number",
-				name: "长按到自动连续按键的时间(毫秒)",
-				min: 50,
-				max: 5000,
-				default: 600
-			},
-			keyInterval: {
-				type: "number",
-				name: "自动连续按键间隔(毫秒)",
-				min: 5,
-				max: 5000,
-				default: 50
-			},
-			mousespeed: {
-				type: "number",
-				name: "鼠标指针速度",
-				min: 0.05,
-				max: 20,
-				default: 1
-			},
-			mouseaccer: {
-				type: "number",
-				name: "鼠标指针减速",
-				min: 0,
-				max: 10000,
-				default: 500
-			},
-			mouse2click: {
-				type: "check",
-				name: "放置两根手指模拟点击",
-				default: true
-			},
-			mousebuttons: {
-				type: "check",
-				name: "鼠标显示中键和右键",
-				default: false
-			},
-			joyleft: {
-				type: "menu",
-				name: "游戏手柄左侧布局",
-				menu: [
-					"摇杆(上下左右)",
-					"摇杆(WSAD)",
-					"摇杆(IKJL)",
-					"摇杆(自定义)",
-					"键盘(FC|ZX)",
-					"键盘(EQ|R{space})",
-					"键盘(UIO|JKL)",
-					"键盘(123|456)",
-					"键盘({ctrl}{shift}|{alt}{space})",
-					"键盘({up}{down}{leftcurly}|{left}{right}{rightcurly})",
-					"键盘(自定义)",
-					"鼠标"
-				],
-				value: [10, 11, 12, 13, 20, 21, 22, 23, 24, 25, 26, 30],
-				default: 10
-			},
-			joyright: {
-				type: "menu",
-				name: "游戏手柄右侧布局",
-				menu: [
-					"摇杆(上下左右)",
-					"摇杆(WSAD)",
-					"摇杆(IKJL)",
-					"摇杆(自定义)",
-					"键盘(FC|ZX)",
-					"键盘(EQ|R{space})",
-					"键盘(UIO|JKL)",
-					"键盘(123|456)",
-					"键盘({ctrl}{shift}|{alt}{space})",
-					"键盘({up}{down}{leftcurly}|{left}{right}{rightcurly})",
-					"键盘(自定义)",
-					"鼠标"
-				],
-				value: [10, 11, 12, 13, 20, 21, 22, 23, 24, 25, 26, 30],
-				default: 20
-			},
-			joyleftcustom: {
-				type: "text",
-				name: "左侧自定义",
-				default: "WSAD"
-			},
-			joyrightcustom: {
-				type: "text",
-				name: "右侧自定义",
-				default: "IKJL"
-			}
-		},
-		onenable: function(_api) {
-			api = _api;
-			foption = api.getoption();
-			opencontrol();
-		},
-		ondisable: function() {
-			closecontrol();
-		},
-		onoption: function() {
-			let noption = api.getoption();
-			if (
-				noption.fullkey !== foption.fullkey ||
-				noption.mouse2click !== foption.mouse2click ||
-				noption.mousebuttons !== foption.mousebuttons ||
-				noption.joyleft !== foption.joyleft ||
-				noption.joyright !== foption.joyright ||
-				noption.joyleftcustom !== foption.joyleftcustom ||
-				noption.joyrightcustom !== foption.joyrightcustom
-			) {
-				foption = noption;
-				_refresh();
 			} else {
-				foption = noption;
+				cname = char1.toLowerCase();
 			}
+	}
+	return {
+		ccode: ccode,
+		cname: cname
+	};
+}
+
+function closecontrol() {
+	window.removeEventListener("keydown", monitorkey);
+	window.removeEventListener("keyup", monitorkey);
+	if (win !== null) {
+		win.close();
+		win = null;
+	}
+	if (cursordiv !== null) {
+		document.body.removeChild(cursordiv);
+		cursordiv = null;
+	}
+}
+
+function setJoystick(elem, mode, custom) {
+	custom = custom.replace(/\|/g, "\n").replace(new RegExp("\\{[^}]+\\}", "g"), function(str) {
+		let repl = {
+			"{space}": "␣",
+			"{enter}": "↵",
+			"{left}": "←",
+			"{up}": "↑",
+			"{down}": "↓",
+			"{right}": "→",
+			"{control}": "⌃",
+			"{shift}": "⇧",
+			"{alt}": "⌥",
+			"{tab}": "⇄",
+			"{backspace}": "⌫",
+			"{bar}": "|",
+			"{empty}": " ",
+			"{leftcurly}": "{",
+			"{rightcurly}": "}",
+			"{switch}": "⌬"
 		}
+		if (str in repl) return repl[str];
+		return " ";
 	});
-}();
 
+	switch (Math.floor(mode / 10)) {
+		case 1: {
+			let presets = [
+				"↑↓←→",
+				"WSAD",
+				"IKJL",
+				custom
+			][mode % 10];
+			elem.innerHTML = `<span class="tfgsJoystickJoystick"><span><span></span></span></span>`;
 
-/* functions/guimodify.css */
-_tfgsAddCSS(`span.tfgsGuimodifyButton {
-	position: absolute;
-	color: grey;
-	font-size: 1em;
-	line-height: 1em;
-	text-align: center;
-}
+			let elemrect = elem.getBoundingClientRect();
+			let r = Math.min(elemrect.right - elemrect.left, elemrect.bottom - elemrect.top) * 0.8;
+			elem.children[0].style.setProperty("--size", r + "px");
 
-body.tfgsGuimodifyMenubarFold div[class^=gui_menu-bar-position_] {
-	top: calc(0px - var(--tfgsGuimodifyMenubarHeight));
-	margin-bottom: calc(0px - var(--tfgsGuimodifyMenubarHeight));
-}
-
-body.tfgsGuimodifyMenubarFold div[class^=gui_body-wrapper_] {
-	height: 100%;
-}
-
-body.tfgsGuimodifyBlocktoolFold .blocklyFlyoutScrollbar,
-body.tfgsGuimodifyBlocktoolFold .blocklyFlyout {
-	left: -250px;
-}
-
-body.tfgsGuimodifyStagetargetFold div[class^=gui_stage-and-target-wrapper_] {
-	display: none;
-}
-
-body.tfgsGuimodifySpriteinfoFold div[class^=sprite-info_sprite-info_] {
-	max-height: 0px;
-	padding: 0px;
-	overflow: hidden;
-}
-
-body.tfgsGuimodifyStagebuttonFold div[class^=target-pane_stage-selector-wrapper_] {
-	max-width: 0px;
-	padding: 0px;
-	margin-left: 0px;
-	margin-right: 0px;
-	overflow: hidden;
-}
-
-body.tfgsGuimodifyStageFold div[class^=stage-wrapper_stage-canvas-wrapper_] {
-	max-height: 0px;
-	padding: 0px;
-	overflow: hidden;
-}
-
-body.tfgsGuimodifyFullscreen {
-	overflow: scroll;
-}
-
-body.tfgsGuimodifyExpand100 {
-	position: fixed;
-	bottom: 0;
-}
-
-body.tfgsGuimodifyAssetpanelFold [class^=selector_wrapper_] {
-	position: absolute;
-	height: 100%;
-	width: 100%;
-	z-index: 2;
-}
-
-body.tfgsGuimodifyAssetpanelFold [class^=selector_list-area_] {
-	flex-direction: row;
-	flex-wrap: wrap;
-	align-content: flex-start;
-}
-
-body.tfgsGuimodifyAssetpanelFold [class*=" sprite-selector-item_sprite-selector-item_"] {
-	margin-left: 0.8em;
-}
-
-body.tfgsGuimodifyAssetpanelFold [class^=asset-panel_detail-area_] {
-	padding-left: 45px;
-}
-`);
-/* functions/guimodify.js */
-! function() {
-	let api;
-	let interval = -1;
-
-	let pbutton = {};
-	let foption = {};
-	let _fullscreen = false;
-
-	function configButton(options) {
-		let buttonid = options.buttonid;
-		let enable = options.enable;
-		let addinner = options.addinner;
-		let removeinner = options.removeinner;
-		let styles = options.styles;
-		let targetcss = options.targetcss;
-		let cssname = options.cssname;
-		let onadd = options.onadd;
-		let onremove = options.onremove;
-		if (enable /*foption.foldmenu*/ ) {
-			/* ------ on ------ */
-			if (pbutton[buttonid] !== undefined) {
-				let target = api.selele(targetcss);
-				if (pbutton[buttonid].parentElement !== target) {
-					pbutton[buttonid].remove();
-					pbutton[buttonid] = undefined;
-					if (cssname !== undefined)
-						document.body.classList.remove(cssname);
-					if (typeof onremove === "function")
-						onremove();
-					api.info(buttonid + ": restart");
+			let circle = elem.children[0].children[0];
+			let button = circle.children[0];
+			let handleDrag = function(circle, event) {
+				let rect = circle.getBoundingClientRect();
+				let x0 = (rect.left + rect.right) / 2;
+				let y0 = (rect.top + rect.bottom) / 2;
+				if ("targetTouches" in event)
+					event = event.targetTouches[0];
+				let x = event.clientX - x0;
+				let y = event.clientY - y0;
+				let d = Math.sqrt(x * x + y * y);
+				let dmax = (rect.right - rect.left) / 2 / 2;
+				if (d > dmax) {
+					x /= d;
+					y /= d;
+				} else {
+					x /= dmax;
+					y /= dmax;
 				}
-			}
-			if (pbutton[buttonid] === undefined) {
-				let target = api.selele(targetcss /*"gui_menu-bar-position_"*/ );
-				if (target === null) {
-					// api.warn(buttonid + ": target not found.");
-					return;
+				// api.log(event.type+"|:"+d+","+dmax+","+x+","+y);
+				if (y < -0.38) {
+					sendKey("keydown", presets[0]);
+				} else {
+					sendKey("keyup", presets[0]);
 				}
-				let button = document.createElement("span");
-				button.classList.add(api.selcss("button_outlined-button_"));
-				button.classList.add(api.selcss("stage-header_stage-button_"));
-				button.classList.add("tfgsGuimodifyButton");
-				for (let i in styles)
-					button.style[i] = styles[i];
-				button.innerText = addinner;
-				button.checked = false;
-				button.addEventListener("click", function() {
-					if (button.checked) {
-						if (cssname !== undefined)
-							document.body.classList.remove(cssname /*"tfgsGuimodifyMenubarFold"*/ );
-						if (typeof onremove === "function")
-							onremove();
-						button.innerText = addinner;
-					} else {
-						if (cssname !== undefined)
-							document.body.classList.add(cssname);
-						if (typeof onadd === "function")
-							onadd();
-						button.innerText = removeinner;
+				if (y > 0.38) {
+					sendKey("keydown", presets[1]);
+				} else {
+					sendKey("keyup", presets[1]);
+				}
+				if (x < -0.38) {
+					sendKey("keydown", presets[2]);
+				} else {
+					sendKey("keyup", presets[2]);
+				}
+				if (x > 0.38) {
+					sendKey("keydown", presets[3]);
+				} else {
+					sendKey("keyup", presets[3]);
+				}
+				button.style.left = x * dmax + "px";
+				button.style.top = y * dmax + "px";
+			};
+
+			tfgs.drag.setdrag(circle, {
+				onStart: function(event) {
+					handleDrag(circle, event);
+					return {
+						x: 0,
+						y: 0
+					};
+				},
+				onMove: function(x, y, event) {
+					handleDrag(circle, event);
+				},
+				onEnd: function(event) {
+					for (let i = 0; i < 4; i++) {
+						sendKey("keyup", presets[i]);
 					}
-					button.checked ^= true;
-					dispatchEvent(new Event("resize"));
-				});
-				target.appendChild(button);
-				if (options.clickaftercreate)
-					button.click();
-				pbutton[buttonid] = button;
-				api.info(buttonid + ": OK");
-			}
-		} else {
-			/* ------ off ------ */
-			if (pbutton[buttonid] !== undefined) {
-				pbutton[buttonid].remove();
-				pbutton[buttonid] = undefined;
-				if (cssname !== undefined)
-					document.body.classList.remove(cssname);
-				if (typeof onremove === "function")
-					onremove();
-				dispatchEvent(new Event("resize"));
-				api.info(buttonid + ": OFF");
-			}
+					button.style.left = "0px";
+					button.style.top = "0px";
+				}
+			});
+			break;
+		}
+		case 2: {
+			let presets = [
+				"FC\nZX",
+				"EQ\nR␣",
+				"UIO\nJKL",
+				"123\n456",
+				"⌃⇧\n⌥␣",
+				"↑↓{\n←→}\n| ",
+				custom
+			][mode % 10];
+			elem.classList.add("tfgsJoystickJoystickKeyBoard");
+			setKeyboard(elem, presets, 0, false);
+			break;
+		}
+		case 3: {
+			elem.innerHTML = `<span class="tfgsJoystickJoystickMouse"></span>`;
+			elem = elem.children[0];
+			elem.onmousedown = elem.ontouchstart = synctouch;
+			elem.onmousemove = elem.ontouchmove = synctouch;
+			elem.onmouseleave = elem.onmouseup = elem.ontouchend = synctouch;
+			break;
 		}
 	}
+}
 
-	function updateStatus() {
-		try {
-			let sel = api.selele("sprite-selector_scroll-wrapper_");
-			if (sel !== null)
-				if (foption.foldspriteinfo ||
-					foption.foldstagebutton ||
-					foption.foldthestage)
-					sel.style.position = "relative";
-				else
-					sel.style.position = "inherit";
-
-			if (foption.expand100) {
-				if (!document.body.classList.contains("tfgsGuimodifyExpand100")) {
-					document.body.classList.add("tfgsGuimodifyExpand100");
-					dispatchEvent(new Event("resize"));
-				}
-			} else {
-				if (document.body.classList.contains("tfgsGuimodifyExpand100")) {
-					document.body.classList.remove("tfgsGuimodifyExpand100");
-					dispatchEvent(new Event("resize"));
-				}
-			}
-
-			if (foption.foldmenu) {
-				if (document.body.style.getPropertyValue("--tfgsGuimodifyMenubarHeight") === "")
-					document.body.style.setProperty("--tfgsGuimodifyMenubarHeight", window.getComputedStyle(api.selele("gui_menu-bar-position_")).height);
-			} else {
-				if (document.body.style.getPropertyValue("--tfgsGuimodifyMenubarHeight") !== "")
-					document.body.style.removeProperty("--tfgsGuimodifyMenubarHeight");
-			}
-
-			configButton({
-				buttonid: "foldmenubar",
-				enable: foption.foldmenu,
-				styles: {
-					left: 0,
-					top: "100%",
-					position: "absolute"
-				},
-				addinner: "▲",
-				removeinner: "▼",
-				targetcss: "gui_menu-bar-position_",
-				cssname: "tfgsGuimodifyMenubarFold",
-				clickaftercreate: true
-			});
-
-			configButton({
-				buttonid: "fullscreen",
-				enable: foption.fullscreen,
-				styles: {
-					right: "calc(2em + 1px)",
-					top: "0.3em",
-					position: "absolute"
-				},
-				addinner: "✠",
-				removeinner: "×",
-				targetcss: "gui_editor-wrapper_",
-				cssname: "tfgsGuimodifyFullscreen",
-				onadd: function(button) {
-					document.body.requestFullscreen()
-						.catch(api.onerror);
-				},
-				onremove: function(button) {
-					document.exitFullscreen()
-						.catch(api.onerror);
-				}
-			});
-
-			let _fullscreenchange = function() {
-				let button = pbutton["fullscreen"];
-				if ((document.fullscreenElement === null) !==
-					(button.innerText === "✠"))
-					button.click();
-			}
-
-			if (foption.fullscreen !== _fullscreen) {
-				if (foption.fullscreen)
-					document.addEventListener("fullscreenchange", _fullscreenchange);
-				else
-					document.removeEventListener("fullscreenchange", _fullscreenchange);
-				_fullscreen = foption.fullscreen;
-			}
-
-			configButton({
-				buttonid: "foldstagetarget",
-				enable: foption.foldstagetarget,
-				styles: {
-					right: 0,
-					top: "0.3em",
-					position: "absolute"
-				},
-				addinner: "▶",
-				removeinner: "◀",
-				targetcss: "gui_editor-wrapper_",
-				cssname: "tfgsGuimodifyStagetargetFold"
-			});
-
-			configButton({
-				buttonid: "foldblocktool",
-				enable: foption.foldblocktool,
-				styles: {
-					left: "calc(60px + 0.5em)",
-					top: "0.5em",
-					position: "absolute",
-					zIndex: 2000
-				},
-				addinner: "◀",
-				removeinner: "▶",
-				targetcss: "injectionDiv",
-				cssname: "tfgsGuimodifyBlocktoolFold"
-			});
-
-			configButton({
-				buttonid: "foldspriteinfo",
-				enable: foption.foldspriteinfo,
-				styles: {
-					left: 0,
-					top: 0,
-					position: "absolute"
-				},
-				addinner: "▲",
-				removeinner: "▼",
-				targetcss: "sprite-selector_scroll-wrapper_",
-				cssname: "tfgsGuimodifySpriteinfoFold"
-			});
-
-			configButton({
-				buttonid: "foldstagebutton",
-				enable: foption.foldstagebutton,
-				styles: {
-					right: 0,
-					top: "calc(2em + 1px)",
-					position: "absolute"
-				},
-				addinner: "▶",
-				removeinner: "◀",
-				targetcss: "sprite-selector_scroll-wrapper_",
-				cssname: "tfgsGuimodifyStagebuttonFold"
-			});
-
-			configButton({
-				buttonid: "foldthestage",
-				enable: foption.foldthestage,
-				styles: {
-					right: 0,
-					top: 0,
-					position: "absolute"
-				},
-				addinner: "▲",
-				removeinner: "▼",
-				targetcss: "sprite-selector_scroll-wrapper_",
-				cssname: "tfgsGuimodifyStageFold"
-			});
-
-			configButton({
-				buttonid: "foldassetpanel",
-				enable: foption.foldassetpanel,
-				styles: {
-					right: 0,
-					top: 0,
-					position: "absolute"
-				},
-				addinner: "▶",
-				removeinner: "◀",
-				targetcss: "selector_wrapper_",
-				cssname: "tfgsGuimodifyAssetpanelFold"
-			});
-		} catch (e) {
-			api.error(e);
-		}
-	}
-
-	tfgs.func.add({
-		id: "guifold",
-		name: "折叠展开按钮",
-		info: "添加可以折叠舞台、角色，展开列表等区域的按钮",
-		option: {
-			foldmenu: {
-				type: "check",
-				name: "折叠菜单",
-				default: true
-			},
-			fullscreen: {
-				type: "check",
-				name: "全屏按钮",
-				default: true
-			},
-			foldblocktool: {
-				type: "check",
-				name: "折叠jimuhe",
-				default: true
-			},
-			foldstagetarget: {
-				type: "check",
-				name: "折叠舞台和角色列表",
-				default: true
-			},
-			foldspriteinfo: {
-				type: "check",
-				name: "折叠角色参数",
-				default: true
-			},
-			foldstagebutton: {
-				type: "check",
-				name: "折叠舞台按钮",
-				default: true
-			},
-			foldthestage: {
-				type: "check",
-				name: "折叠舞台",
-				default: true
-			},
-			foldassetpanel: {
-				type: "check",
-				name: "折叠asset",
-				default: true
-			},
-			expand100: {
-				type: "check",
-				name: "填满屏幕(实验)",
-				default: false
-			}
-		},
-		onenable: function(_api) {
-			api = _api;
-			foption = api.getoption();
-			if (interval === -1)
-				interval = setInterval(updateStatus, 200);
-		},
-		ondisable: function() {
-			if (interval !== -1) {
-				clearInterval(interval);
-				foption = {};
-				updateStatus();
-				interval = -1;
-			}
-		},
-		onoption: function() {
-			foption = api.getoption();
-		}
-	});
-}();
-
-
-/* functions/example.js */
-let oldtitle;
 tfgs.func.add({
-	id: "example",
-	name: "自定义窗口标题", // 设定功能名字
-	author: "作者名字", // 设定作者(可选)
-	version: "v0.1.0", // 设定版本(可选)
-	info: "让你能够修改窗口的标题", // 设定说明(可选)
-	default: false, // 是否默认启用
-	option: { // 设定选项列表
-		"title": { // 选项变量名
-			"type": "text", // 选项类型，text 文字，number数字，check 复选框(开关)，menu 选项列表
-			"name": "窗口标题", // 选项旁边的文字
-			"maxlength": 16, // 设定文本最大长度
-			// "max": 9, // 数字最大值
-			// "min": 1, // 数字最小值
-			// "menu": ["a", "b", "c"], // 选项列表
-			// "value": [1, 2, 3], // 选项对应的数值
-			"default": "示例标题" // 默认值
+	id: "joystick",
+	name: "虚拟摇杆",
+	info: "显示自定义虚拟摇杆",
+	default: false,
+	option: {
+		start: {
+			type: "menu",
+			name: "默认模式",
+			menu: ["键盘", "鼠标", "游戏手柄"],
+			value: [0, 1, 2],
+			default: 2
+		},
+		fullkey: {
+			type: "check",
+			name: "键盘显示更多按键",
+			default: false
+		},
+		keyTimeout: {
+			type: "number",
+			name: "长按到自动连续按键的时间(毫秒)",
+			min: 50,
+			max: 5000,
+			default: 600
+		},
+		keyInterval: {
+			type: "number",
+			name: "自动连续按键间隔(毫秒)",
+			min: 5,
+			max: 5000,
+			default: 50
+		},
+		mousespeed: {
+			type: "number",
+			name: "鼠标指针速度",
+			min: 0.5,
+			max: 20,
+			default: 5
+		},
+		mouseaccer: {
+			type: "number",
+			name: "鼠标指针减速",
+			min: 0,
+			max: 10000,
+			default: 100
+		},
+		mouse2click: {
+			type: "check",
+			name: "放置两根手指模拟点击",
+			default: true
+		},
+		mousebuttons: {
+			type: "check",
+			name: "鼠标显示中键和右键",
+			default: false
+		},
+		joyleft: {
+			type: "menu",
+			name: "游戏手柄左侧布局",
+			menu: [
+				"摇杆(上下左右)",
+				"摇杆(WSAD)",
+				"摇杆(IKJL)",
+				"摇杆(自定义)",
+				"键盘(FC|ZX)",
+				"键盘(EQ|R{space})",
+				"键盘(UIO|JKL)",
+				"键盘(123|456)",
+				"键盘({ctrl}{shift}|{alt}{space})",
+				"键盘({up}{down}{leftcurly}|{left}{right}{rightcurly})",
+				"键盘(自定义)",
+				"鼠标"
+			],
+			value: [10, 11, 12, 13, 20, 21, 22, 23, 24, 25, 26, 30],
+			default: 10
+		},
+		joyright: {
+			type: "menu",
+			name: "游戏手柄右侧布局",
+			menu: [
+				"摇杆(上下左右)",
+				"摇杆(WSAD)",
+				"摇杆(IKJL)",
+				"摇杆(自定义)",
+				"键盘(FC|ZX)",
+				"键盘(EQ|R{space})",
+				"键盘(UIO|JKL)",
+				"键盘(123|456)",
+				"键盘({ctrl}{shift}|{alt}{space})",
+				"键盘({up}{down}{leftcurly}|{left}{right}{rightcurly}|{bar}{empty})",
+				"键盘(自定义)",
+				"鼠标"
+			],
+			value: [10, 11, 12, 13, 20, 21, 22, 23, 24, 25, 26, 30],
+			default: 20
+		},
+		joyleftcustom: {
+			type: "text",
+			name: "左侧自定义",
+			default: "WSAD"
+		},
+		joyrightcustom: {
+			type: "text",
+			name: "右侧自定义",
+			default: "IKJL"
 		}
-		// 可以添加更多内容
 	},
-	onenable: function(api) {
-		oldtitle = document.title;
-		document.title = api.getoption().title;
+	onenable: function(_api) {
+		api = _api;
+		foption = api.getoption();
+		opencontrol();
 	},
-	ondisable: function(api) {
-		document.title = oldtitle;
+	ondisable: function() {
+		closecontrol();
 	},
-	// onoption 只有在功能启用时改选项才触发
-	onoption: function(api) {
-		document.title = api.getoption().title;
+	onoption: function() {
+		let noption = api.getoption();
+		if (
+			noption.fullkey !== foption.fullkey ||
+			noption.mouse2click !== foption.mouse2click ||
+			noption.mousebuttons !== foption.mousebuttons ||
+			noption.joyleft !== foption.joyleft ||
+			noption.joyright !== foption.joyright ||
+			noption.joyleftcustom !== foption.joyleftcustom ||
+			noption.joyrightcustom !== foption.joyrightcustom
+		) {
+			foption = noption;
+			_refresh();
+		} else {
+			foption = noption;
+		}
 	}
 });
 
+		}();
 
-/* functions/ccwterm.js */
-! function() {
-	let api, termwin = null,
-		termdiv = null,
-		lastvisi = "?",
-		win = null,
-		readyt = -1,
-		lastmode = "?",
-		vm;
-
-	function getready() {
-		if (readyt === -1) {
-			readyt = setInterval(getready, 100);
-			return;
-		}
-		if (win === null) {
-			termwin = document.getElementById("gandi-terminal");
-			termdiv = termwin.children[1];
-			let tstyle = window.getComputedStyle(termdiv);
-			let termspan = tfgs.element.create("span", "tfgsCCWtermSpan");
-			let twidth = Number(tstyle.width.slice(0, -2)) + 20;
-			let theight = Number(tstyle.height.slice(0, -2)) + 20;
-			api.log(tstyle.width);
-			api.log(tstyle.height);
-			win = tfgs.window.create({
-				title: "wterm",
-				canClose: false,
-				width: twidth + 6,
-				height: theight + 26,
-				onResize: function() {
-					let istyle = window.getComputedStyle(this.innerDiv);
-					let iw = Number(istyle.width.slice(0, -2));
-					let ih = Number(istyle.height.slice(0, -2));
-					termspan.style.setProperty("--scale", Math.min(iw / twidth, ih / theight));
-				}
-			});
-			termspan.innerHTML = "<span></span>";
-			termspan.children[0].appendChild(termdiv);
-			termspan.style.setProperty("--termWidth", twidth + "px");
-			termspan.style.setProperty("--termHeight", theight + "px");
-			win.innerDiv.appendChild(termspan);
-			termwin.style.display = "none";
-		}
-		win.title = termwin.children[0].children[0].innerText;
-		win._refresh();
-		if (lastvisi !== termwin.style.visibility) {
-			lastvisi = termwin.style.visibility;
-			api.log(`visibility: ${lastvisi}`);
-			if (termwin.style.visibility !== "visible") {
-				// HIDE
-				switch (api.getoption().mode) {
-					case "respect":
-						win.windowDiv.style.visibility = "hidden";
-						break;
-					case "minmax":
-						win.minimize();
-						break;
-					case "minshow":
-						win.minimize();
-						break;
-					case "ignore":
-						break;
-				}
-			} else {
-				// SHOW
-				win.windowDiv.style.visibility = "visible";
-				win.movetotop();
-				switch (api.getoption().mode) {
-					case "respect":
-						break;
-					case "minmax":
-						win.restore();
-						break;
-					case "minshow":
-						break;
-					case "ignore":
-						break;
-				}
-				win.flash(200, 3, true);
-			}
-		}
-	}
-
-	function closecontrol() {
-		if (win !== null) {
-			win.close();
-			win = null;
-		}
-		if (termwin !== null) {
-			termwin.style.display = "block";
-			termwin.appendChild(termdiv);
-		}
-	}
-
-	tfgs.func.add({
-		id: "ccwterm",
-		name: "将ccw控制台放入tfgs窗口",
-		info: "这个东西，我们叫它'Terminal'(终端)，微软叫它'Console'(控制台)，用着xterm又叫它控制台的ccw是",
-		default: false,
-		option: {
-			mode: {
-				type: "menu",
-				name: "响应控制台消息",
-				menu: ["尊重显示和隐藏操作", "将显示/隐藏理解为还原/最小化", "显示时闪烁,隐藏时最小化", "忽略隐藏请求"],
-				value: ["respect", "minmax", "minshow", "ignore"],
-				default: "respect"
-			}
-		},
-		onenable: function(_api) {
-			api = _api;
-			lastvisi = "?";
-			lastmode = api.getoption().mode;
-			getready();
-		},
-		ondisable: function() {
-			if (readyt !== -1) {
-				clearInterval(readyt);
-				readyt = -1;
-			}
-			closecontrol();
-		},
-		onoption: function() {
-			if (api.getoption().mode !== lastmode) {
-				lastvisi = "?";
-				lastmode = api.getoption().mode;
-			}
-		}
-	});
-}();
-
-
-/* functions/windowf___.js */
+		/* functions/windowf___.js */
+		! function (){
 let windowf___;
 tfgs.func.add({
 	id: "windowf___",
@@ -3346,443 +4052,615 @@ function conti() {
 	newwin();
 }
 
+		}();
 
-/* functions/copyblock.js */
-! function() {
-	let api;
-	// 左边是积木区，右边是积木拖出区
-	let workspace, flyoutWorkspace;
-	let injectionDiv;
-	// 打开重试计时器
-	let opening = -1;
-	// 积木菜单检测计时器 *
-	let blockMenuTimer = -1;
-	let blockMenuTime = 0;
-	const blockMenuTimeout = 1200; // ms
+		/* functions/lockrun.js */
+		! function (){
+let opening = -1;
 
-	// 打开 tfgs
-	function TFGSON(_api, tryCount) {
-		api = _api;
-		tryCount = tryCount === undefined ? 0 : tryCount;
-		//部分社区的界面会加载，尝试多次
-		try {
-			workspace = api.workspace();
-			flyoutWorkspace = api.toolbox();
-			injectionDiv = api.selele("injectionDiv");
-			injectionDiv.addEventListener("touchstart", on_blockTouch, true);
-			//injectionDiv.addEventListener("touchmove",on_blockTouch,true);
-			//injectionDiv.addEventListener("touchstop",on_blockTouch,true);
-			document.body.addEventListener("mousedown", on_blockMousedown, true);
-			api.log("打开");
-		} catch (err) {
-			api.onerror(err);
-			api.log("启动失败次数: ", tryCount + 1);
-			opening = setTimeout(function() {
-				TFGSON(api, tryCount + 1);
-			}, 1000);
-			return;
+let bl = null;
+let ws = null;
+let wsdiv = null;
+let tb = null;
+let tbdiv = null;
+
+let _origFire = null;
+let _origReadOnly = false;
+
+let funcEnabled = false;
+let foption = {};
+
+// 追踪按键、鼠标状态
+let traceShift = false;
+let traceCtrl = false;
+let traceAlt = false;
+let traceMouseMode = "";
+let traceMouseX = 0;
+let traceMouseY = 0;
+let traceTarget = document.body;
+let traceId = "";
+
+function setup() {
+	try {
+		if (_origFire === null) {
+			bl = api.blockly();
+			ws = api.workspace();
+			wsdiv = ws.getCanvas().parentElement;
+			tb = api.toolbox();
+			tbdiv = tb.getCanvas().parentElement;
+			_origFire = bl.Events.fire;
+			bl.Events.fire = function(e) {
+				try {
+					if (funcEnabled && e.element === "click") {
+						// 点击事件，记录点击的id
+						traceId = e.blockId;
+					}
+					if (!funcEnabled || e.element !== "stackclick" || traceCtrl && foption.ctrlRun) {
+						// 如果不需要拦截，就放行
+						return _origFire.apply(this, arguments);
+					} else if (foption.rightMenu) {
+						// 启动右键菜单，触摸和鼠标点击不一样，如果在触摸使用了鼠标点击的模拟话复制积木时会卡死
+						if (traceMouseMode === "touch") {
+							let touchevent = {
+								type: "touchstart",
+								button: 2,
+								changedTouches: [{
+									identifier: -1, //关键是这个identifier属性，少了就会复制时卡死
+									clientX: traceMouseX,
+									clientY: traceMouseY,
+									target: traceTarget
+								}],
+								clientX: traceMouseX,
+								clientY: traceMouseY,
+								preventDefault: function() {},
+								stopPropagation: function() {},
+								target: traceTarget
+							};
+							ws.getBlockById(traceId).showContextMenu_(touchevent);
+						} else {
+							let mouseevent = {
+								type: "mousedown",
+								button: 2,
+								clientX: traceMouseX,
+								clientY: traceMouseY,
+								view: window,
+								target: traceTarget //target要保留，会影响其它拓展的运行
+							};
+							ws.getBlockById(traceId).showContextMenu_(mouseevent);
+						}
+					}
+				} catch (e) {
+					api.onerror(e);
+					return _origFire.apply(this, arguments);
+				}
+			};
+		};
+		funcEnabled = true;
+
+		window.addEventListener("keydown", traceKey);
+		window.addEventListener("keyup", traceKey);
+		// 需要直接在wsdiv上监听鼠标/触摸事件
+		wsdiv.addEventListener("mousedown", traceMouse);
+		wsdiv.addEventListener("touchstart", traceTouch);
+		// 积木盒这里因为奇怪原因必须用捕获
+		tbdiv.addEventListener("mousedown", traceMouse, true);
+		tbdiv.addEventListener("touchstart", traceTouch, true);
+		window.addEventListener("blur", traceReset);
+
+	} catch (e) {
+		api.onerror(e);
+		opening = setTimeout(setup, 500);
+	}
+}
+
+function traceKey(e) {
+	if (traceAlt !== e.altKey && foption.altMove) {
+		if (e.altKey) {
+			_origReadOnly = ws.options.readOnly;
+			// 设置积木区为只读即可用鼠标拖动视角
+			ws.options.readOnly = true;
+		} else {
+			ws.options.readOnly = _origReadOnly;
 		}
 	}
+	traceShift = e.shiftKey;
+	traceCtrl = e.ctrlKey;
+	traceAlt = e.altKey;
+}
 
-	function TFGSOFF() {
-		// 停止重试
+function traceMouse(e) {
+	traceMouseMode = "mouse";
+	traceMouseX = e.clientX;
+	traceMouseY = e.clientY;
+	traceTarget = e.target;
+}
+
+function traceTouch(e) {
+	traceMouseMode = "touch";
+	if (e.touches.length !== 0) {
+		traceMouseX = e.touches[0].clientX;
+		traceMouseY = e.touches[0].clientY;
+		traceTarget = e.target;
+	}
+}
+
+function traceReset(e) {
+	traceKey({
+		altKey: false,
+		ctrlKey: false,
+		shiftKey: false
+	});
+	traceMouse({
+		clientX: 0,
+		clientY: 0,
+		target: document.body
+	});
+}
+
+tfgs.func.add({
+	id: "lockrun",
+	name: "禁止点击时运行积木",
+	info: "点击积木时积木将不会运行",
+	option: {
+		rightMenu: {
+			type: "check",
+			name: "不仅不运行，还显示右键菜单",
+			default: false
+		},
+		ctrlRun: {
+			type: "check",
+			name: "按住ctrl点击可以运行",
+			default: true
+		},
+		altMove: {
+			type: "check",
+			name: "按住alt拖动视角(防止拖动视角时拖动积木)",
+			default: true
+		}
+	},
+	onenable: function(_api) {
+		api = _api;
+		foption = api.getoption();
+		setup();
+	},
+	ondisable: function() {
 		if (opening !== -1) {
 			clearTimeout(opening);
 			opening = -1;
 		}
-		// 把事件响应函数卸掉就是关闭了
-		if (injectionDiv) {
-			injectionDiv.removeEventListener("touchstart", on_blockTouch, true);
-		}
-		//injectionDiv.removeEventListener("touchmove",on_blockTouch,true);
-		//injectionDiv.removeEventListener("touchstop",on_blockTouch,true);
-		document.body.removeEventListener("mousedown", on_blockMousedown, true);
-		api.log("关闭");
+		funcEnabled = false;
+
+		window.removeEventListener("keydown", traceKey);
+		window.removeEventListener("keyup", traceKey);
+		wsdiv.removeEventListener("mousedown", traceMouse);
+		wsdiv.removeEventListener("touchstart", traceTouch);
+		tbdiv.removeEventListener("mousedown", traceMouse, true);
+		tbdiv.removeEventListener("touchstart", traceTouch, true);
+		window.removeEventListener("blur", traceReset);
+
+	},
+	onoption: function() {
+		foption = api.getoption();
 	}
+});
 
-	function on_blockMousedown(event) {
-		if (event.button === 2) { // 右键
-			on_blockMenuPossible(event.clientX, event.clientY);
-		}
-	}
+		}();
 
-	function on_blockTouch(event) {
-		if (event.touches.length === 0) {
-			return;
-		}
-		let touch = event.touches[0];
-		on_blockMenuPossible(touch.clientX, touch.clientY);
-	}
+		/* functions/resources.css */
+		_tfgsAddCSS(`div.tfgsResourcesRenamable {
+	border-bottom: 1px dotted hsla(225, 15%, 40%, 1);
+	min-height: 1em;
+}
 
-	function on_blockMenuPossible(x, y) {
-		let element = document.elementFromPoint(x, y);
-		let blockBox, blockId;
-		if (element === null) {
-			return;
-		}
-		//api.log(element);
-		let clickSVG = getSVG(element);
-		if (clickSVG === null) {
-			return;
-		}
-		blockBox = clickSVG.classList.contains("blocklyFlyout");
-		blockId = getBlockId(element);
-		if (blockMenuTimer !== -1) {
-			clearInterval(blockMenuTimer);
-			blockMenuTimer = -1;
-		}
-		blockMenuTime = 0;
-		blockMenuTimer = setInterval(function() {
-			let menu = api.selele("blocklyContextMenu");
-			if (menu !== null) {
-				clearInterval(blockMenuTimer);
-				blockMenuTimer = -1;
-				on_blockMenu(blockBox, blockId, menu);
-			} else {
-				blockMenuTime += 10;
-				if (blockMenuTime >= blockMenuTimeout) {
-					clearInterval(blockMenuTimer);
-					blockMenuTimer = -1;
-				}
-			}
-		}, 10);
-	}
+.sprite-selector-item_is-selected_24tQj div.tfgsResourcesRenamable {
+	border-bottom: 1px dotted hsla(0, 100%, 100%, 1);
+}
 
-	function on_blockMenu(blockBox, blockId, menu) {
-		if (blockId !== null) {
-			addToContextMenu("复制这个积木", function() {
-				copyToXML(blockId, false, true);
-				menu.remove();
-			}, menu);
-			/*addToContextMenu("复制以下积木", function() {
-				copyToXML(blockId, false, false);
-				menu.remove();
-			}, menu);*/
-			addToContextMenu("复制这组积木", function() {
-				copyToXML(blockId, true, false);
-				menu.remove();
-			}, menu);
-		} else {
-			addToContextMenu("复制全部积木", function() {
-				copyToXML(null, true, false);
-				menu.remove();
-			}, menu);
-			addToContextMenu("粘贴积木文本", function() {
-				pasteFromXML();
-				menu.remove();
-			}, menu);
-		}
-	}
-
-	function getSVG(element) {
-		while (element !== null && element.tagName.toLowerCase() !== "svg") {
-			element = element.parentElement;
-		}
-		return element;
-	}
-
-	function getBlockId(element) {
-		while (element !== null &&
-			element.tagName.toLowerCase() !== "svg"
-		) {
-			if (element.tagName.toLowerCase() === "g") {
-				let id = element.getAttribute("data-id");
-				if (id !== null) {
-					return id;
-				}
-			}
-			element = element.parentElement;
-		}
-		return null;
-	}
-
-	function addToContextMenu(name, callback, element) {
-		let menuItem = document.createElement("div");
-		menuItem.classList.add("goog-menuitem");
-		menuItem.setAttribute("role", "menuitem");
-		menuItem.style.userSelect = "none";
-		menuItem.innerText = name;
-		menuItem.addEventListener("click", callback);
-		element.parentElement.style.height = "4500px";
-
-		element.appendChild(menuItem);
-	}
-
-	function pasteFromXML() {
-		let loaddata = function(data) {
-			let blockly = api.blockly();
-			let blockXML = blockly.Xml.textToDom(data);
-			let blockIds = blockly.Xml.domToWorkspace(blockXML, workspace);
-			if (blockIds.length === 0) {
-				throw new Error("粘贴失败");
-			}
-			let met = workspace.getMetrics();
-			let posX = met.viewLeft + 15;
-			let posY = met.viewTop + 15;
-			for (let i = 0; i < blockIds.length; i++) {
-				let bl = workspace.getBlockById(blockIds[i]);
-				if (bl.getParent() === null) {
-					let oldpos = bl.getRelativeToSurfaceXY();
-					bl.moveBy(
-						posX / workspace.scale - oldpos.x,
-						posY / workspace.scale - oldpos.y
-					);
-					posY += (bl.getHeightWidth().height + 30) * workspace.scale;
-				}
-			}
-		};
-		if ("clipboard" in navigator) {
-			navigator.clipboard.readText().then(loaddata).catch(function(err) {
-				api.onerror(err);
-				loaddata(prompt("在下方粘贴:"));
-			});
-		} else {
-			loaddata(prompt("在下方粘贴:"));
-		}
-	}
-
-	function copyToXML(blockId, loadPrev, deleNext) {
-		try {
-			let blockly = api.blockly();
-			let blockXML = blockly.Xml.workspaceToDom(workspace);
-			let blockThisXML;
-			if (blockId === null) {
-				blockThisXML = blockly.Xml.domToText(blockXML, workspace);
-			} else {
-				let blockThis = findBlock(blockXML, blockId);
-				while (blockThis !== null &&
-					blockThis.tagName.toLowerCase() !== "block"
-				) {
-					blockThis = blockThis.parentElement;
-				}
-				if (blockThis === null) {
-					throw new Error('复制失败:找不到积木');
-				}
-				if (deleNext) {
-					let bc = blockThis.children;
-					for (let i = 0; i < bc.length; i++) {
-						if (bc[i].tagName.toLowerCase() === "next") {
-							bc[i].remove();
-							i--;
-						}
-					}
-				}
-				if (loadPrev) {
-					while (blockThis.parentElement !== null &&
-						(blockThis.parentElement.tagName.toLowerCase() === 'block' ||
-							blockThis.parentElement.tagName.toLowerCase() === 'next')
-					) {
-						blockThis = blockThis.parentElement;
-					}
-				}
-				blockThisXML = "<xml>" + blockly.Xml.domToText(blockThis, workspace) + "</xml>";
-			}
-			if ("clipboard" in navigator) {
-				navigator.clipboard.writeText(blockThisXML).then(function() {
-					//alert('复制成功');
-				}).catch(function(err) {
-					api.onerror(err);
-					prompt("请复制以下内容", blockThisXML);
-				});
-			} else {
-				prompt("请复制以下内容", blockThisXML);
-			}
-		} catch (e) {
-			api.onerror(e);
-		}
-	}
-
-	function findBlock(blockXML, blockId) {
-		if (blockXML.getAttribute('id') === blockId) {
-			return blockXML;
-		} else {
-			let bc = blockXML.children;
-			for (let i = 0; i < bc.length; i++) {
-				let find = findBlock(bc[i], blockId);
-				if (find !== null) {
-					return find;
-				}
-			}
-			return null;
-		}
-	}
-
-	tfgs.func.add({
-		id: "copyblock",
-		name: "复制积木为文字",
-		info: "在右键菜单中添加“复制积木”“粘贴积木”选项，可以跨作品复制，或者粘贴到记事本(是xml格式)",
-		default: false,
-		option: {},
-		onenable: TFGSON,
-		ondisable: TFGSOFF,
-		onoption: function() {}
-	});
-}();
-
-
-/* functions/ccwterm.css */
-_tfgsAddCSS(`.tfgsCCWtermSpan {
-	position: absolute;
-	height: 100%;
+input.tfgsResourcesRename {
+	border: 2px solid hsla(225, 15%, 40%, 1);
 	width: 100%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+	height: 100%;
+	background: inherit;
+	color: inherit;
+	box-sizing: border-box;
+	text-align: inherit;
+	margin: inherit;
+	padding: inherit;
+	font-family: inherit;
+	font-size: inherit;
+	line-height: inherit;
+	outline: none;
 }
 
-.tfgsCCWtermSpan>span {
-	display: inline-block;
-	width: calc(var(--termWidth) * var(--scale));
-	height: calc(var(--termHeight) * var(--scale));
-	overflow: hidden;
-}
-
-.tfgsCCWtermSpan>span>div#terminal-container {
-	background: black;
-	transform: scale(var(--scale));
-	transform-origin: -10px -10px;
-}
-`);
-/* functions/forcecolor.css */
-_tfgsAddCSS(`.tfgsForcecolorWin {
-	font-size: 16px;
-	text-align: center;
-}
-
-.tfgsForcecolorWin input {
-	width: 150px;
-	border: 1px solid black;
-}
-
-.tfgsForcecolorWin pre {
-	font-size: 8px;
+.sprite-selector-item_is-selected_24tQj input.tfgsResourcesRename {
+	border: 2px solid hsla(0, 100%, 100%, 1);
 }
 `);
-/* functions/forcecolor.js */
-! function() {
-	let api = null;
-	let interval = -1;
-	let winob = null;
 
-	function forcesetcolor(id, data) {
-		// 强行发送颜色更改
-		let div = api.selele("paint-editor_editor-container-top_")
-		//id: 0填充 1轮廓
-		div = div.children[1].children[0].children[id];
-		let stateNode = api.reactInternal(div).return.return.return.stateNode;
+		/* functions/blocktips.js */
+		! function (){
+/*
+let api, workspace;
 
-		// 找到 stateNode 后，可以访问并执行react回调函数
-		// 经过尝试和查看scratch源代码可以发现这些函数可以修改颜色
-		stateNode.handleChangeGradientType(data.gradientType);
-		// 改左颜色
-		stateNode.props.onChangeColorIndex(0);
-		stateNode.handleChangeColor(data.primary);
-		// 如果需要改右颜色，就改右颜色
-		// 如果在纯色模式下还去改右颜色会变成改左颜色，因此要特判
-		if (data.gradientType !== "SOLID") {
-			stateNode.props.onChangeColorIndex(1);
-			stateNode.handleChangeColor(data.secondary);
-		}
-		// 象征性地
-		stateNode.handleCloseColor();
-		// 更改颜色后，如果有选中的项，它们会改变颜色，调用onUpdateImage提交造型的修改以免丢失。
-		stateNode.props.onUpdateImage();
+let opening = -1;
 
-		// 如果设置的颜色包含透明度，在颜色通过方法一传播到最后的时候会被检查函数拦下，导致当前颜色没有改变（但是选中元素的颜色会正常改变），此时使用方法二
-		let vm = api.vm();
-		let color = tfgs.funcapi.paint().color;
-		// 强行改变color的值，这在redux中很不规范，但是有效
-		let colid = id === 1 ? "strokeColor" : "fillColor";
-		color[colid].gradientType = data.gradientType;
-		color[colid].primary = data.primary;
-		color[colid].secondary = data.secondary;
-		// 关键：调用refreshWorkspace直接刷新工作区，此时当前颜色完美改变。
-		vm.refreshWorkspace();
+let costume_sound = null;
+
+function childof(parent, test) {
+	if (parent === null) return false;
+	while (test !== parent && test !== null) {
+		test = test.parentElement;
 	}
+	return test === parent;
+}
 
-	function showwindow() {
-		if (winob !== null) {
-			return;
-		}
-		winob = tfgs.window.create({
-			title: "forceColor",
-			haveLogo: false,
-			canClose: false,
-			canMaximize: false,
-			x: 100,
-			y: 80,
-			width: 250,
-			height: 160,
-			minWidth: 120,
-			minHeight: 120
-		});
-		let win = tfgs.element.create("div", "tfgsForcecolorWin");
-		win.innerHTML = `
-类型: <select>
-	<option value="0">填充颜色</option>
-	<option value="1">轮廓颜色</option>
-</select><br/>
-颜色1: <input type="text" value="#00ff00"></input><br/>
-颜色2: <input type="text" value="#ff0000"></input><br/>
-混合模式: <select>
-	<option value="SOLID">■</option>
-	<option value="VERTICAL">↓</option>
-	<option value="HORIZONTAL">→</option>
-	<option value="RADIAL">○</option>
-</select><br/>
-<input type="button" value="设置"></input>
-<pre>颜色格式: #RRGGBB 或者 rgb(红色, 绿色, 蓝色)
-透明颜色: #RRGGBBAA 或者 rgba(红色, 绿色, 蓝色, 不透明度)</pre>
-`;
-		let ins = win.children;
-		ins[8].addEventListener("click", function() {
-			try {
-				forcesetcolor(Number(ins[0].value), {
-					primary: ins[2].value,
-					secondary: ins[4].value,
-					gradientType: ins[6].value
-				});
-			} catch (e) {
-				api.onerror(e);
+function starttips() {
+	try {
+		opening = -1;
+		workspace = api.workspace();
+	} catch (e) {
+		opening = setTimeout(starttips, 500);
+	}
+}
+
+function getSVG(element) {
+	while (element !== null && element.tagName.toLowerCase() !== "svg") {
+		element = element.parentElement;
+	}
+	return element;
+}
+
+function getBlockId(element) {
+	while (element !== null &&
+		element.tagName.toLowerCase() !== "svg"
+	) {
+		if (element.tagName.toLowerCase() === "g") {
+			let id = element.getAttribute("data-id");
+			if (id !== null) {
+				return id;
 			}
-		});
-		winob.innerDiv.appendChild(win);
+		}
+		element = element.parentElement;
 	}
+	return null;
+}
 
-	function scanner() {
-		showwindow();
+tfgs.func.add({
+	id: "blocktips",
+	name: "显示编辑提示",
+	info: "不知道该咋解释",
+	option: {},
+	onenable: function(_api) {
+		api = _api;
+		starttips();
+	},
+	ondisable: function() {
+		if (opening !== -1) {
+			clearTimeout(opening);
+			opening = -1;
+		}
+	},
+	onoption: function() {}
+});
+*/
+
+		}();
+
+		/* functions/resources.js */
+		! function (){
+let api, vm = null;
+
+let extramenus = [];
+let modimenus = [];
+let modirenames = [];
+let interval = -1;
+
+let costume_sound = null;
+
+function childof(parent, test) {
+	if (parent === null) return false;
+	while (test !== parent && test !== null) {
+		test = test.parentElement;
 	}
+	return test === parent;
+}
 
-	function stopscan() {
-		if (winob !== null) {
-			winob.close();
-			winob = null
+function createmenu(parent, name, onclick) {
+	let menu = tfgs.element.create("div",
+		api.selcss("react-contextmenu-item") + " " +
+		api.selcss("context-menu_menu-item_")
+	);
+	menu.innerText = name;
+	menu.onclick = function(e) {
+		parent.style.opacity = 0;
+		parent.style.pointerEvents = "none";
+
+		onclick(e);
+
+		e.preventDefault();
+		e.stopPropagation();
+		e.cancelBubble = true;
+		return false;
+	};
+	menu.onmousedown = function(e) {
+		e.stopPropagation();
+		e.cancelBubble = true;
+		return false;
+	};
+	parent.appendChild(menu);
+	return menu;
+}
+
+function automodify() {
+	// 设定自动重复
+	if (interval === -1) {
+		interval = setInterval(automodify, 500);
+	}
+	if (vm === null)
+		vm = api.vm();
+	// 上面那个vm如果获取不到就会出错，导致下面的内容不会继续。
+	// vm获取要在自动重复后面否则会导致自动重复无效，这样出错后不会重试
+	costume_sound = api.selele("selector_list-area_");
+	let allmenu = api.selall("sprite-selector-item_sprite-selector-item_");
+	for (let i = 0; i < extramenus.length; i++) {
+		if (!childof(document.body, extramenus[i])) {
+			extramenus[i].remove();
+			extramenus.splice(i, 1);
+			i--;
 		}
 	}
-
-	tfgs.func.add({
-		id: "forcecolor",
-		name: "强行设定颜色",
-		onenable: function(_api) {
-			api = _api;
-			if (interval === -1) interval = setInterval(scanner, 100);
-		},
-		ondisable: function() {
-			if (interval !== -1) {
-				clearInterval(interval);
-				interval = -1;
+	for (let i = 0; i < modimenus.length; i++) {
+		if (!childof(document.body, modimenus[i])) {
+			modimenus.splice(i, 1);
+			i--;
+		}
+	}
+	for (let i = 0; i < modirenames.length; i++) {
+		if (!childof(document.body, modirenames[i])) {
+			modirenames.splice(i, 1);
+			i--;
+		}
+	}
+	for (let i = 0; i < allmenu.length; i++) {
+		let parent = api.selele("react-contextmenu", allmenu[i]);
+		if (parent === null) {
+			api.warn("no menu found");
+			api.warn(allmenu[i]);
+			continue;
+		}
+		if (!modimenus.includes(parent)) {
+			extramenus.push(createmenu(parent, "重命名", function() {
+				let index = childof(costume_sound, parent) ? 2 : 1;
+				setTimeout(function() {
+					parent.parentElement.children[index].children[0].click()
+				}, 10);
+			}));
+			if (!api.RESPECTnodownload_DO_NOT_DELETE()) {
+				if (childof(costume_sound, parent)) {
+					extramenus.push(createmenu(parent, "复制 md5ext", function() {
+						let assets = api.currenttab() === 1 ? "costumes" : "sounds";
+						let ob = parent.parentElement;
+						let index = Number(ob.children[0].innerText) - 1;
+						let asset = vm.runtime.getEditingTarget().sprite[assets][index];
+						api.copy(asset.assetId + "." + asset.dataFormat);
+					}));
+				} else {
+					extramenus.push(createmenu(parent, "导出全部素材", function() {
+						let list = vm.runtime.targets;
+						let sprite = null;
+						let ob = parent.parentElement;
+						let name = ob.children[1].children[0].innerText;
+						list.forEach(v => {
+							if (v.isOriginal && v.sprite.name === name) {
+								sprite = v.sprite;
+							}
+						});
+						if (sprite === null) {
+							api.error(`Sprite \`${val}' not found.`);
+						} else {
+							try {
+								let reservedfilename = [
+									"con", "prn", "aux", "nul",
+									"com1", "com2", "com3", "com4",
+									"com5", "com6", "com7", "com8",
+									"com9", "lpt1", "lpt2", "lpt3",
+									"lpt4", "lpt5", "lpt6", "lpt7",
+									"lpt8", "lpt9"
+								];
+								let filelist = [];
+								let filecomment = "";
+								sprite.costumes.forEach((v, i) => {
+									let comment = "造型(" + (i + 1) + ")\n" +
+										"角色: " + sprite.name + "\n" +
+										"造型: " + v.name + "\n" +
+										"md5ext: " + v.assetId + "." + v.asset.dataFormat;
+									filelist.push({
+										folder: "造型/",
+										name: v.name,
+										ext: "." + v.asset.dataFormat,
+										data: v.asset.data
+									});
+									filecomment += comment + "\n\n";
+								});
+								sprite.sounds.forEach((v, i) => {
+									let comment = "声音(" + (i + 1) + ")\n" +
+										"角色: " + sprite.name + "\n" +
+										"声音: " + v.name + "\n" +
+										"md5ext: " + v.assetId + "." + v.asset.dataFormat;
+									filelist.push({
+										folder: "声音/",
+										name: v.name,
+										ext: "." + v.asset.dataFormat,
+										data: v.asset.data
+									});
+									filecomment += comment + "\n\n";
+								});
+								let zip = tfgs.storezip.create();
+								zip.begin();
+								let usedfile = [];
+								filelist.forEach(v => {
+									let folder = v.folder;
+									let name = v.name.replace(RegExp("[*.?:/\\<|>\n\r\t\"]", "g"), "_");
+									let ext = v.ext;
+									let test = (folder + name + ext).toLowerCase();
+									if (reservedfilename.includes(name) ||
+										usedfile.includes(test)) {
+										// 如果文件名被占用，就在后面加上(数字)
+										for (let i = 1; i < 10000; i++) {
+											name = v.name + "(" + i + ")";
+											test = (folder + name + "." + ext).toLowerCase();
+											if (!(reservedfilename.includes(name) ||
+													usedfile.includes(test))) {
+												break;
+											}
+										}
+									}
+									usedfile.push(test);
+									zip.addfile(folder + name + ext, v.data, v.comment);
+								});
+								zip.addfile("文件列表.txt", filecomment);
+								let file = zip.end(filecomment);
+								let fr = new FileReader();
+								fr.onload = function() {
+									let a = tfgs.element.create('a');
+									let name = sprite.name.replace(RegExp("[*.?:/\\<|>\n\r\t\"]", "g"), "_");
+									a.download = name + ".zip";
+									a.href = fr.result;
+									a.click();
+								}
+								file = new Uint8Array(file);
+								fr.readAsDataURL(new Blob([file], {
+									type: "application/zip"
+								}));
+							} catch (e) {
+								api.onerror(e);
+							}
+						}
+					}));
+				}
 			}
-			stopscan();
-		},
-		onoption: function() {}
+		}
+		modimenus.push(parent);
+	}
+	api.selall("sprite-selector-item_sprite-selector-item_").forEach(ob => {
+		if (!modirenames.includes(ob)) {
+			modirenames.push(ob);
+			let th;
+			if (childof(costume_sound, ob)) {
+				th = ob.children[2].children[0];
+			} else {
+				th = ob.children[1].children[0];
+			}
+			console.log(th);
+			th.classList.add("tfgsResourcesRenamable");
+			th.addEventListener("click", handleRenameInput);
+		}
 	});
-}();
-
-
-/* (allinone.js) */
-	tfgs.data.load().then(tfgs.menu.create).catch(tfgs.error);
-} catch(e) {
-	alert(e.message);
-	console.error(e);
-	throw e;
 }
+
+function handleRenameInput(e) {
+	let th = this;
+	let ob = th.parentElement.parentElement;
+	let val = th.innerText;
+	let input = tfgs.element.create("input", "tfgsResourcesRename");
+	th.innerHTML = "";
+	th.appendChild(input);
+	input.value = val;
+	input.onblur = function() {
+		if (childof(costume_sound, ob)) {
+			let renameFunc = api.currenttab() === 1 ? "renameCostume" : "renameSound";
+			let index = Number(ob.children[0].innerText) - 1;
+			if (input.value !== val)
+				vm[renameFunc](index, input.value);
+			th.innerText = val;
+		} else {
+			let list = vm.runtime.targets;
+			let index = null;
+			list.forEach(v => {
+				if (v.isOriginal && v.sprite.name === val) {
+					index = v.id;
+				}
+			});
+			if (index === null) {
+				api.error(`Sprite \`${val}' not found.`);
+			} else {
+				api.log(index);
+				if (input.value !== val)
+					vm.renameSprite(index, input.value);
+				th.innerText = val;
+			}
+		}
+	}
+	input.ontouchstart = function(e) {
+		e.stopPropagation();
+		e.cancelBubble = true;
+	}
+	input.onkeydown = function(e) {
+		if (e.code === 13) {
+			input.blur();
+			e.preventDefault();
+		}
+	}
+	input.onmousedown = function(e) {
+		e.stopPropagation();
+		e.cancelBubble = true;
+	}
+	input.onclick = function(e) {
+		e.stopPropagation();
+		e.cancelBubble = true;
+	}
+	input.oncontextmenu = function(e) {
+		e.stopPropagation();
+		e.cancelBubble = true;
+	}
+	input.focus();
+
+	e.preventDefault();
+	e.stopPropagation();
+	e.cancelBubble = true;
+	return false;
+}
+
+function nomodify() {
+	if (interval !== -1) {
+		clearInterval(interval);
+		interval = -1;
+	}
+	while (extramenus.length !== 0) {
+		extramenus[0].remove();
+		extramenus.splice(0, 1);
+	}
+	modimenus = [];
+	while (modirenames.length !== 0) {
+		let ob = modirenames.splice(0, 1)[0];
+		let th = ob.children[2].children[0];
+		th.classList.remove("tfgsResourcesRenamable");
+		th.removeEventListener("click", handleRenameInput);
+	}
+}
+
+tfgs.func.add({
+	id: "resources",
+	name: "角色造型声音右键菜单拓展",
+	info: "重命名、复制md5、导出所有造型和声音",
+	option: {},
+	onenable: function(_api) {
+		api = _api;
+		automodify();
+	},
+	ondisable: function() {
+		nomodify();
+	},
+	onoption: function() {}
+});
+
+		}();
+
+		/* (allinone.js) */
+		tfgs.data.load().then(tfgs.menu.create).catch(tfgs.error);
+	} catch(e) {
+		alert(e.message);
+		console.error(e);
+		throw e;
+	}
+}();
