@@ -46,10 +46,10 @@ tfgs
 | \-create*
 |-data
 | |-list
-| | |-(id)
-| | | |-enable*
-| | | |-data*
-| | | \-option*
+| | \-(id)
+| |   |-enable*
+| |   |-data*
+| |   \-option*
 | |-getjson*
 | |-setjson*
 | |-load*
@@ -63,5 +63,18 @@ tfgs
 | |-_json*
 | |-load*
 | \-delete*
-\-button
+|-window
+| \-create*
+|   |-minimize*
+|   |-maximize*
+|   |-resize*
+|   |-move*
+|   |-movetotop*
+|   |-close*
+|   |-restore*
+|   \-_refresh*
+\-storezip
   \-create*
+    |-begin*
+    |-addfile*
+    \-end*
