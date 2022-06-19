@@ -18,7 +18,7 @@ tfgs.menu.setmodi = function(modi) {
 	if (modi !== tfgs.menu.modi) {
 		let buttons = tfgs.menu.buttons;
 		for (let i in buttons) {
-			let flip = true;
+			let flip;
 			switch (i) {
 				case "edit":
 					// 不影响编辑文本按钮（一直隐藏）
@@ -27,6 +27,11 @@ tfgs.menu.setmodi = function(modi) {
 				case "cancel":
 					// 保存，取消按钮只有在修改后才显示
 					flip = false;
+					break;
+				default:
+					// 其他按钮在修改前显示
+					flip = true;
+					break;
 			}
 			buttons[i].classList[modi === flip ? "add" : "remove"]("tfgsDisable");
 		}
@@ -57,16 +62,7 @@ tfgs.menu.create = function() {
 	menuwin.minimize();
 	let menudiv = menuwin.innerDiv;
 	menudiv.innerHTML = `
-<div class="tfgsMenuContent">
-	<!--<span class="tfgsMenuFuncSelect">Test</span>
-	<span class="tfgsMenuFuncSelect">Test</span>
-	<span class="tfgsMenuFuncSelect">Test</span>
-	<span class="tfgsMenuFuncSelect">Test</span>
-	<span class="tfgsMenuFuncSelect">Test</span>
-	<span class="tfgsMenuFuncSelect">Test</span>
-	<span class="tfgsMenuFuncSelect">Test</span>
-	<span class="tfgsMenuFuncSelect">Test</span>-->
-</div>
+<div class="tfgsMenuContent"></div>
 <div class="tfgsMenuButtons">
 	<span class="tfgsButton">导出</span>
 	<span class="tfgsButton">导入</span>
