@@ -3,6 +3,8 @@ let opening = -1;
 let bl = null;
 let ws = null;
 let wsdiv = null;
+let tb = null;
+let tbdiv = null;
 
 let _origFire = null;
 let _origReadOnly = false;
@@ -17,7 +19,7 @@ let traceAlt = false;
 let traceMouseMode = "";
 let traceMouseX = 0;
 let traceMouseY = 0;
-let traceTarget = "";
+let traceTarget = document.body;
 let traceId = "";
 
 function setup() {
@@ -26,6 +28,8 @@ function setup() {
 			bl = api.blockly();
 			ws = api.workspace();
 			wsdiv = ws.getCanvas().parentElement;
+			tb = api.toolbox();
+			tbdiv = tb.getCanvas().parentElement;
 			_origFire = bl.Events.fire;
 			bl.Events.fire = function(e) {
 				try {
@@ -80,6 +84,8 @@ function setup() {
 		// 需要直接在wsdiv上监听鼠标/触摸事件
 		wsdiv.addEventListener("mousedown", traceMouse);
 		wsdiv.addEventListener("touchstart", traceTouch);
+		tbdiv.addEventListener("mousedown", traceMouse, true);
+		tbdiv.addEventListener("touchstart", traceTouch, true);
 		window.addEventListener("blur", traceReset);
 
 	} catch (e) {
@@ -127,7 +133,8 @@ function traceReset(e) {
 	});
 	traceMouse({
 		clientX: 0,
-		clientY: 0
+		clientY: 0,
+		target: document.body
 	});
 }
 
@@ -168,6 +175,8 @@ tfgs.func.add({
 		window.removeEventListener("keyup", traceKey);
 		wsdiv.removeEventListener("mousedown", traceMouse);
 		wsdiv.removeEventListener("touchstart", traceTouch);
+		tbdiv.removeEventListener("mousedown", traceMouse, true);
+		tbdiv.removeEventListener("touchstart", traceTouch, true);
 		window.removeEventListener("blur", traceReset);
 
 	},
