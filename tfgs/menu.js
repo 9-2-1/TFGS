@@ -148,18 +148,23 @@ tfgs.menu.create = function() {
 <div class="tfgsMenuFuncOption"></div>
 `;
 		let fl = list[fname] = {};
+		// 打开/关闭按钮
 		fl.enable = funcdiv.children[0].children[0]
 		fl.enable.addEventListener("change", function() {
 			tfgs.menu.setmodi(true);
 		});
 		fl.option = {};
+		// 标题
 		funcdiv.children[0].children[1].innerText = f.name;
 		let frame = function(x, y) {
 			if (x !== undefined && x !== null && x !== "") return x + y;
 			else return "";
 		};
+		// 介绍
 		funcdiv.children[0].children[2].innerText = frame(f.version, " ") + frame(f.author, " ") + frame(f.info, "");
+		// 选项列表
 		let fopdiv = funcdiv.children[1];
+		fl.optiondiv = fopdiv;
 		let olist = f.option;
 		for (let oname in olist) {
 			let o = olist[oname];
@@ -208,6 +213,10 @@ tfgs.menu.create = function() {
 			});
 		}
 		contentdiv.appendChild(funcdiv);
+		// 自动折叠
+		fl.enable.addEventListener("change", function(event) {
+			fl.optiondiv.classList[fl.enable.checked ? "remove" : "add"]("tfgsMenuFuncFold");
+		});
 	}
 
 	tfgs.menu.menuwin = menuwin;
@@ -268,6 +277,7 @@ tfgs.menu.load = function() {
 		let d = dlist[fname];
 		let m = mlist[fname];
 		m.enable.checked = d.enable;
+		m.optiondiv.classList[m.enable.checked ? "remove" : "add"]("tfgsMenuFuncFold");
 		let olist = f.option;
 		for (let oname in olist) {
 			let o = olist[oname];

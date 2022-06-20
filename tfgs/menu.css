@@ -21,6 +21,14 @@
 .tfgsMenuFuncOption {
 	background: #def;
 	padding: 2px;
+	max-height: 200px;
+	box-sizing: border-box;
+	overflow: scroll;
+	transition: all ease 0.2s;
+}
+
+.tfgsMenuFuncOption.tfgsMenuFuncFold {
+	max-height: 0px;
 }
 
 .tfgsMenuFuncOptionOne {
