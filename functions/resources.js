@@ -150,14 +150,15 @@ function automodify() {
 								let usedfile = [];
 								filelist.forEach(v => {
 									let folder = v.folder;
-									let name = v.name.replace(RegExp("[*.?:/\\<|>\n\r\t\"]", "g"), "_");
+									let origname = v.name.replace(RegExp("[*.?:/\\<|>\n\r\t\"]", "g"), "_");
+									let name = origname;
 									let ext = v.ext;
 									let test = (folder + name + ext).toLowerCase();
 									if (reservedfilename.includes(name) ||
 										usedfile.includes(test)) {
 										// 如果文件名被占用，就在后面加上(数字)
 										for (let i = 1; i < 10000; i++) {
-											name = v.name + "(" + i + ")";
+											name = origname + "(" + i + ")";
 											test = (folder + name + "." + ext).toLowerCase();
 											if (!(reservedfilename.includes(name) ||
 													usedfile.includes(test))) {
