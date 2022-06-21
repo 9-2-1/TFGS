@@ -337,6 +337,7 @@ tfgs.funcapi.RESPECTnodownload_DO_NOT_DELETE = function(name) {
 	let gui = tfgs.funcapi.gui(name);
 	if ("readOnly" in gui.props && gui.props.readOnly === true) return true;
 	if ("canSaveToLocal" in gui.props && gui.props.canSaveToLocal === false) return true;
+	if ("openSourceLevel" in gui.props && gui.props.openSourceLevel !== 3) return true;
 	return false;
 };
 
