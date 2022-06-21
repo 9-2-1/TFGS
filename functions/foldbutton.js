@@ -36,7 +36,7 @@ function configButton(options) {
 				return;
 			}
 			let button = document.createElement("span");
-			button.classList.add("tfgsGuimodifyButton");
+			button.classList.add("tfgsFoldbuttonButton");
 			for (let i in styles)
 				button.style[i] = styles[i];
 			button.innerText = addinner;
@@ -44,7 +44,7 @@ function configButton(options) {
 			button.addEventListener("click", function() {
 				if (button.checked) {
 					if (cssname !== undefined)
-						document.body.classList.remove(cssname /*"tfgsGuimodifyMenubarFold"*/ );
+						document.body.classList.remove(cssname /*"tfgsFoldbuttonMenubarFold"*/ );
 					if (typeof onremove === "function")
 						onremove();
 					button.innerText = addinner;
@@ -82,23 +82,23 @@ function configButton(options) {
 function updateStatus() {
 	try {
 		if (foption.expand100) {
-			if (!document.body.classList.contains("tfgsGuimodifyExpand100")) {
-				document.body.classList.add("tfgsGuimodifyExpand100");
+			if (!document.body.classList.contains("tfgsFoldbuttonExpand100")) {
+				document.body.classList.add("tfgsFoldbuttonExpand100");
 				dispatchEvent(new Event("resize"));
 			}
 		} else {
-			if (document.body.classList.contains("tfgsGuimodifyExpand100")) {
-				document.body.classList.remove("tfgsGuimodifyExpand100");
+			if (document.body.classList.contains("tfgsFoldbuttonExpand100")) {
+				document.body.classList.remove("tfgsFoldbuttonExpand100");
 				dispatchEvent(new Event("resize"));
 			}
 		}
 
 		if (foption.foldmenu) {
-			if (document.body.style.getPropertyValue("--tfgsGuimodifyMenubarHeight") === "")
-				document.body.style.setProperty("--tfgsGuimodifyMenubarHeight", window.getComputedStyle(api.selele("gui_menu-bar-position_")).height);
+			if (document.body.style.getPropertyValue("--tfgsFoldbuttonMenubarHeight") === "")
+				document.body.style.setProperty("--tfgsFoldbuttonMenubarHeight", window.getComputedStyle(api.selele("gui_menu-bar-position_")).height);
 		} else {
-			if (document.body.style.getPropertyValue("--tfgsGuimodifyMenubarHeight") !== "")
-				document.body.style.removeProperty("--tfgsGuimodifyMenubarHeight");
+			if (document.body.style.getPropertyValue("--tfgsFoldbuttonMenubarHeight") !== "")
+				document.body.style.removeProperty("--tfgsFoldbuttonMenubarHeight");
 		}
 
 		configButton({
@@ -112,7 +112,7 @@ function updateStatus() {
 			addinner: "▲",
 			removeinner: "▼",
 			targetcss: "gui_menu-bar-position_",
-			cssname: "tfgsGuimodifyMenubarFold",
+			cssname: "tfgsFoldbuttonMenubarFold",
 			clickaftercreate: true
 		});
 
@@ -127,7 +127,7 @@ function updateStatus() {
 			addinner: "✠",
 			removeinner: "×",
 			targetcss: "gui_editor-wrapper_",
-			cssname: "tfgsGuimodifyFullscreen",
+			cssname: "tfgsFoldbuttonFullscreen",
 			onadd: function(button) {
 				if (document.fullscreenElement === null)
 					document.body.requestFullscreen()
@@ -166,7 +166,7 @@ function updateStatus() {
 			addinner: "▶",
 			removeinner: "◀",
 			targetcss: "gui_editor-wrapper_",
-			cssname: "tfgsGuimodifyStagetargetFold"
+			cssname: "tfgsFoldbuttonStagetargetFold"
 		});
 
 		configButton({
@@ -181,7 +181,7 @@ function updateStatus() {
 			addinner: "◀",
 			removeinner: "▶",
 			targetcss: "injectionDiv",
-			cssname: "tfgsGuimodifyBlocktoolFold"
+			cssname: "tfgsFoldbuttonBlocktoolFold"
 		});
 
 		configButton({
@@ -195,7 +195,7 @@ function updateStatus() {
 			addinner: "▲",
 			removeinner: "▼",
 			targetcss: "sprite-selector_scroll-wrapper_",
-			cssname: "tfgsGuimodifySpriteinfoFold"
+			cssname: "tfgsFoldbuttonSpriteinfoFold"
 		});
 
 		configButton({
@@ -209,7 +209,7 @@ function updateStatus() {
 			addinner: "▶",
 			removeinner: "◀",
 			targetcss: "sprite-selector_scroll-wrapper_",
-			cssname: "tfgsGuimodifyStagebuttonFold"
+			cssname: "tfgsFoldbuttonStagebuttonFold"
 		});
 
 		configButton({
@@ -223,7 +223,7 @@ function updateStatus() {
 			addinner: "▲",
 			removeinner: "▼",
 			targetcss: "sprite-selector_scroll-wrapper_",
-			cssname: "tfgsGuimodifyStageFold"
+			cssname: "tfgsFoldbuttonStageFold"
 		});
 
 		configButton({
@@ -237,7 +237,7 @@ function updateStatus() {
 			addinner: "▶",
 			removeinner: "◀",
 			targetcss: "selector_wrapper_",
-			cssname: "tfgsGuimodifyAssetpanelFold"
+			cssname: "tfgsFoldbuttonAssetpanelFold"
 		});
 	} catch (e) {
 		api.error(e);
