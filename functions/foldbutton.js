@@ -245,7 +245,7 @@ function updateStatus() {
 }
 
 tfgs.func.add({
-	id: "guifold",
+	id: "foldbutton",
 	name: "折叠展开按钮",
 	info: "添加可以折叠舞台、角色，展开列表等区域的按钮",
 	option: {

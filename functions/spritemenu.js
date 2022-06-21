@@ -293,8 +293,8 @@ function nomodify() {
 }
 
 tfgs.func.add({
-	id: "resources",
-	name: "角色造型声音右键菜单拓展",
+	id: "spritemenu",
+	name: "角色与素材右键菜单",
 	info: "重命名、复制md5、导出所有造型和声音",
 	option: {},
 	onenable: function(_api) {

@@ -7,6 +7,8 @@ let opening = -1;
 let _origcontextmenu1 = null;
 let _origcontextmenu2 = null;
 
+let foption = {};
+
 // 打开 tfgs
 function setup(tryCount) {
 	api_enabled = true;
@@ -49,26 +51,22 @@ function setup(tryCount) {
 		api.onerror(err);
 		api.log("启动失败次数: " + (tryCount + 1));
 		opening = setTimeout(function() {
-			setup(api, tryCount + 1);
+			setup(tryCount + 1);
 		}, 500);
 		return;
 	}
 }
 
-function on_blockMenu(event) {
-	let element = event.target;
-	if (element === null) return;
-
-	let clickSVG = getSVG(element);
-	if (clickSVG === null) return;
-
+// event: 触发菜单的模拟事件，block: 积木对象(可能是null)，blockspace：触发事件的workspace（可能是workspace或者toolbox）
+function on_blockMenu(event, block, blockspace) {
 	let menu = api.selele("blocklyContextMenu");
 	if (menu === null) return;
 
 	let blockId = block === null ? null : block.id;
 
-	// 积木在积木区里（不在积木盒里）？
-	if (blockspace === workspace &&
+	if (foption.copypaste &&
+		// 积木在积木区里（不在积木盒里）？
+		blockspace === workspace &&
 		!api.RESPECTnodownload_DO_NOT_DELETE()) {
 		if (blockId !== null) {
 			addToContextMenu("复制这个积木", function() {
@@ -192,13 +190,20 @@ function findBlock(blockXML, blockId) {
 }
 
 tfgs.func.add({
-	id: "copyblock",
-	name: "复制积木为文字",
-	info: "在右键菜单中添加“复制积木”“粘贴积木”选项，可以跨作品复制，或者粘贴到记事本(是xml格式)",
+	id: "blockmenu",
+	name: "积木右键菜单",
+	info: "在右键菜单中添加各种功能",
 	default: false,
-	option: {},
+	option: {
+		copypaste: {
+			type: "check",
+			name: "复制，粘贴积木为文本",
+			default: true
+		}
+	},
 	onenable: function(_api) {
 		api = _api;
+		foption = api.getoption();
 		setup(1);
 	},
 	ondisable: function() {
@@ -210,5 +215,7 @@ tfgs.func.add({
 		}
 		api.log("关闭");
 	},
-	onoption: function() {}
+	onoption: function() {
+		foption = api.getoption();
+	}
 });
