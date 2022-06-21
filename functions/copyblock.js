@@ -21,7 +21,7 @@ function setup(tryCount) {
 				let ret = _origcontextmenu1.apply(this, arguments);
 				try {
 					if (api_enabled) {
-						on_blockMenu(e);
+						on_blockMenu(e, null, workspace);
 					}
 				} catch (e) {
 					api.onerror(e);
@@ -33,11 +33,10 @@ function setup(tryCount) {
 		if (_origcontextmenu2 === null) {
 			_origcontextmenu2 = blockly.BlockSvg.prototype.showContextMenu_;
 			blockly.BlockSvg.prototype.showContextMenu_ = function(e) {
-				api.log(e);
 				let ret = _origcontextmenu2.apply(this, arguments);
 				try {
 					if (api_enabled) {
-						on_blockMenu(e);
+						on_blockMenu(e, this, this.workspace);
 					}
 				} catch (e) {
 					api.onerror(e);
@@ -66,10 +65,11 @@ function on_blockMenu(event) {
 	let menu = api.selele("blocklyContextMenu");
 	if (menu === null) return;
 
-	let blockBox = clickSVG.classList.contains("blocklyFlyout");
-	let blockId = getBlockId(element);
+	let blockId = block === null ? null : block.id;
 
-	if (!blockBox && !api.RESPECTnodownload_DO_NOT_DELETE()) {
+	// 积木在积木区里（不在积木盒里）？
+	if (blockspace === workspace &&
+		!api.RESPECTnodownload_DO_NOT_DELETE()) {
 		if (blockId !== null) {
 			addToContextMenu("复制这个积木", function() {
 				copyToXML(blockId, false, true);
@@ -94,28 +94,6 @@ function on_blockMenu(event) {
 			}, menu);
 		}
 	}
-}
-
-function getSVG(element) {
-	while (element !== null && element.tagName.toLowerCase() !== "svg") {
-		element = element.parentElement;
-	}
-	return element;
-}
-
-function getBlockId(element) {
-	while (element !== null &&
-		element.tagName.toLowerCase() !== "svg"
-	) {
-		if (element.tagName.toLowerCase() === "g") {
-			let id = element.getAttribute("data-id");
-			if (id !== null) {
-				return id;
-			}
-		}
-		element = element.parentElement;
-	}
-	return null;
 }
 
 function addToContextMenu(name, callback, element) {
