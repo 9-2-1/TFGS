@@ -14,6 +14,7 @@ function setup(tryCount) {
 	try {
 		blockly = api.blockly();
 		workspace = api.workspace();
+		// 积木区背景
 		if (_origcontextmenu1 === null) {
 			_origcontextmenu1 = workspace.showContextMenu_;
 			workspace.showContextMenu_ = function(e) {
@@ -28,6 +29,7 @@ function setup(tryCount) {
 				return ret;
 			}
 		}
+		// 所有积木
 		if (_origcontextmenu2 === null) {
 			_origcontextmenu2 = blockly.BlockSvg.prototype.showContextMenu_;
 			blockly.BlockSvg.prototype.showContextMenu_ = function(e) {

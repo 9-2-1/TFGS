@@ -109,6 +109,7 @@ function automodify() {
 							api.error(`Sprite \`${val}' not found.`);
 						} else {
 							try {
+								// windows保留文件名
 								let reservedfilename = [
 									"con", "prn", "aux", "nul",
 									"com1", "com2", "com3", "com4",
@@ -150,6 +151,7 @@ function automodify() {
 								let usedfile = [];
 								filelist.forEach(v => {
 									let folder = v.folder;
+									// 文件名避免出现这些字符
 									let origname = v.name.replace(RegExp("[*.?:/\\<|>\n\r\t\"]", "g"), "_");
 									let name = origname;
 									let ext = v.ext;
