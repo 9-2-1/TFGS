@@ -9,6 +9,7 @@ span.tfgsFoldbuttonButton {
 	border-radius: 2px;
 	border: 1px solid grey;
 	text-align: center;
+	cursor: pointer;
 }
 
 body.tfgsFoldbuttonMenubarFold div[class*=gui_menu-bar-position_] {
