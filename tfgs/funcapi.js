@@ -247,26 +247,11 @@ tfgs.funcapi.gui = function(name) {
 			return gui;
 		} catch (e) {
 			errors.push(e);
-			try {
-				// 获取Gui方法3
-				let gui = tfgs.funcapi.reactInternal(name,
-						tfgs.funcapi.selele(name, "stage-wrapper_")
-					)
-					.return.return.return.return
-					.return.return.return.return
-					.return.return
-					.stateNode;
-				if (typeof gui.props !== "object" || gui.props === null || !("vm" in gui.props))
-					throw new Error("Invaild gui");
-				return gui;
-			} catch (e) {
-				errors.push(e);
-				for (let i = 0; i < errors.length; i++) {
-					tfgs.funcapi.error(name, `funcapi: gui: 方法${i+1}错误:`);
-					tfgs.funcapi.onerror(name, errors[i]);
-				}
-				throw new Error("tfgs.funcapi.gui: cannot find gui");
+			for (let i = 0; i < errors.length; i++) {
+				tfgs.funcapi.error(name, `funcapi: gui: 方法${i+1}错误:`);
+				tfgs.funcapi.onerror(name, errors[i]);
 			}
+			throw new Error("tfgs.funcapi.gui: cannot find gui");
 		}
 	}
 };
