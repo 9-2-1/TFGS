@@ -4,6 +4,7 @@ let interval = -1;
 let pbutton = {};
 let foption = {};
 let _fullscreen = false;
+let _oldTabIndex = 0;
 
 function configButton(options) {
 	let buttonid = options.buttonid;
@@ -236,12 +237,43 @@ function updateStatus() {
 			},
 			addinner: "▶",
 			removeinner: "◀",
+			onadd: function() {
+				let l_a = api.selele("selector_list-area_1Xbj_");
+				let l_s = api.selele("sprite-selector-item_is-selected_", l_a);
+				l_a.scrollTo(0, l_s.parentElement.offsetTop - l_a.offsetHeight / 2 + l_s.parentElement.offsetHeight / 2)
+			},
+			onremove: function() {
+				let l_a = api.selele("selector_list-area_1Xbj_");
+				let l_s = api.selele("sprite-selector-item_is-selected_", l_a);
+				l_a.scrollTo(0, l_s.parentElement.offsetTop - l_a.offsetHeight / 2 + l_s.parentElement.offsetHeight / 2)
+			},
 			targetcss: "selector_wrapper_",
 			cssname: "tfgsFoldbuttonAssetpanelFold"
 		});
+
+		if (foption.autoscrollassetpanel) {
+			let l_a = api.selele("selector_list-area_1Xbj_");
+			if (l_a !== null) {
+				if (getTabIndex() !== _oldTabIndex || getEditingId() !== _oldEditingId) {
+					let l_s = api.selele("sprite-selector-item_is-selected_", l_a);
+					l_a.scrollTo(0, l_s.parentElement.offsetTop - l_a.offsetHeight / 2 + l_s.parentElement.offsetHeight / 2)
+					_oldTabIndex = getTabIndex();
+					_oldEditingId = getEditingId();
+				}
+			}
+		}
+
 	} catch (e) {
 		api.error(e);
 	}
+}
+
+function getTabIndex() {
+	return api.store().getState().scratchGui.editorTab.activeTabIndex;
+}
+
+function getEditingId() {
+	return api.store().getState().scratchGui.targets.editingTarget;
 }
 
 tfgs.func.add({
@@ -261,7 +293,12 @@ tfgs.func.add({
 		},
 		foldblocktool: {
 			type: "check",
-			name: "折叠jimuhe",
+			name: "折叠积木盒",
+			default: true
+		},
+		foldblocktoolauto: {
+			type: "check",
+			name: "点击类别时展开(五)",
 			default: true
 		},
 		foldstagetarget: {
@@ -286,12 +323,17 @@ tfgs.func.add({
 		},
 		foldassetpanel: {
 			type: "check",
-			name: "折叠asset",
+			name: "展开素材列表",
+			default: true
+		},
+		autoscrollassetpanel: {
+			type: "check",
+			name: "自动滚动到当前造型",
 			default: true
 		},
 		expand100: {
 			type: "check",
-			name: "填满屏幕(实验)",
+			name: "填满屏幕(可能开了反而出问题)",
 			default: false
 		}
 	},
