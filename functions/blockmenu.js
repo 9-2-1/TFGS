@@ -9,7 +9,6 @@ let _origcontextmenu2 = null;
 
 let foption = {};
 
-// 打开 tfgs
 function setup(tryCount) {
 	api_enabled = true;
 	//部分社区的界面会加载，尝试多次
@@ -199,6 +198,48 @@ tfgs.func.add({
 			type: "check",
 			name: "复制，粘贴积木为文本",
 			default: true
+			/*
+		},
+		copypastekey: {
+			type: "check",
+			name: "按下复制粘贴快捷键时触发(没有实装)",
+			default: true
+		},
+		jumpto: {
+			type: "check",
+			name: "跳转到...(没有实装)",
+			default: true
+		},
+		jumptodef: {
+			type: "check",
+			name: "跳转到定义(没有实装)",
+			default: true
+		},
+		jumptoref: {
+			type: "check",
+			name: "跳转到引用...(没有实装)",
+			default: true
+		},
+		jumptomodi: {
+			type: "check",
+			name: "跳转到修改...(没)",
+			default: true
+		},
+		editdefault: {
+			type: "check",
+			name: "编辑默认值...(没)",
+			default: true
+		},
+		search: {
+			type: "check",
+			name: "查找关键词...(没)",
+			default: true
+		},
+		variable: {
+			type: "check",
+			name: "合并或修改变量...()",
+			default: true
+			*/
 		}
 	},
 	onenable: function(_api) {
