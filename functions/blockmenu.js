@@ -7,20 +7,22 @@ let opening = -1;
 let _origcontextmenu1 = null;
 let _origcontextmenu2 = null;
 
-// 打开 tfgs
+let foption = {};
+
 function setup(tryCount) {
 	api_enabled = true;
 	//部分社区的界面会加载，尝试多次
 	try {
 		blockly = api.blockly();
 		workspace = api.workspace();
+		// 积木区背景
 		if (_origcontextmenu1 === null) {
 			_origcontextmenu1 = workspace.showContextMenu_;
 			workspace.showContextMenu_ = function(e) {
 				let ret = _origcontextmenu1.apply(this, arguments);
 				try {
 					if (api_enabled) {
-						on_blockMenu(e);
+						on_blockMenu(e, null, workspace);
 					}
 				} catch (e) {
 					api.onerror(e);
@@ -28,14 +30,14 @@ function setup(tryCount) {
 				return ret;
 			}
 		}
+		// 所有积木
 		if (_origcontextmenu2 === null) {
 			_origcontextmenu2 = blockly.BlockSvg.prototype.showContextMenu_;
 			blockly.BlockSvg.prototype.showContextMenu_ = function(e) {
-				api.log(e);
 				let ret = _origcontextmenu2.apply(this, arguments);
 				try {
 					if (api_enabled) {
-						on_blockMenu(e);
+						on_blockMenu(e, this, this.workspace);
 					}
 				} catch (e) {
 					api.onerror(e);
@@ -48,26 +50,23 @@ function setup(tryCount) {
 		api.onerror(err);
 		api.log("启动失败次数: " + (tryCount + 1));
 		opening = setTimeout(function() {
-			setup(api, tryCount + 1);
+			setup(tryCount + 1);
 		}, 500);
 		return;
 	}
 }
 
-function on_blockMenu(event) {
-	let element = event.target;
-	if (element === null) return;
-
-	let clickSVG = getSVG(element);
-	if (clickSVG === null) return;
-
+// event: 触发菜单的模拟事件，block: 积木对象(可能是null)，blockspace：触发事件的workspace（可能是workspace或者toolbox）
+function on_blockMenu(event, block, blockspace) {
 	let menu = api.selele("blocklyContextMenu");
 	if (menu === null) return;
 
-	let blockBox = clickSVG.classList.contains("blocklyFlyout");
-	let blockId = getBlockId(element);
+	let blockId = block === null ? null : block.id;
 
-	if (!blockBox && !api.RESPECTnodownload_DO_NOT_DELETE()) {
+	if (foption.copypaste &&
+		// 积木在积木区里（不在积木盒里）？
+		blockspace === workspace &&
+		!api.RESPECTnodownload_DO_NOT_DELETE()) {
 		if (blockId !== null) {
 			addToContextMenu("复制这个积木", function() {
 				copyToXML(blockId, false, true);
@@ -92,28 +91,6 @@ function on_blockMenu(event) {
 			}, menu);
 		}
 	}
-}
-
-function getSVG(element) {
-	while (element !== null && element.tagName.toLowerCase() !== "svg") {
-		element = element.parentElement;
-	}
-	return element;
-}
-
-function getBlockId(element) {
-	while (element !== null &&
-		element.tagName.toLowerCase() !== "svg"
-	) {
-		if (element.tagName.toLowerCase() === "g") {
-			let id = element.getAttribute("data-id");
-			if (id !== null) {
-				return id;
-			}
-		}
-		element = element.parentElement;
-	}
-	return null;
 }
 
 function addToContextMenu(name, callback, element) {
@@ -212,13 +189,62 @@ function findBlock(blockXML, blockId) {
 }
 
 tfgs.func.add({
-	id: "copyblock",
-	name: "复制积木为文字",
-	info: "在右键菜单中添加“复制积木”“粘贴积木”选项，可以跨作品复制，或者粘贴到记事本(是xml格式)",
+	id: "blockmenu",
+	name: "积木右键菜单",
+	info: "在右键菜单中添加各种功能",
 	default: false,
-	option: {},
+	option: {
+		copypaste: {
+			type: "check",
+			name: "复制，粘贴积木为文本",
+			default: true
+			/*
+		},
+		copypastekey: {
+			type: "check",
+			name: "按下复制粘贴快捷键时触发(没有实装)",
+			default: true
+		},
+		jumpto: {
+			type: "check",
+			name: "跳转到...(没有实装)",
+			default: true
+		},
+		jumptodef: {
+			type: "check",
+			name: "跳转到定义(没有实装)",
+			default: true
+		},
+		jumptoref: {
+			type: "check",
+			name: "跳转到引用...(没有实装)",
+			default: true
+		},
+		jumptomodi: {
+			type: "check",
+			name: "跳转到修改...(没)",
+			default: true
+		},
+		editdefault: {
+			type: "check",
+			name: "编辑默认值...(没)",
+			default: true
+		},
+		search: {
+			type: "check",
+			name: "查找关键词...(没)",
+			default: true
+		},
+		variable: {
+			type: "check",
+			name: "合并或修改变量...()",
+			default: true
+			*/
+		}
+	},
 	onenable: function(_api) {
 		api = _api;
+		foption = api.getoption();
 		setup(1);
 	},
 	ondisable: function() {
@@ -230,5 +256,7 @@ tfgs.func.add({
 		}
 		api.log("关闭");
 	},
-	onoption: function() {}
+	onoption: function() {
+		foption = api.getoption();
+	}
 });

@@ -1,0 +1,83 @@
+span.tfgsFoldbuttonButton {
+	position: absolute;
+	color: grey;
+	background: white;
+	font-size: 1em;
+	line-height: 30px;
+	width: 30px;
+	height: 30px;
+	border-radius: 2px;
+	border: 1px solid grey;
+	text-align: center;
+	cursor: pointer;
+}
+
+body.tfgsFoldbuttonMenubarFold div[class*=gui_menu-bar-position_] {
+	top: calc(0px - var(--tfgsFoldbuttonMenubarHeight));
+	margin-bottom: calc(0px - var(--tfgsFoldbuttonMenubarHeight));
+}
+
+body.tfgsFoldbuttonMenubarFold div[class*=gui_body-wrapper_] {
+	height: 100%;
+}
+
+body.tfgsFoldbuttonBlocktoolFold .blocklyFlyoutScrollbar,
+body.tfgsFoldbuttonBlocktoolFold .blocklyFlyout {
+	left: -250px;
+}
+
+body.tfgsFoldbuttonStagetargetFold div[class*=gui_stage-and-target-wrapper_] {
+	display: none;
+}
+
+/* gandi */
+body.tfgsFoldbuttonSpriteinfoFold div[class*=sprite-info_sprite-info_],
+body.tfgsFoldbuttonSpriteinfoFold div[class*=target-pane_target-preview_] {
+	max-height: 0px;
+	padding: 0px;
+	overflow: hidden;
+}
+
+body.tfgsFoldbuttonStagebuttonFold div[class*=target-pane_stage-selector-wrapper_] {
+	max-width: 0px;
+	padding: 0px;
+	margin-left: 0px;
+	margin-right: 0px;
+	overflow: hidden;
+}
+
+body.tfgsFoldbuttonStageFold div[class*=stage-wrapper_stage-canvas-wrapper_] {
+	max-height: 0px;
+	padding: 0px;
+	overflow: hidden;
+}
+
+body.tfgsFoldbuttonFullscreen {
+	overflow: scroll;
+}
+
+body.tfgsFoldbuttonExpand100 {
+	position: fixed;
+	bottom: 0;
+}
+
+body.tfgsFoldbuttonAssetpanelFold [class*=selector_wrapper_] {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	z-index: 2;
+}
+
+body.tfgsFoldbuttonAssetpanelFold [class*=selector_list-area_] {
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-content: flex-start;
+}
+
+body.tfgsFoldbuttonAssetpanelFold [class*="sprite-selector-item_sprite-selector-item_"] {
+	margin-left: 0.8em;
+}
+
+body.tfgsFoldbuttonAssetpanelFold [class*=asset-panel_detail-area_] {
+	padding-left: 45px;
+}

@@ -4,6 +4,7 @@ let interval = -1;
 let pbutton = {};
 let foption = {};
 let _fullscreen = false;
+let _oldTabIndex = 0;
 
 function configButton(options) {
 	let buttonid = options.buttonid;
@@ -36,7 +37,7 @@ function configButton(options) {
 				return;
 			}
 			let button = document.createElement("span");
-			button.classList.add("tfgsGuimodifyButton");
+			button.classList.add("tfgsFoldbuttonButton");
 			for (let i in styles)
 				button.style[i] = styles[i];
 			button.innerText = addinner;
@@ -44,7 +45,7 @@ function configButton(options) {
 			button.addEventListener("click", function() {
 				if (button.checked) {
 					if (cssname !== undefined)
-						document.body.classList.remove(cssname /*"tfgsGuimodifyMenubarFold"*/ );
+						document.body.classList.remove(cssname /*"tfgsFoldbuttonMenubarFold"*/ );
 					if (typeof onremove === "function")
 						onremove();
 					button.innerText = addinner;
@@ -82,23 +83,23 @@ function configButton(options) {
 function updateStatus() {
 	try {
 		if (foption.expand100) {
-			if (!document.body.classList.contains("tfgsGuimodifyExpand100")) {
-				document.body.classList.add("tfgsGuimodifyExpand100");
+			if (!document.body.classList.contains("tfgsFoldbuttonExpand100")) {
+				document.body.classList.add("tfgsFoldbuttonExpand100");
 				dispatchEvent(new Event("resize"));
 			}
 		} else {
-			if (document.body.classList.contains("tfgsGuimodifyExpand100")) {
-				document.body.classList.remove("tfgsGuimodifyExpand100");
+			if (document.body.classList.contains("tfgsFoldbuttonExpand100")) {
+				document.body.classList.remove("tfgsFoldbuttonExpand100");
 				dispatchEvent(new Event("resize"));
 			}
 		}
 
 		if (foption.foldmenu) {
-			if (document.body.style.getPropertyValue("--tfgsGuimodifyMenubarHeight") === "")
-				document.body.style.setProperty("--tfgsGuimodifyMenubarHeight", window.getComputedStyle(api.selele("gui_menu-bar-position_")).height);
+			if (document.body.style.getPropertyValue("--tfgsFoldbuttonMenubarHeight") === "")
+				document.body.style.setProperty("--tfgsFoldbuttonMenubarHeight", window.getComputedStyle(api.selele("gui_menu-bar-position_")).height);
 		} else {
-			if (document.body.style.getPropertyValue("--tfgsGuimodifyMenubarHeight") !== "")
-				document.body.style.removeProperty("--tfgsGuimodifyMenubarHeight");
+			if (document.body.style.getPropertyValue("--tfgsFoldbuttonMenubarHeight") !== "")
+				document.body.style.removeProperty("--tfgsFoldbuttonMenubarHeight");
 		}
 
 		configButton({
@@ -112,7 +113,7 @@ function updateStatus() {
 			addinner: "▲",
 			removeinner: "▼",
 			targetcss: "gui_menu-bar-position_",
-			cssname: "tfgsGuimodifyMenubarFold",
+			cssname: "tfgsFoldbuttonMenubarFold",
 			clickaftercreate: true
 		});
 
@@ -127,7 +128,7 @@ function updateStatus() {
 			addinner: "✠",
 			removeinner: "×",
 			targetcss: "gui_editor-wrapper_",
-			cssname: "tfgsGuimodifyFullscreen",
+			cssname: "tfgsFoldbuttonFullscreen",
 			onadd: function(button) {
 				if (document.fullscreenElement === null)
 					document.body.requestFullscreen()
@@ -166,7 +167,7 @@ function updateStatus() {
 			addinner: "▶",
 			removeinner: "◀",
 			targetcss: "gui_editor-wrapper_",
-			cssname: "tfgsGuimodifyStagetargetFold"
+			cssname: "tfgsFoldbuttonStagetargetFold"
 		});
 
 		configButton({
@@ -181,7 +182,7 @@ function updateStatus() {
 			addinner: "◀",
 			removeinner: "▶",
 			targetcss: "injectionDiv",
-			cssname: "tfgsGuimodifyBlocktoolFold"
+			cssname: "tfgsFoldbuttonBlocktoolFold"
 		});
 
 		configButton({
@@ -195,7 +196,7 @@ function updateStatus() {
 			addinner: "▲",
 			removeinner: "▼",
 			targetcss: "sprite-selector_scroll-wrapper_",
-			cssname: "tfgsGuimodifySpriteinfoFold"
+			cssname: "tfgsFoldbuttonSpriteinfoFold"
 		});
 
 		configButton({
@@ -209,7 +210,7 @@ function updateStatus() {
 			addinner: "▶",
 			removeinner: "◀",
 			targetcss: "sprite-selector_scroll-wrapper_",
-			cssname: "tfgsGuimodifyStagebuttonFold"
+			cssname: "tfgsFoldbuttonStagebuttonFold"
 		});
 
 		configButton({
@@ -223,7 +224,7 @@ function updateStatus() {
 			addinner: "▲",
 			removeinner: "▼",
 			targetcss: "sprite-selector_scroll-wrapper_",
-			cssname: "tfgsGuimodifyStageFold"
+			cssname: "tfgsFoldbuttonStageFold"
 		});
 
 		configButton({
@@ -236,16 +237,47 @@ function updateStatus() {
 			},
 			addinner: "▶",
 			removeinner: "◀",
+			onadd: function() {
+				let l_a = api.selele("selector_list-area_1Xbj_");
+				let l_s = api.selele("sprite-selector-item_is-selected_", l_a);
+				l_a.scrollTo(0, l_s.parentElement.offsetTop - l_a.offsetHeight / 2 + l_s.parentElement.offsetHeight / 2)
+			},
+			onremove: function() {
+				let l_a = api.selele("selector_list-area_1Xbj_");
+				let l_s = api.selele("sprite-selector-item_is-selected_", l_a);
+				l_a.scrollTo(0, l_s.parentElement.offsetTop - l_a.offsetHeight / 2 + l_s.parentElement.offsetHeight / 2)
+			},
 			targetcss: "selector_wrapper_",
-			cssname: "tfgsGuimodifyAssetpanelFold"
+			cssname: "tfgsFoldbuttonAssetpanelFold"
 		});
+
+		if (foption.autoscrollassetpanel) {
+			let l_a = api.selele("selector_list-area_1Xbj_");
+			if (l_a !== null) {
+				if (getTabIndex() !== _oldTabIndex || getEditingId() !== _oldEditingId) {
+					let l_s = api.selele("sprite-selector-item_is-selected_", l_a);
+					l_a.scrollTo(0, l_s.parentElement.offsetTop - l_a.offsetHeight / 2 + l_s.parentElement.offsetHeight / 2)
+					_oldTabIndex = getTabIndex();
+					_oldEditingId = getEditingId();
+				}
+			}
+		}
+
 	} catch (e) {
 		api.error(e);
 	}
 }
 
+function getTabIndex() {
+	return api.store().getState().scratchGui.editorTab.activeTabIndex;
+}
+
+function getEditingId() {
+	return api.store().getState().scratchGui.targets.editingTarget;
+}
+
 tfgs.func.add({
-	id: "guifold",
+	id: "foldbutton",
 	name: "折叠展开按钮",
 	info: "添加可以折叠舞台、角色，展开列表等区域的按钮",
 	option: {
@@ -261,7 +293,12 @@ tfgs.func.add({
 		},
 		foldblocktool: {
 			type: "check",
-			name: "折叠jimuhe",
+			name: "折叠积木盒",
+			default: true
+		},
+		foldblocktoolauto: {
+			type: "check",
+			name: "点击类别时展开(五)",
 			default: true
 		},
 		foldstagetarget: {
@@ -286,12 +323,17 @@ tfgs.func.add({
 		},
 		foldassetpanel: {
 			type: "check",
-			name: "折叠asset",
+			name: "展开素材列表",
+			default: true
+		},
+		autoscrollassetpanel: {
+			type: "check",
+			name: "自动滚动到当前造型",
 			default: true
 		},
 		expand100: {
 			type: "check",
-			name: "填满屏幕(实验)",
+			name: "填满屏幕(可能开了反而出问题)",
 			default: false
 		}
 	},

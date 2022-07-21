@@ -3,7 +3,7 @@ div.tfgsResourcesRenamable {
 	min-height: 1em;
 }
 
-.sprite-selector-item_is-selected_24tQj div.tfgsResourcesRenamable {
+[class*=sprite-selector-item_is-selected] div.tfgsResourcesRenamable {
 	border-bottom: 1px dotted hsla(0, 100%, 100%, 1);
 }
 
@@ -23,6 +23,6 @@ input.tfgsResourcesRename {
 	outline: none;
 }
 
-.sprite-selector-item_is-selected_24tQj input.tfgsResourcesRename {
+[class*=sprite-selector-item_is-selected] input.tfgsResourcesRename {
 	border: 2px solid hsla(0, 100%, 100%, 1);
 }

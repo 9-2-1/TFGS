@@ -9,6 +9,8 @@
 // let zipdata = zip.end("zip 注释"); // 返回Uint8Array
 // // 以下代码Node.js有效
 // require('fs').writeFileSync('test.zip', Buffer.from(zipdata));
+//
+// 编码只有utf-8，中文在windows下默认乱码，需要解压程序支持utf-8编码
 
 tfgs.storezip = {};
 

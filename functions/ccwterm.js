@@ -91,6 +91,41 @@ function closecontrol() {
 	}
 }
 
+function getxtermhelp() {
+	return document.getElementsByClassName("xterm-helper-textarea")[0];
+}
+
+function handleinput(e) {
+	for (let x = 0; x < e.data.length; x++) {
+		this.dispatchEvent(new KeyboardEvent('keypress', {
+			charCode: e.data.codePointAt(x)
+		}));
+		e.preventDefault();
+	}
+}
+
+function handlekeypress(e) {
+	e.preventDefault();
+}
+
+function enableinputfix() {
+	let xtermhelp = getxtermhelp();
+	if (xtermhelp !== undefined) {
+		xtermhelp.addEventListener('compositionend', handleinput);
+		xtermhelp.addEventListener('input', handleinput);
+		xtermhelp.addEventListener('keypress', handlekeypress);
+	}
+}
+
+function disableinputfix() {
+	let xtermhelp = getxtermhelp();
+	if (xtermhelp !== undefined) {
+		xtermhelp.removeEventListener('compositionend', handleinput);
+		xtermhelp.removeEventListener('input', handleinput);
+		xtermhelp.removeEventListener('keypress', handlekeypress);
+	}
+}
+
 tfgs.func.add({
 	id: "ccwterm",
 	name: "将ccw控制台放入tfgs窗口",
@@ -103,6 +138,11 @@ tfgs.func.add({
 			menu: ["尊重显示和隐藏操作", "将显示/隐藏理解为还原/最小化", "显示时闪烁,隐藏时最小化", "忽略隐藏请求"],
 			value: ["respect", "minmax", "minshow", "ignore"],
 			default: "respect"
+		},
+		fixinput: {
+			type: "check",
+			name: "修复中文/手机输入异常",
+			default: "true"
 		}
 	},
 	onenable: function(_api) {
@@ -110,6 +150,11 @@ tfgs.func.add({
 		lastvisi = "?";
 		lastmode = api.getoption().mode;
 		getready();
+		if (api.getoption().fixinput) {
+			enableinputfix();
+		} else {
+			disableinputfix();
+		}
 	},
 	ondisable: function() {
 		if (readyt !== -1) {
@@ -117,11 +162,17 @@ tfgs.func.add({
 			readyt = -1;
 		}
 		closecontrol();
+		disableinputfix();
 	},
 	onoption: function() {
 		if (api.getoption().mode !== lastmode) {
 			lastvisi = "?";
 			lastmode = api.getoption().mode;
+		}
+		if (api.getoption().fixinput) {
+			enableinputfix();
+		} else {
+			disableinputfix();
 		}
 	}
 });

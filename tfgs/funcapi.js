@@ -247,26 +247,11 @@ tfgs.funcapi.gui = function(name) {
 			return gui;
 		} catch (e) {
 			errors.push(e);
-			try {
-				// 获取Gui方法3
-				let gui = tfgs.funcapi.reactInternal(name,
-						tfgs.funcapi.selele(name, "stage-wrapper_")
-					)
-					.return.return.return.return
-					.return.return.return.return
-					.return.return
-					.stateNode;
-				if (typeof gui.props !== "object" || gui.props === null || !("vm" in gui.props))
-					throw new Error("Invaild gui");
-				return gui;
-			} catch (e) {
-				errors.push(e);
-				for (let i = 0; i < errors.length; i++) {
-					tfgs.funcapi.error(name, `funcapi: gui: 方法${i+1}错误:`);
-					tfgs.funcapi.onerror(name, errors[i]);
-				}
-				throw new Error("tfgs.funcapi.gui: cannot find gui");
+			for (let i = 0; i < errors.length; i++) {
+				tfgs.funcapi.error(name, `funcapi: gui: 方法${i+1}错误:`);
+				tfgs.funcapi.onerror(name, errors[i]);
 			}
+			throw new Error("tfgs.funcapi.gui: cannot find gui");
 		}
 	}
 };
@@ -337,6 +322,7 @@ tfgs.funcapi.RESPECTnodownload_DO_NOT_DELETE = function(name) {
 	let gui = tfgs.funcapi.gui(name);
 	if ("readOnly" in gui.props && gui.props.readOnly === true) return true;
 	if ("canSaveToLocal" in gui.props && gui.props.canSaveToLocal === false) return true;
+	if ("openSourceLevel" in gui.props && gui.props.openSourceLevel !== 3) return true;
 	return false;
 };
 
